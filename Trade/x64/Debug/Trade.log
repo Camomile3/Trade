@@ -1,0 +1,3 @@
+﻿  main.cpp
+func.obj : error LNK2005: "class BUTTON btn" (?btn@@3VBUTTON@@A) は既に main.obj で定義されています。
+C:\Users\PC-USER\source\repos\Trade\x64\Debug\Trade.exe : fatal error LNK1169: 1 つ以上の複数回定義されているシンボルが見つかりました。
