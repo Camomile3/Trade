@@ -1,9 +1,12 @@
 #pragma once
 
 class BUTTON {
-	int BtnX, BtnY, BtnW, BtnH;
+	struct BtnS {
+		int BtnX, BtnY, BtnW, BtnH;
+	};
+	struct BtnS BtnN[4];
 	int GraBtn;
 public:
-	void ButtonOver();
 	void DrawButton();
+	void ButtonOver();
 };
