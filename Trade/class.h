@@ -6,4 +6,4 @@ class BUTTON {
 public:
 	void ButtonOver();
 	void DrawButton();
-}btn;
+};

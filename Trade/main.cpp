@@ -1,6 +1,8 @@
 #include "DxLib.h"
 #include "class.h"
 
+BUTTON btn;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	int Gra;
