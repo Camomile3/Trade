@@ -20,11 +20,43 @@ void BUTTON::DrawButton() {
 
 void BUTTON::ButtonOver() {
 	int MouseX, MouseY;
-	bool LoopEnd = FALSE;
+	int OveredBtn;
 	bool MOver = FALSE;
 
 	while (CheckHitKeyAll() == 0) {
+
 		while (MOver == FALSE) {
+			GetMousePoint(&MouseX, &MouseY);
+			for (int i = 0; i < 4; i++) {
+				if ((MouseX >= BtnN[i].BtnX && MouseX <= BtnN[i].BtnX + BtnN[i].BtnW) && (MouseY >= BtnN[i].BtnY && MouseY <= BtnN[i].BtnY + BtnN[i].BtnH)) {
+					GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
+					DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
+					MOver = TRUE;
+					OveredBtn = i;
+					printfDx("OverTrue & %d \n", OveredBtn);
+					break;
+				}
+			}
+		}
+		WaitTimer(16);
+
+		while (MOver == TRUE) {
+			GetMousePoint(&MouseX, &MouseY);
+			printfDx("MOverMTRUE");
+			if (!((MouseX >= BtnN[OveredBtn].BtnX && MouseX <= BtnN[OveredBtn].BtnX + BtnN[OveredBtn].BtnW) && (MouseY >= BtnN[OveredBtn].BtnY && MouseY <= BtnN[OveredBtn].BtnY + BtnN[OveredBtn].BtnH))) {
+				GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
+				DrawGraph(BtnN[OveredBtn].BtnX, BtnN[OveredBtn].BtnY, GraBtn, TRUE);
+				MOver = FALSE;
+				printfDx("OutTrue & %d \n", OveredBtn);
+				break;
+			}
+			WaitTimer(16);
+		}WaitTimer(16);
+	}
+}
+
+/*	while (CheckHitKeyAll() == 0) {
+		while (MOver[i] == FALSE) {
 			GetMousePoint(&MouseX, &MouseY);
 			for (int i = 0; i < 4; i++) {
 				if (MouseX >= BtnN[i].BtnX && MouseX <= BtnN[i].BtnX + BtnN[i].BtnW) {
@@ -32,7 +64,8 @@ void BUTTON::ButtonOver() {
 						GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
 						DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
 						LoopEnd = TRUE;
-						MOver = TRUE;
+						MOver[i] = TRUE;
+						printfDx("OverTrue");
 						break;
 					}
 				}
@@ -42,7 +75,7 @@ void BUTTON::ButtonOver() {
 		}
 		LoopEnd = FALSE;
 
-		while (MOver == TRUE) {
+		while (MOver[0] == TRUE) {
 			GetMousePoint(&MouseX, &MouseY);
 			for (int i = 0; i < 4; i++) {
 				if (MouseX >= BtnN[i].BtnX && MouseX <= BtnN[i].BtnX + BtnN[i].BtnW) {
@@ -53,7 +86,7 @@ void BUTTON::ButtonOver() {
 						GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
 						DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
 						LoopEnd = TRUE;
-						MOver = FALSE;
+						MOver[i] = FALSE;
 						break;
 					}
 				}
@@ -62,7 +95,7 @@ void BUTTON::ButtonOver() {
 					printfDx("%dOut", i);
 					DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
 					LoopEnd = TRUE;
-					MOver = FALSE;
+					MOver[i] = FALSE;
 					break;
 				}
 			}
@@ -70,5 +103,4 @@ void BUTTON::ButtonOver() {
 			WaitTimer(100);
 		}
 		LoopEnd = FALSE;
-	}
-}
+	}*/
