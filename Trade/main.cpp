@@ -1,10 +1,10 @@
 #include "DxLib.h"
+#include "class.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	int Gra;
 	void Test();
-	void ButtonOver();
 
 	if (DxLib_Init() == -1)    // ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
 	{
@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMouseDispFlag(TRUE);
 
 	//ŠÖ”
-	ButtonOver();
+	btn.ButtonOver();
 
 	Test();
 
@@ -41,46 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 
-//ƒ{ƒ^ƒ“
-void ButtonOver() {
-	int GraBtn1;
-	int MouseX, MouseY;
 
-	GraBtn1 = LoadGraph("Resouce/T_Btn1.png");
-
-	DrawGraph(870, 800, GraBtn1, TRUE);
-	while (CheckHitKeyAll() == 0) {
-		while (CheckHitKeyAll() == 0) {
-			GetMousePoint(&MouseX, &MouseY);
-			if (MouseX >= 870 && MouseX <= 870 + 180) {
-				if (MouseY >= 800 && MouseY <= 800 + 42) {
-					GraphFilter(GraBtn1, DX_GRAPH_FILTER_INVERT);
-					DrawGraph(870, 800, GraBtn1, TRUE);
-					break;
-				}
-			}
-			WaitTimer(100);
-		}
-		while (CheckHitKeyAll() == 0) {
-			GetMousePoint(&MouseX, &MouseY);
-			if (MouseX >= 870 && MouseX <= 870 + 180) {
-				if (MouseY >= 800 && MouseY <= 800 + 42) {
-				}
-				else {
-					GraphFilter(GraBtn1, DX_GRAPH_FILTER_INVERT);
-					DrawGraph(870, 800, GraBtn1, TRUE);
-					break;
-				}
-			}
-			else {
-				GraphFilter(GraBtn1, DX_GRAPH_FILTER_INVERT);
-				DrawGraph(870, 800, GraBtn1, TRUE);
-				break;
-			}
-			WaitTimer(100);
-		}
-	}
-}
 
 void Test()
 {
