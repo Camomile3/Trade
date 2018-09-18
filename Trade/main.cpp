@@ -2,6 +2,7 @@
 #include "class.h"
 
 BUTTON btn;
+INITIALIZATION init;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -20,7 +21,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetGraphMode(WinX, WinY, 32, 60);
 
 	//タイトル画像表示
-	Gra = LoadGraph("Resouce/BG_Title.jpg");
+	Gra = LoadGraph("Resource/BG_Title.jpg");
 
 	DrawExtendGraph(0, 0, WinX, WinY, Gra, TRUE);
 
@@ -28,7 +29,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	SetMouseDispFlag(TRUE);
 
 	//関数
+
+	init.SetFont();
 	btn.DrawButton();
+
+
 	btn.ButtonOver();
 
 	Test();

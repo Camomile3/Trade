@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class BUTTON {
 	struct BtnS {
@@ -9,4 +10,9 @@ class BUTTON {
 public:
 	void DrawButton();
 	void ButtonOver();
+};
+
+class INITIALIZATION {
+public:
+	void SetFont();
 };
