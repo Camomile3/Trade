@@ -37,9 +37,9 @@ void BUTTON::ButtonOver() {
 					break;
 				}
 			}
-		}
 		WaitTimer(16);
-
+		}
+		
 		while (MOver == TRUE) {
 			GetMousePoint(&MouseX, &MouseY);
 			printfDx("MOverMTRUE");
@@ -50,8 +50,9 @@ void BUTTON::ButtonOver() {
 				printfDx("OutTrue & %d \n", OveredBtn);
 				break;
 			}
-			WaitTimer(16);
-		}WaitTimer(16);
+		WaitTimer(16);
+		}
+	WaitTimer(16);
 	}
 }
 
