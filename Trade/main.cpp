@@ -1,7 +1,7 @@
 #include "DxLib.h"
 #include "class.h"
 
-FUN fun;
+FUN Mfun;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -12,13 +12,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;    // エラーが起きたら直ちに終了
 	}
 
-
 	//関数
-	fun.main();
-
-
-
-	WaitKey();        // 結果を見るためにキー待ち(『WaitKey』を使用)
+	Mfun.main();
 
 	DxLib_End();        // ＤＸライブラリ使用の終了処理
 

@@ -1,6 +1,33 @@
 #pragma once
 #include <string>
 
+class INIT {
+public:
+	int WinX;
+	int WinY;
+	int GraT;
+	int GraBtn;
+	int GraMW;
+	int GraMap;
+	int GraHer;
+	void SetFont();
+	void LoadGra();
+	void ResetTitle();
+};
+
+class FUN {
+public:
+	void main();
+	enum {
+		S_TITLE,
+		S_MAIN,
+		S_ENDING,
+		S_END,
+	};
+
+	int FStat = S_TITLE;
+};
+
 class BUTTON {
 	int BtnX[16], BtnY[16], BtnW[16], BtnH[16];
 	int MouseX, MouseY;
@@ -10,7 +37,12 @@ class BUTTON {
 public:
 	void DrawButton();
 	void ButtonOver();
+	void ButtonSys();
 	void QuitWindow();
+	void SetMapBtn();
+	void MapBtnOver();
+	void MapBtnSys();
+	void DebugBox();
 };
 
 class MWINDOW {
@@ -20,19 +52,8 @@ public:
 	void DrawWindow();
 };
 
-class INIT {
+class MMAP {
 public:
-	int WinX;
-	int WinY;
-	int GraT;
-	int GraBtn;
-	int GraMW;
-	void SetFont();
-	void LoadGra();
-	void ResetTitle();
-};
+	void DrawMap();
 
-class FUN {
-public:
-	void main();
 };
