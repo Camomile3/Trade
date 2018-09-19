@@ -5,6 +5,7 @@ INIT init;
 FUN fun;
 SYSTEM sys;
 MMAP map;
+HEROINE her;
 
 int FontHandle;
 
@@ -42,6 +43,7 @@ void FUN::main() {
 			map.DrawMap();
 			sys.SetMapBtn();
 			sys.DebugBox();
+			sys.SpawnHer();
 			while (1) {
 				sys.MapBtnOver();
 				sys.MapBtnSys();
@@ -266,13 +268,20 @@ void SYSTEM::QuitBtnSys(int OveredBtn) {
 }
 
 void MMAP::DrawMap() {
-	SetDrawScreen(DX_SCREEN_BACK);
+	sys.DebugMap();
+	//sys.Fade(init.GraT, init.GraMap);
+
+}
+
+void SYSTEM::ResetMap() {
+	ClearDrawScreen();
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraMap, TRUE);
-	ScreenFlip();
-	SetDrawScreen(DX_SCREEN_FRONT);
-	int x = 640;
-	int y = 560;
-	DrawExtendGraph(x, y, x+32, y+64, init.GraHer, FALSE);
+	DebugBox();
+	for (int i = 0; i < ButtonNumber; i++) {
+		BtnCx[i] = BtnX[i] + BtnW[i] / 2;
+		BtnCy[i] = BtnY[i] + BtnH[i] / 2;
+		DrawCircle(BtnCx[i], BtnCy[i], 2, GetColor(0, 255, 0), TRUE);
+	}
 }
 
 //Å‘å“sŽs	640, 560
@@ -328,14 +337,27 @@ void SYSTEM::SetMapBtn() {
 	BtnY[9] = 920;
 	BtnW[9] = x;
 	BtnH[9] = y;
-
+	BtnX[10] = 730;
+	BtnY[10] = 550;
+	BtnW[10] = x;
+	BtnH[10] = y;
+	BtnX[11] = 765;
+	BtnY[11] = 480;
+	BtnW[11] = x;
+	BtnH[11] = y;
+	ButtonNumber = 12;
+	for (int i = 0; i < ButtonNumber; i++) {
+		BtnCx[i] = BtnX[i] + BtnW[i] / 2;
+		BtnCy[i] = BtnY[i] + BtnH[i] / 2;
+		DrawCircle(BtnCx[i], BtnCy[i], 2, GetColor(0, 255, 0), TRUE);
+	}
 }
 
 void SYSTEM::MapBtnOver() {
 
 	GetMousePoint(&MouseX, &MouseY);
 	if (MOver == FALSE) {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < ButtonNumber; i++) {
 			if ((MouseX >= BtnX[i] && MouseX <= BtnX[i] + BtnW[i]) && (MouseY >= BtnY[i] && MouseY <= BtnY[i] + BtnH[i])) {
 				MOver = TRUE;
 				OveredBtn = i;
@@ -373,47 +395,294 @@ void SYSTEM::MapBtnSys(){
 	MInput1F = MInput;
 	MInput = GetMouseInput();
 	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1) {
-		switch (OveredBtn) {
-		case 0:
+		if (OveredBtn == 0) {
 			printfDx("%d\n", OveredBtn);
 			DxLib_End();
-			break;
-		case 1:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 2:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 3:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 4:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 5:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 6:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 7:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 8:
-			printfDx("%d\n", OveredBtn);
-			break;
-		case 9:
-			printfDx("%d\n", OveredBtn);
-			break;
+		}
+		else
+		{
 			printfDx("MOUSE LEFT ON");
-			return;
+			MoveRoute();
 		}
 	}
 }
 
 void SYSTEM::DebugBox() {
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < ButtonNumber; i++) {
 		DrawBox(BtnX[i], BtnY[i], BtnX[i] + BtnW[i], BtnY[i] + BtnH[i], GetColor(0, 255, 0), FALSE);
+	}
+}
+
+void SYSTEM::Fade(int before, int after) {
+
+	SetDrawScreen(DX_SCREEN_BACK);
+
+	for (int i = 0; i < 384; i++) {
+		if (i >= 0 && i < 128) {
+			SetDrawBright(255 - (i * 2), 255 - (i * 2), 255 - (i * 2));
+			DrawExtendGraph(0, 0, init.WinX, init.WinY, before, TRUE);
+		}
+		if (i >= 128 && i < 192)
+			SetDrawBright(0, 0, 0);
+
+		if (i >= 192 && i < 320) {
+			SetDrawBright((i - 192) * 2, (i - 192) * 2, (i - 192) * 2);
+			DrawExtendGraph(0, 0, init.WinX, init.WinY, after, TRUE);
+		}
+		if (ProcessMessage() == -1) break;
+
+		ScreenFlip();
+	}
+	SetDrawScreen(DX_SCREEN_FRONT);
+
+}
+
+void SYSTEM::DebugMap() {
+	SetDrawScreen(DX_SCREEN_BACK);
+	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraMap, TRUE);
+	ScreenFlip();
+	SetDrawScreen(DX_SCREEN_FRONT);
+}
+
+void SYSTEM::SpawnHer() {
+
+	her.X = BtnCx[0];
+	her.Y = BtnCy[0];
+	her.On = 0;
+
+	DrawExtendGraph(BtnCx[0] - 16, BtnCy[0] - 64, BtnCx[0] + 16, BtnCy[0], init.GraHer, FALSE);
+}
+
+void SYSTEM::Move(int MoveTo) {
+
+	Angle = atan2(BtnCy[MoveTo] - her.Y, BtnCx[MoveTo] - her.X);
+
+	while (!(((her.X > BtnCx[MoveTo] - 6) && (her.X <= BtnCx[MoveTo] + 6)) && ((her.Y > BtnCy[MoveTo] - 6) && (her.Y <= BtnCy[MoveTo] + 6)))) {
+
+		her.X += 1 * cos(Angle);
+		her.Y += 1 * sin(Angle);
+
+		ResetMap();
+
+		DrawExtendGraph((int)her.X - 16, (int)her.Y - 64, (int)her.X + 16, (int)her.Y, init.GraHer, FALSE);
+
+		WaitTimer(8);
+	}
+}
+
+void SYSTEM::MoveRoute() {
+	switch (her.On) {
+	case 0:
+		printfDx("case 0");
+		switch (OveredBtn) {
+		case 1:
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			Move(1);
+			Move(2);
+			her.On = 2;
+			break;
+		case 4:
+			Move(10);
+			Move(11);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			Move(4);
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			Move(4);
+			Move(6);
+			her.On = 6;
+			break;
+		}
+		break;
+	case 1:
+		switch (OveredBtn) {
+		case 0:
+			Move(0);
+			her.On = 0;
+			break;
+		case 2:
+			Move(2);
+			her.On = 2;
+			break;
+		case 4:
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			Move(6);
+			her.On = 6;
+			break;
+		}
+		break;
+	case 2:
+		switch (OveredBtn) {
+		case 0:
+			Move(1);
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			Move(1);
+			her.On = 1;
+			break;
+		case 4:
+			Move(1);
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			Move(1);
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			Move(1);
+			Move(0);
+			Move(10);
+			Move(11);
+			Move(4);
+			Move(6);
+			her.On = 6;
+			break;
+		}
+		break;
+	case 4:
+		switch (OveredBtn) {
+		case 0:
+			Move(11);
+			Move(10);
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			Move(2);
+			her.On = 2;
+			break;
+		case 5:
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			Move(6);
+			her.On = 6;
+			break;
+		}
+		break;
+	case 5:
+		switch (OveredBtn) {
+		case 0:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			Move(2);
+			her.On = 2;
+			break;
+		case 4:
+			Move(4);
+			her.On = 5;
+			break;
+		case 6:
+			Move(4);
+			Move(6);
+			her.On = 6;
+			break;
+		}
+		break;
+	case 6:
+		switch (OveredBtn) {
+		case 0:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			Move(4);
+			Move(11);
+			Move(10);
+			Move(0);
+			Move(1);
+			Move(2);
+			her.On = 2;
+			break;
+		case 4:
+			Move(4);
+			her.On = 5;
+			break;
+		case 5:
+			Move(4);
+			Move(5);
+			her.On = 6;
+			break;
+		}
+		break;
 	}
 }
 
@@ -427,54 +696,3 @@ void SYSTEM::DebugBox() {
 //“Œ‚Ì“‡	1720, 260
 //“ì“Œ‚Ì“‡1	1700, 750
 //“ì“Œ‚Ì“‡2	1440, 880
-
-
-/*	while (CheckHitKeyAll() == 0) {
-		while (MOver[i] == FALSE) {
-			GetMousePoint(&MouseX, &MouseY);
-			for (int i = 0; i < 4; i++) {
-				if (MouseX >= BtnN[i].BtnX && MouseX <= BtnN[i].BtnX + BtnN[i].BtnW) {
-					if (MouseY >= BtnN[i].BtnY && MouseY <= BtnN[i].BtnY + BtnN[i].BtnH) {
-						GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
-						DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
-						LoopEnd = TRUE;
-						MOver[i] = TRUE;
-						printfDx("OverTrue");
-						break;
-					}
-				}
-			}
-			if (LoopEnd) { break; }
-			WaitTimer(100);
-		}
-		LoopEnd = FALSE;
-
-		while (MOver[0] == TRUE) {
-			GetMousePoint(&MouseX, &MouseY);
-			for (int i = 0; i < 4; i++) {
-				if (MouseX >= BtnN[i].BtnX && MouseX <= BtnN[i].BtnX + BtnN[i].BtnW) {
-					if (MouseY >= BtnN[i].BtnY && MouseY <= BtnN[i].BtnY + BtnN[i].BtnH) {
-					}
-					else {
-						printfDx("%dOut", i);
-						GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
-						DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
-						LoopEnd = TRUE;
-						MOver[i] = FALSE;
-						break;
-					}
-				}
-				else {
-					GraphFilter(GraBtn, DX_GRAPH_FILTER_INVERT);
-					printfDx("%dOut", i);
-					DrawGraph(BtnN[i].BtnX, BtnN[i].BtnY, GraBtn, TRUE);
-					LoopEnd = TRUE;
-					MOver[i] = FALSE;
-					break;
-				}
-			}
-			if (LoopEnd) { break; }
-			WaitTimer(100);
-		}
-		LoopEnd = FALSE;
-	}*/

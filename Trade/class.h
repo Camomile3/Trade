@@ -29,12 +29,13 @@ public:
 };
 
 class SYSTEM {
-	int BtnX[16], BtnY[16], BtnW[16], BtnH[16];
+	int BtnX[32], BtnY[32], BtnW[32], BtnH[32], BtnCx[32], BtnCy[32];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
 	int OveredBtn;
 	int ButtonNumber;
 	int MWX,MWY;
+	double Angle;
 	bool MOver = FALSE;
 	enum {
 		S_TITLE,
@@ -45,6 +46,7 @@ class SYSTEM {
 	};
 	int BtnSwitch = S_TITLE;
 public:
+	//タイトル
 	void DrawTitleButton();
 	void DrawButton();
 	void TitleBtnOver(int);
@@ -55,14 +57,27 @@ public:
 	void QuitBtnOver(int);
 	void QuitBtnOut(int);
 	void QuitBtnSys(int);
+	//メインマップ
+	void Fade(int, int);
+	void ResetMap();
 	void SetMapBtn();
 	void MapBtnOver();
 	void MapBtnSys();
 	void DebugBox();
+	void DebugMap();
+	void SpawnHer();
+	void Move(int);
+	void MoveRoute();
 };
 
 class MMAP {
 public:
 	void DrawMap();
 
+};
+
+class HEROINE {
+public:
+	double X, Y;
+	int On;
 };
