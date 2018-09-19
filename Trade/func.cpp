@@ -3,8 +3,7 @@
 
 INIT init;
 FUN fun;
-MWINDOW mw;
-BUTTON btn;
+SYSTEM sys;
 MMAP map;
 
 int FontHandle;
@@ -32,8 +31,8 @@ void FUN::main() {
 		case S_TITLE:
 			init.ResetTitle();
 			while (1) {
-				btn.ButtonOver();
-				btn.ButtonSys();
+				sys.DrawButton();
+				sys.ButtonSys();
 				if (fun.FStat != S_TITLE)
 					break;
 				WaitTimer(16);
@@ -41,11 +40,11 @@ void FUN::main() {
 			break;
 		case S_MAIN:
 			map.DrawMap();
-			btn.SetMapBtn();
-			btn.DebugBox();
+			sys.SetMapBtn();
+			sys.DebugBox();
 			while (1) {
-				btn.MapBtnOver();
-				btn.MapBtnSys();
+				sys.MapBtnOver();
+				sys.MapBtnSys();
 				if (fun.FStat != S_MAIN)
 					break;
 			}
@@ -81,11 +80,11 @@ void INIT::LoadGra() {
 
 void INIT::ResetTitle() {
 	DrawExtendGraph(0, 0, WinX, WinY, GraT, TRUE);
-	btn.DrawButton();
+	sys.DrawTitleButton();
 }
 
 //ボタン
-void BUTTON::DrawButton() {
+void SYSTEM::DrawTitleButton() {
 
 	for (int i = 0; i < 4; i++) {
 		BtnX[i] = 200 * i + 580;
@@ -100,26 +99,23 @@ void BUTTON::DrawButton() {
 	DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), FontHandle);
 	DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), FontHandle);
 	DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), FontHandle);
+	ButtonNumber = 4;
 }
 
-void BUTTON::ButtonOver() {
+
+
+void SYSTEM::DrawButton() {
 
 	GetMousePoint(&MouseX, &MouseY);
 	if (MOver == FALSE) {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < ButtonNumber; i++) {
 			if ((MouseX >= BtnX[i] && MouseX <= BtnX[i] + BtnW[i]) && (MouseY >= BtnY[i] && MouseY <= BtnY[i] + BtnH[i])) {
-				switch (i) {
-				case 0:
-					DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(255, 0, 0), FontHandle);
+				switch (BtnSwitch) {
+				case S_TITLE:
+					TitleBtnOver(i);
 					break;
-				case 1:
-					DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(255, 0, 0), FontHandle);
-					break;
-				case 2:
-					DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(255, 0, 0), FontHandle);
-					break;
-				case 3:
-					DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(255, 0, 0), FontHandle);
+				case S_QUIT:
+					QuitBtnOver(i);
 					break;
 				}
 				MOver = TRUE;
@@ -132,18 +128,12 @@ void BUTTON::ButtonOver() {
 
 	if (MOver == TRUE) {
 		if (!((MouseX >= BtnX[OveredBtn] && MouseX <= BtnX[OveredBtn] + BtnW[OveredBtn]) && (MouseY >= BtnY[OveredBtn] && MouseY <= BtnY[OveredBtn] + BtnH[OveredBtn]))) {
-			switch (OveredBtn) {
-			case 0:
-				DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(0, 0, 0), FontHandle);
+			switch (BtnSwitch) {
+			case S_TITLE:
+				TitleBtnOverOut(OveredBtn);
 				break;
-			case 1:
-				DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), FontHandle);
-				break;
-			case 2:
-				DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), FontHandle);
-				break;
-			case 3:
-				DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), FontHandle);
+			case S_QUIT:
+				QuitBtnOut(OveredBtn);
 				break;
 			}
 			MOver = FALSE;
@@ -153,18 +143,51 @@ void BUTTON::ButtonOver() {
 	}
 }
 
-void BUTTON::ButtonSys() {
+void SYSTEM::TitleBtnOver(int i) {
+	switch (i) {
+	case 0:
+		DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(255, 0, 0), FontHandle);
+		break;
+	case 1:
+		DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(255, 0, 0), FontHandle);
+		break;
+	case 2:
+		DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(255, 0, 0), FontHandle);
+		break;
+	case 3:
+		DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(255, 0, 0), FontHandle);
+		break;
+	}
+}
+
+void SYSTEM::TitleBtnOverOut(int OveredBtn) {
+	switch (OveredBtn) {
+	case 0:
+		DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(0, 0, 0), FontHandle);
+		break;
+	case 1:
+		DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), FontHandle);
+		break;
+	case 2:
+		DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), FontHandle);
+		break;
+	case 3:
+		DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), FontHandle);
+		break;
+	}
+}
+
+void SYSTEM::ButtonSys() {
 
 	MInput1F = MInput;
 	MInput = GetMouseInput();
 	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1) {
-		switch (OveredBtn) {
-		case 0:
-			fun.FStat = fun.S_MAIN;
-			return;
-		case 3:
-			mw.DrawWindow();
-			QuitWindow();
+		switch (BtnSwitch) {
+		case S_TITLE:
+			TitleBtnSys(OveredBtn);
+			break;
+		case S_QUIT:
+			QuitBtnSys(OveredBtn);
 			break;
 		}
 		printfDx("MOUSE LEFT ON");
@@ -172,81 +195,73 @@ void BUTTON::ButtonSys() {
 	}
 }
 
-void MWINDOW::DrawWindow() {
+void SYSTEM::TitleBtnSys(int OveredBtn) {
+	switch (OveredBtn) {
+	case 0:
+		fun.FStat = fun.S_MAIN;
+		return;
+	case 3:
+		BtnSwitch = S_QUIT;
+		DrawWindow();
+		break;
+	}
+}
+
+void SYSTEM::DrawWindow() {
 	MWX = 480;
 	MWY = 800;
 	DrawGraph(MWX, MWY, init.GraMW, TRUE);
+
+	sys.MOver = FALSE;
+	BtnX[0] = MWX + 280;
+	BtnY[0] = MWY + 140;
+	BtnW[0] = 90;
+	BtnH[0] = 42;
+	BtnX[1] = MWX + 640;
+	BtnY[1] = MWY + 140;
+	BtnW[1] = 90;
+	BtnH[1] = 42;
+
+	DrawStringToHandle(MWX + 64, MWY + 64, "終了しますか？", GetColor(255, 255, 255), FontHandle);
+	DrawStringToHandle(BtnX[0], BtnY[0], "はい", GetColor(255, 255, 255), FontHandle);
+	DrawStringToHandle(BtnX[1], BtnY[1], "いいえ", GetColor(255, 255, 255), FontHandle);
+	ButtonNumber = 2;
+
 }
 
-void BUTTON::QuitWindow() {
+void SYSTEM::QuitBtnOver(int i) {
 
-	MOver = FALSE;
-	BtnX[4] = mw.MWX + 280;
-	BtnY[4] = mw.MWY + 140;
-	BtnW[4] = 90;
-	BtnH[4] = 42;
-	BtnX[5] = mw.MWX + 640;
-	BtnY[5] = mw.MWY + 140;
-	BtnW[5] = 90;
-	BtnH[5] = 42;
+	switch (i) {
+	case 0:
+		DrawStringToHandle(BtnX[0], BtnY[0], "はい", GetColor(255, 0, 0), FontHandle);
+		break;
+	case 1:
+		DrawStringToHandle(BtnX[1], BtnY[1], "いいえ", GetColor(255, 0, 0), FontHandle);
+		break;
+	}
+}
 
-	DrawStringToHandle(mw.MWX + 64, mw.MWY + 64, "終了しますか？", GetColor(255, 255, 255), FontHandle);
-	DrawStringToHandle(BtnX[4], BtnY[4], "はい", GetColor(255, 255, 255), FontHandle);
-	DrawStringToHandle(BtnX[5], BtnY[5], "いいえ", GetColor(255, 255, 255), FontHandle);
+void SYSTEM::QuitBtnOut(int OveredBtn) {
 
-	while (1) {
-		while (MOver == FALSE) {
-			GetMousePoint(&MouseX, &MouseY);
-			for (int i = 4; i < 6; i++) {
-				if ((MouseX >= BtnX[i] && MouseX <= BtnX[i] + BtnW[i]) && (MouseY >= BtnY[i] && MouseY <= BtnY[i] + BtnH[i])) {
-					switch (i) {
-					case 4:
-						DrawStringToHandle(BtnX[4], BtnY[4], "はい", GetColor(255, 0, 0), FontHandle);
-						break;
-					case 5:
-						DrawStringToHandle(BtnX[5], BtnY[5], "いいえ", GetColor(255, 0, 0), FontHandle);
-						break;
-					}
-					MOver = TRUE;
-					OveredBtn = i;
-					printfDx("OverTrue & %d \n", OveredBtn);
-					break;
-				}
-			}
-		WaitTimer(16);
-		}
+	switch (OveredBtn) {
+	case 0:
+		DrawStringToHandle(BtnX[0], BtnY[0], "はい", GetColor(255, 255, 255), FontHandle);
+		break;
+	case 1:
+		DrawStringToHandle(BtnX[1], BtnY[1], "いいえ", GetColor(255, 255, 255), FontHandle);
+		break;
+	}
+}
 
-		while (MOver == TRUE) {
-			GetMousePoint(&MouseX, &MouseY);
-			MInput1F = MInput;
-			MInput = GetMouseInput();
-			if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1) {
-				if (OveredBtn == 4) {
-					DxLib_End();
-				}
-				if (OveredBtn == 5) {
-					init.ResetTitle();
-					return;
-				}
-				printfDx("MOUSE LEFT ON");
-				break;
-			}
-			if (!((MouseX >= BtnX[OveredBtn] && MouseX <= BtnX[OveredBtn] + BtnW[OveredBtn]) && (MouseY >= BtnY[OveredBtn] && MouseY <= BtnY[OveredBtn] + BtnH[OveredBtn]))) {
-				switch (OveredBtn) {
-				case 4:
-					DrawStringToHandle(BtnX[4], BtnY[4], "はい", GetColor(255, 255, 255), FontHandle);
-					break;
-				case 5:
-					DrawStringToHandle(BtnX[5], BtnY[5], "いいえ", GetColor(255, 255, 255), FontHandle);
-					break;
-				}
-				MOver = FALSE;
-				printfDx("OutTrue & %d \n", OveredBtn);
-				break;
-			}
-		WaitTimer(16);
-		}
-	WaitTimer(16);
+void SYSTEM::QuitBtnSys(int OveredBtn) {
+
+	switch(OveredBtn){
+	case 0:
+		DxLib_End();
+	case 1:
+		BtnSwitch = S_TITLE;
+		init.ResetTitle();
+		return;
 	}
 }
 
@@ -270,7 +285,7 @@ void MMAP::DrawMap() {
 //東の島	1720, 260
 //南東の島1	1700, 750
 //南東の島2	1440, 880
-void BUTTON::SetMapBtn() {
+void SYSTEM::SetMapBtn() {
 	int x = 64;
 	int y = 48;
 	BtnX[0] = 595;
@@ -316,7 +331,7 @@ void BUTTON::SetMapBtn() {
 
 }
 
-void BUTTON::MapBtnOver() {
+void SYSTEM::MapBtnOver() {
 
 	GetMousePoint(&MouseX, &MouseY);
 	if (MOver == FALSE) {
@@ -353,7 +368,7 @@ void BUTTON::MapBtnOver() {
 	}
 }
 
-void BUTTON::MapBtnSys(){
+void SYSTEM::MapBtnSys(){
 
 	MInput1F = MInput;
 	MInput = GetMouseInput();
@@ -396,7 +411,7 @@ void BUTTON::MapBtnSys(){
 	}
 }
 
-void BUTTON::DebugBox() {
+void SYSTEM::DebugBox() {
 	for (int i = 0; i < 10; i++) {
 		DrawBox(BtnX[i], BtnY[i], BtnX[i] + BtnW[i], BtnY[i] + BtnH[i], GetColor(0, 255, 0), FALSE);
 	}
