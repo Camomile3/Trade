@@ -258,7 +258,6 @@ void SYSTEM::ButtonSys() {
 			CityBtnSys(OveredBtn);
 			break;
 		case Sw_EXIT:
-			printfDx("Sw_EXITPush");
 			ExitBtnSys(OveredBtn);
 			break;
 		}
@@ -424,6 +423,18 @@ void SYSTEM::TitleBtnSys(int OveredBtn) {
 		fun.FStat = fun.F_MAIN;
 		InitMap();
 		return;
+	case 1:
+		BtnSwitch = Sw_LOAD;
+		DrawWindow(520, 140, 5, 16);
+		DrawMessageWindow();
+		LoadData();
+		break;
+	case 2:
+		BtnSwitch = Sw_OPTION;
+		DrawWindow(520, 140, 5, 16);
+		DrawMessageWindow();
+		OptionData();
+		break;
 	case 3:
 		BtnSwitch = Sw_QUIT;
 		DrawMessageWindow();
@@ -792,9 +803,66 @@ void SYSTEM::FinanBtnSys(int OveredBtn) {
 }
 
 void SYSTEM::FinanData() {
+
+	int x = 0;
+	int y = 0;
+
 	DrawStringToHandle(410, 160, "ë›éÿëŒè∆ï\", GetColor(0, 0, 0), init.FontHandle);
+
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "åªã‡", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "è§ïi", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ó¨ìÆéëéYçáåv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "åöï®", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ìyín", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "îıïi", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "é‘óºâ^î¿ãÔ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "å≈íËéëéYçáåv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "éëéYçáåv", GetColor(0, 0, 0), init.FontHandle); y++;
+	x++; y = 0;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "éÿì¸ã‡", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ñ¢ï•ã‡", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ïâç¬çáåv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "éëñ{ã‡", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ìñä˙èÉóòâv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "èÉéëéYçáåv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "ïâç¬èÉéëéYçáåv", GetColor(0, 0, 0), init.FontHandle);
+	x = 0; y = 0;
 	DrawStringToHandle(1350, 160, "ëπâvåvéZèë", GetColor(0, 0, 0), init.FontHandle);
 
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "îÑè„çÇ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "îÑè„å¥âø", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "îÃîÑîÔãyÇ—àÍî ä«óùîÔ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ê≈à¯ëOìñä˙èÉóòâv", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ìñä˙èÉóòâv", GetColor(0, 0, 0), init.FontHandle);
+	x++; y = 0;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ä˙éÒè§ïiíIâµçÇ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ìñä˙è§ïiédì¸çÇ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ä˙ññè§ïiíIâµçÇ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ããóø", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "éxï•â∆í¿", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "å∏âøèûãpîÔ", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
+	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "ñ@êlê≈ìô", GetColor(0, 0, 0), init.FontHandle); y++;
 }
 
 void SYSTEM::SaveBtnOver(int i) {
@@ -847,44 +915,95 @@ void SYSTEM::SaveData() {
 
 void SYSTEM::LoadBtnOver(int i) {
 
-	switch (i) {
-	case 0:
-		ResetMap();
-		BtnSwitch = Sw_LOAD;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		LoadData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		printfDx("F_TITLE");
+		switch (i) {
+		case 0:
+			init.ResetTitle();
+			BtnSwitch = Sw_LOAD;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			LoadData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
-	case 1:
+	case fun.F_MAIN:
+		switch (i) {
+		case 0:
+			ResetMap();
+			BtnSwitch = Sw_LOAD;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			LoadData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
 
 void SYSTEM::LoadBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
-		ResetMap();
-		BtnSwitch = Sw_LOAD;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		LoadData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		switch (OveredBtn) {
+		case 0:
+			init.ResetTitle();
+			BtnSwitch = Sw_LOAD;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			LoadData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
-	case 1:
+	case fun.F_MAIN:
+		switch (OveredBtn) {
+		case 0:
+			ResetMap();
+			BtnSwitch = Sw_LOAD;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			LoadData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
 
 void SYSTEM::LoadBtnSys(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
-		BtnSwitch = Sw_MMAP;
-		ResetMap();
-		return;
-	case 1:
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		switch (OveredBtn) {
+		case 0:
+			BtnSwitch = Sw_TITLE;
+			init.ResetTitle();
+			break;
+		case 1:
+			break;
+		}
+		break;
+	case fun.F_MAIN:
+		switch (OveredBtn) {
+		case 0:
+			BtnSwitch = Sw_MMAP;
+			ResetMap();
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
@@ -895,44 +1014,94 @@ void SYSTEM::LoadData() {
 
 void SYSTEM::OptionBtnOver(int i) {
 
-	switch (i) {
-	case 0:
-		ResetMap();
-		BtnSwitch = Sw_OPTION;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		OptionData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		switch (i) {
+		case 0:
+			init.ResetTitle();
+			BtnSwitch = Sw_OPTION;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			OptionData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
-	case 1:
+	case fun.F_MAIN:
+		switch (i) {
+		case 0:
+			ResetMap();
+			BtnSwitch = Sw_OPTION;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			OptionData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
 
 void SYSTEM::OptionBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
-		ResetMap();
-		BtnSwitch = Sw_OPTION;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		OptionData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		switch (OveredBtn) {
+		case 0:
+			init.ResetTitle();
+			BtnSwitch = Sw_OPTION;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			OptionData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
-	case 1:
+	case fun.F_MAIN:
+		switch (OveredBtn) {
+		case 0:
+			ResetMap();
+			BtnSwitch = Sw_OPTION;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			OptionData();
+			DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
 
 void SYSTEM::OptionBtnSys(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
-		BtnSwitch = Sw_MMAP;
-		ResetMap();
-		return;
-	case 1:
+	switch (fun.FStat) {
+	case fun.F_TITLE:
+		switch (OveredBtn) {
+		case 0:
+			BtnSwitch = Sw_TITLE;
+			init.ResetTitle();
+			break;
+		case 1:
+			break;
+		}
+		break;
+	case fun.F_MAIN:
+		switch (OveredBtn) {
+		case 0:
+			BtnSwitch = Sw_MMAP;
+			ResetMap();
+			break;
+		case 1:
+			break;
+		}
 		break;
 	}
 }
