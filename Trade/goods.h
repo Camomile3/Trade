@@ -10,7 +10,8 @@ GOODS::GOODS(void){
 
 GOODS Goods[32];
 
-void GOODS::SetGoods(char* n, int p) {
+void GOODS::SetGoods(int i, char* n, int p) {
+	ID = i;
 	Name = n;
 	Price = p;
 }

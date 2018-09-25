@@ -130,7 +130,7 @@ public:
 	void BuyBtnOut(int);
 	void BuyBtnSys(int);
 	void BuyData();
-	void BuySys();
+	void BuySys(int);
 	void SaleBtnOver(int);
 	void SaleBtnOut(int);
 	void SaleBtnSys(int);
@@ -158,6 +158,7 @@ public:
 	int On;
 	int Year, Month, Day;
 	int Money;
+	int HiddenID[8];
 	int Cargo[8];
 	int BoughtPrice[32];
 	int BoughtNumber[32];
@@ -169,6 +170,7 @@ public:
 
 class GOODS {
 public:
+	int ID;
 	const char* Name;
 	int Price;
 	int Supply;
@@ -176,7 +178,7 @@ public:
 	GOODS(void);
 
 	void InitGoods();
-	void SetGoods(char*, int);
+	void SetGoods(int, char*, int);
 	char* GetGoodsName();
 	int GetGoodsPrice();
 	void PrintInfo();
