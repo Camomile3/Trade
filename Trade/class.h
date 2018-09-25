@@ -7,12 +7,14 @@ public:
 	int WinX;
 	int WinY;
 	int GraT;
-	int GraBtn;
-	int GraBtn2;
+	int GraBtn, GraBtn2, GraBtn3;
 	int GraMW;
 	int GraMap;
 	int GraCity;
 	int GraHer;
+	int GraCalender, GraGold, GraIdea, GraFactory;
+	int GraCarriage[12];
+	int GraShip[12];
 	void SetFont();
 	void LoadGra();
 	void ResetTitle();
@@ -33,13 +35,14 @@ public:
 };
 
 class SYSTEM {
-	int BtnX[32], BtnY[32], BtnW[32], BtnH[32], BtnCx[32], BtnCy[32];
+	int BtnX[64], BtnY[64], BtnW[64], BtnH[64], BtnCx[64], BtnCy[64];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
 	int OveredBtn = -1;
 	int ButtonNumber;
 	int MWX,MWY;
-	double Angle;
+	int BuyNumber;
+	double Angle, Angle2;
 	bool MOver = FALSE;
 	enum {
 		Sw_TITLE,
@@ -55,6 +58,7 @@ class SYSTEM {
 		//‚±‚±‚©‚çŠX
 		Sw_CITY,
 		Sw_BUY,
+		Sw_BUY2,
 		Sw_SALE,
 		Sw_INVEST,
 		Sw_MANAGE,
@@ -112,6 +116,7 @@ public:
 	void OptionData();
 	void DebugBox();
 	void DebugMap();
+	void InitHer();
 	void SpawnHer();
 	void Move(int);
 	void MoveRoute();
@@ -121,6 +126,27 @@ public:
 	void CityBtnOut(int);
 	void CityBtnSys(int);
 	void CityData();
+	void BuyBtnOver(int);
+	void BuyBtnOut(int);
+	void BuyBtnSys(int);
+	void BuyData();
+	void BuySys();
+	void SaleBtnOver(int);
+	void SaleBtnOut(int);
+	void SaleBtnSys(int);
+	void SaleData();
+	void InvestBtnOver(int);
+	void InvestBtnOut(int);
+	void InvestBtnSys(int);
+	void InvestData();
+	void ManageBtnOver(int);
+	void ManageBtnOut(int);
+	void ManageBtnSys(int);
+	void ManageData();
+	void TalkBtnOver(int);
+	void TalkBtnOut(int);
+	void TalkBtnSys(int);
+	void TalkData();
 	void ExitBtnOver(int);
 	void ExitBtnOut(int);
 	void ExitBtnSys(int);
@@ -130,4 +156,28 @@ class HEROINE {
 public:
 	double X, Y;
 	int On;
+	int Year, Month, Day;
+	int Money;
+	int Cargo[8];
+	int BoughtPrice[32];
+	int BoughtNumber[32];
+	int CargoWeight;
+	int MaxWeight;
+	int WTech;
+	int WIndustry;
+};
+
+class GOODS {
+public:
+	const char* Name;
+	int Price;
+	int Supply;
+	int Demand;
+	GOODS(void);
+
+	void InitGoods();
+	void SetGoods(char*, int);
+	char* GetGoodsName();
+	int GetGoodsPrice();
+	void PrintInfo();
 };
