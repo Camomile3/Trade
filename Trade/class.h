@@ -38,10 +38,18 @@ class SYSTEM {
 	int BtnX[64], BtnY[64], BtnW[64], BtnH[64], BtnCx[64], BtnCy[64];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
+	int KInput, KInput1F, KInput2, KInput1F2;
 	int OveredBtn = -1;
 	int ButtonNumber;
+	int SortX[16];
+	int SortY[16];
+	bool GoodsOn[16];
+	bool BtnOn[64];
+	int ExistBtn[64];
 	int MWX,MWY;
 	int BuyNumber;
+	long long BoughtPrice;
+	int BoughtNumber;
 	double Angle, Angle2;
 	bool MOver = FALSE;
 	enum {
@@ -73,6 +81,8 @@ public:
 	void ButtonSys();
 	void DrawMessageWindow();
 	void DrawWindow(int, int, int, int);
+	void InitSys();
+	void ResetButton();
 	//ƒ^ƒCƒgƒ‹
 	void DrawButton();
 	void TitleBtnOver(int);
@@ -86,6 +96,7 @@ public:
 	void Fade(int, int);
 	void ResetMap();
 	void InitMap();
+	void DrawValue();
 	void SetMapBtn();
 	void MapBtnOver(int);
 	void MapBtnOut(int);
@@ -131,6 +142,7 @@ public:
 	void BuyBtnSys(int);
 	void BuyData();
 	void BuySys(int);
+	void BuySort(int);
 	void SaleBtnOver(int);
 	void SaleBtnOut(int);
 	void SaleBtnSys(int);
@@ -157,11 +169,10 @@ public:
 	double X, Y;
 	int On;
 	int Year, Month, Day;
-	int Money;
+	long long Money;
 	int HiddenID[8];
 	int Cargo[8];
-	int BoughtPrice[32];
-	int BoughtNumber[32];
+	int CargoPrice[32];
 	int CargoWeight;
 	int MaxWeight;
 	int WTech;

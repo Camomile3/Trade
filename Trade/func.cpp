@@ -27,17 +27,27 @@ void FUN::main() {
 	init.ResetTitle();
 	Goods->InitGoods();
 
-	her.Money = 500;
+	her.Money = 100000;
+	her.CargoWeight = 0;
 
 
 	//メインループ
-	while (1) {
-		sys.ButtonOver();
-		sys.ButtonSys();
-		WaitTimer(16);
-		if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
+	if (sys.DebugMode == TRUE) {
+		while (CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
+			sys.ButtonOver();
+			sys.ButtonSys();
+			WaitTimer(16);
+			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
+		}
 	}
-
+	else {
+		while (1) {
+			sys.ButtonOver();
+			sys.ButtonSys();
+			WaitTimer(16);
+			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
+		}
+	}
 }
 
 //フォントセット
@@ -122,47 +132,6 @@ void SYSTEM::DrawButton() {
 
 		ButtonNumber += 7;
 
-		int ValueX[4], ValueY[4], ValueW[4], ValueH[4];
-
-		for (int i = 0; i < 4; i++) {
-			ValueX[i] = 175 * i;
-			ValueY[i] = 38;
-			ValueW[i] = 180;
-			ValueH[i] = 32;
-			DrawExtendGraph(ValueX[i], ValueY[i], ValueX[i] + ValueW[i], ValueY[i] + ValueH[i], init.GraBtn3, TRUE);
-		}
-		TCHAR Temp[32];
-		int x, y;
-		x = 8;
-		y = 42;
-
-		her.Year = 3;
-		her.Month = 9;
-		her.Day = 25;
-		DrawExtendGraph(x, y, x + 24, y + 24, init.GraCalender, TRUE);
-		sprintf_s(Temp, 32, "%d/%d/%d", her.Year, her.Month, her.Day);
-		DrawStringToHandle(x + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
-
-
-		DrawExtendGraph(x + 128, 42, x + 128 + 24, 42 + 24, init.GraGold, TRUE);
-		sprintf_s(Temp, 32, "%16d", her.Money);
-		DrawStringToHandle(x + 128 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
-
-		her.CargoWeight = 50;
-		her.MaxWeight = 100;
-		DrawExtendGraph(x + 256 + 128, 42, x + 256 + 128 + 24, 42 + 24, init.GraCarriage[6], TRUE);
-		sprintf_s(Temp, 32, "%d/%d", her.CargoWeight, her.MaxWeight);
-		DrawStringToHandle(x + 256 + 128 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
-
-		her.WTech = 4;
-		DrawExtendGraph(x + 512 + 32, 42, x + 512 + 32 + 24, 42 + 24, init.GraIdea, TRUE);
-		sprintf_s(Temp, 32, "%d", her.WTech);
-		DrawStringToHandle(x + 512 + 32 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
-
-		her.WIndustry = 2;
-		DrawExtendGraph(x + 512 + 96, 42, x + 512 + 96 + 24, 42 + 24, init.GraFactory, TRUE);
-		sprintf_s(Temp, 32, "%d", her.WIndustry);
-		DrawStringToHandle(x + 512 + 96 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
 
 		break;
 	case fun.F_CITY:
@@ -180,7 +149,7 @@ void SYSTEM::DrawButton() {
 		DrawStringToHandle(BtnX[4] + 24, BtnY[4] + 8, "Talk", GetColor(0, 0, 0), init.FontHandle);
 		DrawStringToHandle(BtnX[5] + 24, BtnY[5] + 8, "Exit", GetColor(0, 0, 0), init.FontHandle);
 
-		ButtonNumber = 6;
+		ButtonNumber = 64;
 		break;
 	}
 }
@@ -247,7 +216,6 @@ void SYSTEM::ButtonOver() {
 				MOver = TRUE;
 				OveredBtn = i;
 				if (DebugMode == TRUE)
-					clsDx();
 					printfDx("OverTrue & %d \n", OveredBtn);
 				break;
 			}
@@ -309,7 +277,6 @@ void SYSTEM::ButtonOver() {
 			OveredBtn = -1;
 			MOver = FALSE;
 			if (DebugMode == TRUE)
-				clsDx();
 				printfDx("OutTrue & %d \n", OveredBtn);
 			return;
 		}
@@ -372,7 +339,6 @@ void SYSTEM::ButtonSys() {
 			break;
 		}
 		if (DebugMode == TRUE)
-			clsDx();
 			printfDx("MOUSE LEFT ON %d \n", OveredBtn);
 			printfDx("Cargo = %d\n", her.Cargo[0]);
 			printfDx("Cargo2 = %d\n", her.Cargo[1]);
@@ -461,22 +427,22 @@ void SYSTEM::DrawMessageWindow() {
 		DrawStringToHandle(MWX + 64, MWY + 64, "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_BUY:
-		BtnX[0] = MWX + 640;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "購入する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_SALE:
-		BtnX[0] = MWX + 640;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "売却する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_EXIT:
 		BtnX[0] = MWX + 280;
@@ -522,6 +488,67 @@ void GOODS::InitGoods() {
 	Goods[5].SetGoods(5, (char*)"石油", 100);
 	Goods[6].SetGoods(6, (char*)"金属", 100);
 	Goods[7].SetGoods(7, (char*)"缶詰", 100);
+	Goods[8].SetGoods(8, (char*)"銃火器", 100);
+	Goods[9].SetGoods(9, (char*)"紙", 100);
+	Goods[10].SetGoods(10, (char*)"書籍", 100);
+	Goods[11].SetGoods(11, (char*)"東洋贅沢品", 100);
+	Goods[12].SetGoods(12, (char*)"西洋贅沢品", 100);
+	Goods[13].SetGoods(13, (char*)"農業贅沢品", 100);
+}
+
+void SYSTEM::DrawValue() {
+	int ValueX[5], ValueY[5], ValueW[5], ValueH[5];
+
+	for (int i = 0; i < 5; i++) {
+		ValueX[i] = 175 * i;
+		ValueY[i] = 38;
+		ValueW[i] = 180;
+		ValueH[i] = 32;
+		DrawExtendGraph(ValueX[i], ValueY[i], ValueX[i] + ValueW[i], ValueY[i] + ValueH[i], init.GraBtn3, TRUE);
+	}
+	TCHAR Temp[64];
+	int x, y;
+	x = 8;
+	y = 42;
+
+	her.Year = 3;
+	her.Month = 9;
+	her.Day = 25;
+	DrawExtendGraph(x, y, x + 24, y + 24, init.GraCalender, TRUE);
+	sprintf_s(Temp, 32, "%2d/%d/%d", her.Year, her.Month, her.Day);
+	DrawStringToHandle(x + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+
+	DrawExtendGraph(x + 128+32, 42, x + 128+32 + 24, 42 + 24, init.GraGold, TRUE);
+	if (her.Money >= 1000000000000) {
+		sprintf_s(Temp, 64, "%2lld,%03lld,%03lld,%03lld,%03lld", her.Money / 1000000000000, (her.Money - her.Money / 1000000000000 * 1000000000000) / 1000000000, (her.Money - her.Money / 1000000000 * 1000000000) / 1000000, (her.Money - her.Money / 1000000 * 1000000) / 1000, her.Money - (her.Money / 1000) * 1000);
+	}
+	else if (her.Money >= 1000000000) {
+		sprintf_s(Temp, 64, "%6lld,%03lld,%03lld,%03lld", her.Money / 1000000000, (her.Money - her.Money / 1000000000 * 1000000000) / 1000000, (her.Money - her.Money / 1000000 * 1000000) / 1000, her.Money - (her.Money / 1000) * 1000);
+	}
+	else if (her.Money >= 1000000) {
+		sprintf_s(Temp, 64, "%9lld,%03lld,%03lld", her.Money / 1000000, (her.Money - her.Money/1000000 * 1000000) / 1000, her.Money - (her.Money / 1000) * 1000);
+	}
+	else if (her.Money >= 1000) {
+		sprintf_s(Temp, 64, "%13lld,%03lld", her.Money/1000, her.Money - (her.Money / 1000) * 1000);
+	}
+	else
+		sprintf_s(Temp, 64, "%16lld", her.Money);
+	DrawStringToHandle(x + 128+64 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+
+	her.MaxWeight = 100;
+	DrawExtendGraph(x + 512-64, 42, x + 512-64 + 24, 42 + 24, init.GraCarriage[6], TRUE);
+	sprintf_s(Temp, 32, "%d/%d", her.CargoWeight, her.MaxWeight);
+	DrawStringToHandle(x + 512-64 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+
+	her.WTech = 14;
+	DrawExtendGraph(x + 512 + 175 + 64, 42, x + 512 + 175 + 64 + 24, 42 + 24, init.GraIdea, TRUE);
+	sprintf_s(Temp, 32, "%d", her.WTech);
+	DrawStringToHandle(x + 512 + 64 + 175 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+
+	her.WIndustry = 12;
+	DrawExtendGraph(x + 512 + 123 + 175, 42, x + 512 + 123 + 175 + 24, 42 + 24, init.GraFactory, TRUE);
+	sprintf_s(Temp, 32, "%d", her.WIndustry);
+	DrawStringToHandle(x + 512 + 123 + 175 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
 }
 
 void SYSTEM::TitleBtnOver(int i) {
@@ -840,18 +867,19 @@ void SYSTEM::CargoData() {
 	DrawStringToHandle(780, 160, "数量", GetColor(0, 0, 0), init.FontHandle);
 	DrawStringToHandle(980, 160, "買値", GetColor(0, 0, 0), init.FontHandle);
 	DrawStringToHandle(1180, 160, "一個当たり買値", GetColor(0, 0, 0), init.FontHandle);
-	BtnX[1] = 580;
-	BtnY[1] = 200;
-	BtnX[2] = BtnX[1];
-	BtnY[2] = BtnY[1] + 42;
+
+	for (int i = 1; i < 8; i++) {
+		BtnX[i] = 580;
+		BtnY[i] = 200 + i * 42;
+	}
 	for (int i = 0; i < 8; i++) {
 		if (her.Cargo[i] != 0) {
-			DrawStringToHandle(BtnX[i + 1], BtnY[i + 1], Goods[i].Name, GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[i + 1], BtnY[i + 1], Goods[her.HiddenID[i]].Name, GetColor(0, 0, 0), init.FontHandle);
 			sprintf_s(Temp, 32, "%d", her.Cargo[i]);
 			DrawStringToHandle(BtnX[i + 1] + 200, BtnY[i + 1], Temp, GetColor(0, 0, 0), init.FontHandle);
-			sprintf_s(Temp, 32, "%d", her.BoughtPrice[i]);
+			sprintf_s(Temp, 32, "%d", her.CargoPrice[i]);
 			DrawStringToHandle(BtnX[i + 1] + 400, BtnY[i + 1], Temp, GetColor(0, 0, 0), init.FontHandle);
-			sprintf_s(Temp, 32, "%d", her.BoughtPrice[i] / her.Cargo[i]);
+			sprintf_s(Temp, 32, "%d", her.CargoPrice[i] / her.Cargo[i]);
 			DrawStringToHandle(BtnX[i + 1] + 600, BtnY[i + 1], Temp, GetColor(0, 0, 0), init.FontHandle);
 		}
 		else
@@ -1301,6 +1329,7 @@ void SYSTEM::InitMap() {
 	else
 		sys.Fade(init.GraT, init.GraMap);
 	DrawButton();
+	DrawValue();
 	InitHer();
 
 }
@@ -1310,6 +1339,7 @@ void SYSTEM::ResetMap() {
 	SetMapBtn();
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraMap, TRUE);
 	DrawButton();
+	DrawValue();
 	//DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[0], TRUE);
 	//DrawExtendGraph((int)her.X - 16, (int)her.Y - 64, (int)her.X + 16, (int)her.Y, init.GraHer, FALSE);
 	if (DebugMode == TRUE) {
@@ -1320,6 +1350,7 @@ void SYSTEM::ResetMap() {
 			DrawCircle(BtnCx[i], BtnCy[i], 2, GetColor(0, 255, 0), TRUE);
 		}
 		clsDx();
+		printfDx("Money=%lld\n", her.Money);
 	}
 }
 
@@ -1520,7 +1551,6 @@ void SYSTEM::Move(int MoveTo) {
 		}
 
 		if (Angle2 < 45 && Angle2 > -45) {
-			printfDx("Drawing");
 			DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[6], TRUE);
 		}
 		else if (Angle2 < 135 && Angle2 > 45) {
@@ -1666,9 +1696,7 @@ void SYSTEM::MoveRoute() {
 		}
 		break;
 	case 3:
-		switch (OveredBtn) {
 
-		}
 	case 4:
 		switch (OveredBtn) {
 		case 0:
@@ -1804,11 +1832,30 @@ void SYSTEM::MoveRoute() {
 	Fade(init.GraMap, init.GraCity);
 	fun.FStat = fun.F_CITY;
 	BtnSwitch = Sw_CITY;
+	InitSys();
 	ResetCity();
+}
+
+void SYSTEM::InitSys() {
+
+	OveredBtn = -1;
+	MInput1F = -1;
+	MInput = -1;
+	for (int i = 0; i < 64; i++) {
+		GoodsOn[i] = FALSE;
+		BtnX[i] = -1;
+		BtnY[i] = -1;
+	}
+
 }
 
 void SYSTEM::ResetCity() {
 
+	for (int i = 0; i < 64; i++) {
+		GoodsOn[i] = FALSE;
+		BtnX[i] = -1;
+		BtnY[i] = -1;
+	}
 	ClearDrawScreen();
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraCity, TRUE);
 	DrawWindow(160, 120, 1, 8);
@@ -1895,13 +1942,15 @@ void SYSTEM::CityBtnSys(int OveredBtn) {
 	case 0:
 		BtnSwitch = Sw_BUY;
 		ResetCity();
-		DrawWindow(520, 140, 5, 16);	
+		ResetButton();
+		DrawWindow(520, 140, 5, 16);
 		BuyData();
 		break;
 	case 1:
 		BtnSwitch = Sw_SALE;
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
+		SaleData();
 		break;
 	case 5:
 		BtnSwitch = Sw_EXIT;
@@ -1924,169 +1973,279 @@ void SYSTEM::CityData() {
 
 }
 
+void SYSTEM::ResetButton() {
+	for (int i = 0; i < 64; i++) {
+		GoodsOn[i] = FALSE;
+		BtnX[i] = -1;
+		BtnY[i] = -1;
+	}
+	OveredBtn = -1;
+}
+
+void SYSTEM::BuySort(int ID) {
+
+	//BtnX[1] = 560;
+	//BtnY[1] = 180;
+
+	TCHAR Temp[32];
+
+	for (int i = 0; i < 16; i++) {
+		SortX[i] = 560;
+		SortY[i] = 240 + i * 42;
+	}
+
+	for (int i = 0; i < 63; i++) {
+		if (GoodsOn[i] == FALSE) {
+			BtnX[ID] = SortX[i];
+			BtnY[ID] = SortY[i];
+			GoodsOn[i] = TRUE;
+			BtnOn[ID] = TRUE;
+			break;
+		}
+	}
+
+	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
+	sprintf_s(Temp, 32, "%d", Goods[ID].Price);
+	DrawStringToHandle(BtnX[ID] + 200, BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+}
+
 //Goods.Nameは品目の名前
 
 void SYSTEM::BuyBtnOver(int i) {
 
-	switch (i) {
-	case 0:
+	if (i == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		BuyData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 0, 0), init.FontHandle);
-		break;
-	case 1:
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 0, 0), init.FontHandle);
+	}
+	else if (BtnOn[i] == TRUE) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		BuyData();
-		DrawStringToHandle(BtnX[1], BtnY[1], Goods[0].Name, GetColor(255, 0, 0), init.FontHandle);
-		break;
-	case 2:
-		ResetCity();
-		DrawWindow(520, 140, 5, 16);
-		BuyData();
-		DrawStringToHandle(BtnX[2], BtnY[2], Goods[1].Name, GetColor(255, 0, 0), init.FontHandle);
-		break;
+		DrawStringToHandle(BtnX[i], BtnY[i], Goods[i].Name, GetColor(255, 0, 0), init.FontHandle);
 	}
 }
 
 void SYSTEM::BuyBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
+	if (OveredBtn == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		BuyData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case 1:
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+	}
+	else if (BtnOn[OveredBtn] == TRUE) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		BuyData();
-		DrawStringToHandle(BtnX[1], BtnY[1], Goods[0].Name, GetColor(0, 0, 0), init.FontHandle);
-		break;
-	case 2:
-		ResetCity();
-		DrawWindow(520, 140, 5, 16);
-		BuyData();
-		DrawStringToHandle(BtnX[2], BtnY[2], Goods[1].Name, GetColor(0, 0, 0), init.FontHandle);
-		break;
+		DrawStringToHandle(BtnX[OveredBtn], BtnY[OveredBtn], Goods[OveredBtn].Name, GetColor(0, 0, 0), init.FontHandle);
 	}
 }
 
 void SYSTEM::BuyBtnSys(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
+	if (OveredBtn == 63) {
 		BtnSwitch = Sw_CITY;
 		ResetCity();
-		break;
-	case 1:
+		ButtonNumber = 6;
+	}
+	else if (OveredBtn != -1) {
 		BtnSwitch = Sw_BUY2;
 		ResetCity();
-		BuySys(Goods[OveredBtn].ID);
-		break;
-	case 2:
-		BtnSwitch = Sw_BUY2;
-		ResetCity();
-		BuySys(Goods[OveredBtn].ID);
-		break;
+		BuySys(OveredBtn);
+	}
+}
+/*	Goods[0].SetGoods(0, (char*)"石炭", 60);
+	Goods[1].SetGoods(1, (char*)"鉱石", 80);
+	Goods[2].SetGoods(2, (char*)"レアメタル", 100);
+	Goods[3].SetGoods(3, (char*)"食料", 100);
+	Goods[4].SetGoods(4, (char*)"木材", 100);
+	Goods[5].SetGoods(5, (char*)"石油", 100);
+	Goods[6].SetGoods(6, (char*)"金属", 100);
+	Goods[7].SetGoods(7, (char*)"缶詰", 100);
+	Goods[8].SetGoods(8, (char*)"銃火器", 100);
+	Goods[9].SetGoods(9, (char*)"紙", 100);
+	Goods[10].SetGoods(10, (char*)"書籍", 100);
+	Goods[11].SetGoods(11, (char*)"東洋贅沢品", 100);
+	Goods[12].SetGoods(12, (char*)"西洋贅沢品", 100);
+	Goods[13].SetGoods(13, (char*)"農業贅沢品", 100);*/
+void SYSTEM::BuyData() {
+
+	int X = 560;
+	int Y = 160;
+
+	DrawStringToHandle(X, Y, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 200, Y, "値段", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 200 + 160, Y, "売量", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 200 + 160 * 2, Y, "需要", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 200 + 160 * 3, Y, "供給", GetColor(0, 0, 0), init.FontHandle);
+
+	switch (her.On) {
+	case 0:
+		BuySort(0);
+		BuySort(3);
+		BuySort(6);
+		BuySort(7);
+		BuySort(8);
+		BuySort(12);
 	}
 }
 
-void SYSTEM::BuyData() {
-
-	TCHAR Temp[32];
-
-	BtnX[1] = 560;
-	BtnY[1] = 180;
-	BtnX[2] = BtnX[1];
-	BtnY[2] = BtnY[1] + 42;
-
-
-
-	DrawStringToHandle(BtnX[1], BtnY[1], Goods[0].Name, GetColor(0, 0, 0), init.FontHandle);
-	sprintf_s(Temp, 32, "%d", Goods[0].Price);
-	DrawStringToHandle(BtnX[1] + 80, BtnY[1], Temp, GetColor(0, 0, 0), init.FontHandle);
-
-	DrawStringToHandle(BtnX[2], BtnY[2], Goods[1].Name, GetColor(0, 0, 0), init.FontHandle);
-	sprintf_s(Temp, 32, "%d", Goods[1].Price);
-	DrawStringToHandle(BtnX[2] + 80, BtnY[2], Temp, GetColor(0, 0, 0), init.FontHandle);
-
-}
-
 void SYSTEM::BuySys(int ID) {
-	
-	int SlotNumber;
 
-	for (int i = 0; i < 8; i++) {
+	int SlotNumber;
+	bool LEnd = FALSE;
+
+	for (int i = 0; i < 64; i++) {
 		if (her.HiddenID[i] == ID) {
 			SlotNumber = i;
 			break;
-		}else if (her.Cargo[i] == 0) {
+		}
+		else if (her.Cargo[i] == 0) {
 			SlotNumber = i;
 			break;
 		}
 	}
 
 	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
-	printfDx("\n\n\n%d", SlotNumber);
+	printfDx("SlotNumber=%d\n", SlotNumber);
 
-	her.BoughtNumber[SlotNumber] = KeyInputNumber(MWX + 64, MWY + 96, 640, 0, FALSE);
-	her.BoughtPrice[SlotNumber] += Goods[SlotNumber].Price * her.BoughtNumber[SlotNumber];
-	her.Cargo[SlotNumber] += her.BoughtNumber[SlotNumber];
-	her.HiddenID[SlotNumber] = ID;
+	BoughtNumber = KeyInputNumber(MWX + 64, MWY + 96, 9999, 0, FALSE);
+	her.CargoPrice[SlotNumber] += Goods[ID].Price * BoughtNumber;
+	BoughtPrice = Goods[ID].Price * BoughtNumber;
 
-	if (her.Cargo[SlotNumber] != 0) {
+	printfDx("Price=%d\n", Goods[ID].Price);
+	printfDx("BoughtNumber=%d\n", BoughtNumber);
+	printfDx("BoughtPrice=%d\n", BoughtPrice);
+	printfDx("CargoPrice=%d\n", her.CargoPrice[SlotNumber]);
+
+	if (BoughtPrice > her.Money) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "購入しました", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "所持金が足りません", GetColor(255, 255, 255), init.FontHandle);
 		while (1) {
 			MInput1F = MInput;
 			MInput = GetMouseInput();
-			if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-				break;
+			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
+				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
+					while (1) {
+						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
+							LEnd = TRUE;
+						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
+							LEnd = TRUE;
+						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
+							LEnd = TRUE;
+						WaitTimer(16);
+						if (LEnd) { break; }
+					}
+				}
+			}
+			WaitTimer(16);
+			if (LEnd) { break; }
 		}
+	}
+	else if (BoughtNumber + her.CargoWeight > her.MaxWeight) {
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "重量オーバーです", GetColor(255, 255, 255), init.FontHandle);
+		while (1) {
+			MInput1F = MInput;
+			MInput = GetMouseInput();
+			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
+				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
+					while (1) {
+						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
+							LEnd = TRUE;
+						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
+							LEnd = TRUE;
+						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
+							LEnd = TRUE;
+						WaitTimer(16);
+						if (LEnd) { break; }
+					}
+				}
+			}
+			WaitTimer(16);
+			if (LEnd) { break; }
+		}
+	}
+	else if (BoughtNumber != 0)
+	{
+		her.Cargo[SlotNumber] += BoughtNumber;
+		her.Money -= BoughtPrice;
+		her.CargoWeight += BoughtNumber;
+		her.HiddenID[SlotNumber] = ID;
+
+		if (her.Cargo[SlotNumber] != 0) {
+			ResetCity();
+			DrawStringToHandle(MWX + 64, MWY + 64, "購入しました", GetColor(255, 255, 255), init.FontHandle);
+			while (1) {
+				MInput1F = MInput;
+				MInput = GetMouseInput();
+				if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
+					if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
+						while (1) {
+							if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
+								LEnd = TRUE;
+							if (CheckHitKey(KEY_INPUT_RETURN) == 1)
+								LEnd = TRUE;
+							if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
+								LEnd = TRUE;
+							WaitTimer(16);
+							if (LEnd) { break; }
+						}
+					}
+				}
+				WaitTimer(16);
+				if (LEnd) { break; }
+			}
+		}
+	}
 		BtnSwitch = Sw_BUY;
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		BuyData();
 		OveredBtn = -1;
-	}
 }
+
 void SYSTEM::SaleBtnOver(int i) {
 
-	switch (i) {
-	case 0:
+	if (i == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		SaleData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 0, 0), init.FontHandle);
-		break;
-	case 1:
-		break;
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 0, 0), init.FontHandle);
+	}
+	else if (BtnOn[i] == TRUE) {
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		SaleData();
+		DrawStringToHandle(BtnX[i], BtnY[i], Goods[i].Name, GetColor(255, 0, 0), init.FontHandle);
 	}
 }
 
 void SYSTEM::SaleBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 0:
+	if (OveredBtn == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		SaleData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "戻る", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case 1:
-		break;
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+	}
+	else if (BtnOn[OveredBtn] == TRUE) {
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		SaleData();
+		DrawStringToHandle(BtnX[OveredBtn], BtnY[OveredBtn], Goods[OveredBtn].Name, GetColor(0, 0, 0), init.FontHandle);
 	}
 }
 
 void SYSTEM::SaleBtnSys(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		BtnSwitch = Sw_CITY;
 		ResetCity();
+		ButtonNumber = 6;
 		break;
 	case 1:
 		break;
@@ -2095,6 +2254,34 @@ void SYSTEM::SaleBtnSys(int OveredBtn) {
 
 void SYSTEM::SaleData() {
 
+	char Temp[32];
+	int X = 560;
+	int Y = 160;
+
+	DrawStringToHandle(X, Y, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 190, Y, "一個当買値", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 210 + 110, Y, "売値", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 210 + 110 * 2, Y, "数量", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 210 + 110 * 3, Y, "受入量", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 210 + 110 * 4, Y, "需要", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(X + 210 + 110 * 5, Y, "供給", GetColor(0, 0, 0), init.FontHandle);
+
+	for (int i = 1; i < 8; i++) {
+		BtnX[i] = 580;
+		BtnY[i] = 200 + i * 42;
+	}
+
+	for (int i = 0; i < 8; i++) {
+		if (her.Cargo[i] != 0) {
+			DrawStringToHandle(BtnX[i + 1], BtnY[i + 1], Goods[her.HiddenID[i]].Name, GetColor(0, 0, 0), init.FontHandle);
+			sprintf_s(Temp, 32, "%d", her.Cargo[i]);
+			DrawStringToHandle(BtnX[i + 1] + 200, BtnY[i + 1], Temp, GetColor(0, 0, 0), init.FontHandle);
+			sprintf_s(Temp, 32, "%d", her.CargoPrice[i] / her.Cargo[i]);
+			DrawStringToHandle(BtnX[i + 1] + 600, BtnY[i + 1], Temp, GetColor(0, 0, 0), init.FontHandle);
+		}
+		else
+			break;
+	}
 }
 
 
