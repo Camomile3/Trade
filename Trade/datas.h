@@ -5,6 +5,7 @@
 GOODS Goods[32];
 CITY City[16];
 MARKET Market[16][32];
+MARKET HerMarket[16][32];
 extern HEROINE her;
 
 void GOODS::SetGoods(int i, char* n, int p) {

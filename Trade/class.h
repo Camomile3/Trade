@@ -65,6 +65,8 @@ class SYSTEM {
 		Sw_CARGO,
 		Sw_TRANS,
 		Sw_FINAN,
+		Sw_QUEST,
+		Sw_PRICES,
 		//‚±‚±‚©‚çŠX
 		Sw_CITY,
 		Sw_BUY,
@@ -116,6 +118,14 @@ public:
 	void FinanBtnOut(int);
 	void FinanBtnSys(int);
 	void FinanData();
+	void QuestBtnOver(int);
+	void QuestBtnOut(int);
+	void QuestBtnSys(int);
+	void QuestData();
+	void PricesBtnOver(int);
+	void PricesBtnOut(int);
+	void PricesBtnSys(int);
+	void PricesData();
 	void SaveBtnOver(int);
 	void SaveBtnOut(int);
 	void SaveBtnSys(int);
@@ -194,9 +204,6 @@ public:
 
 	void InitGoods();
 	void SetGoods(int, char*, int);
-	char* GetGoodsName();
-	int GetGoodsPrice();
-	void PrintInfo();
 };
 
 class MARKET {
