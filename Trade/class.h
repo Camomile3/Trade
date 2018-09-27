@@ -18,6 +18,8 @@ public:
 	void SetFont();
 	void LoadGra();
 	void ResetTitle();
+	void InitMarket();
+	void Cargo();
 };
 
 class FUN {
@@ -45,11 +47,11 @@ class SYSTEM {
 	int SortY[16];
 	bool GoodsOn[16];
 	bool BtnOn[64];
-	int ExistBtn[64];
+	int CargoNumber;
 	int MWX,MWY;
-	int BuyNumber;
-	long long BoughtPrice;
-	int BoughtNumber;
+	long long TempPrice;
+	int TempNumber;
+
 	double Angle, Angle2;
 	bool MOver = FALSE;
 	enum {
@@ -68,6 +70,7 @@ class SYSTEM {
 		Sw_BUY,
 		Sw_BUY2,
 		Sw_SALE,
+		Sw_SALE2,
 		Sw_INVEST,
 		Sw_MANAGE,
 		Sw_TALK,
@@ -140,6 +143,7 @@ public:
 	void BuyBtnOver(int);
 	void BuyBtnOut(int);
 	void BuyBtnSys(int);
+	void DrawBuyWindow();
 	void BuyData();
 	void BuySys(int);
 	void BuySort(int);
@@ -147,6 +151,8 @@ public:
 	void SaleBtnOut(int);
 	void SaleBtnSys(int);
 	void SaleData();
+	void SaleSys(int);
+	void SaleSort(int);
 	void InvestBtnOver(int);
 	void InvestBtnOut(int);
 	void InvestBtnSys(int);
@@ -170,7 +176,7 @@ public:
 	int On;
 	int Year, Month, Day;
 	long long Money;
-	int HiddenID[8];
+	int HiddenID[8];	//スロットに入ってる貿易品のID
 	int Cargo[8];
 	int CargoPrice[32];
 	int CargoWeight;
@@ -184,13 +190,38 @@ public:
 	int ID;
 	const char* Name;
 	int Price;
-	int Supply;
-	int Demand;
-	GOODS(void);
+	int CalcedPrice;
 
 	void InitGoods();
 	void SetGoods(int, char*, int);
 	char* GetGoodsName();
 	int GetGoodsPrice();
 	void PrintInfo();
+};
+
+class MARKET {
+public:
+	float Supply;
+	float Demand;
+
+	//固有値　景気　需要　供給　工業
+	int CalcPrice(int, float, float, float, float);
+	int SaleCalcPrice(int, float, float, float, float);
+	void SetMarket(float, float);
+};
+
+class CITY {
+public:
+	int ID;
+	const char* Name;
+	int Type;
+	int Population;
+	float Develop;
+	float Economy;
+	float Technology;
+	float Industry;
+	float Infra;
+
+	void SetCity(int, int, const char*, int, float, float, float, float, float);
+	void InitCity();
 };
