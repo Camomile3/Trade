@@ -42,7 +42,8 @@ class SYSTEM {
 	int MInput,MInput1F;
 	int KInput, KInput1F, KInput2, KInput1F2;
 	int OveredBtn = -1;
-	int ButtonNumber;
+	int ClickedBtn = -1;
+	int ButtonNumber = 64;
 	int SortX[16];
 	int SortY[16];
 	bool GoodsOn[16];
@@ -67,6 +68,7 @@ class SYSTEM {
 		Sw_FINAN,
 		Sw_QUEST,
 		Sw_PRICES,
+		Sw_PRICES2,
 		//ここから街
 		Sw_CITY,
 		Sw_BUY,
@@ -81,6 +83,7 @@ class SYSTEM {
 	int BtnSwitch = Sw_TITLE;
 public:
 	bool DebugMode = TRUE;
+
 	//メインシステム
 	void ButtonOver();
 	void ButtonSys();
@@ -88,6 +91,8 @@ public:
 	void DrawWindow(int, int, int, int);
 	void InitSys();
 	void ResetButton();
+	void ResetBtnOn();
+	char* AddComma(int);
 	//タイトル
 	void DrawButton();
 	void TitleBtnOver(int);
@@ -126,6 +131,7 @@ public:
 	void PricesBtnOut(int);
 	void PricesBtnSys(int);
 	void PricesData();
+	void PricesData2(int);
 	void SaveBtnOver(int);
 	void SaveBtnOut(int);
 	void SaveBtnSys(int);
@@ -144,7 +150,9 @@ public:
 	void SpawnHer();
 	void Move(int);
 	void MoveRoute();
+	void WarpHer(int);
 	//街
+	void SetHerPrices(int);
 	void ResetCity();
 	void CityBtnOver(int);
 	void CityBtnOut(int);
@@ -191,8 +199,12 @@ public:
 	int CargoPrice[32];
 	int CargoWeight;
 	int MaxWeight;
+	int ShipWeight;
+	int ShipMaxWeight;
 	int WTech;
 	int WIndustry;
+	bool HaveShip = FALSE;
+	bool OnShip = FALSE;
 };
 
 class GOODS {

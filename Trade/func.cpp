@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "class.h"
 #include "datas.h"
+
 #define M_PI	3.14159265358979323846
 #define DEG_TO_RAD(deg) (((deg)/360)*2*M_PI)
 #define RAD_TO_DEG(rad) (((rad)/2/M_PI)*360)
@@ -30,13 +31,19 @@ void FUN::main() {
 	City->InitCity();
 	init.InitMarket();
 
-	her.Money = 100000;
-	her.CargoWeight = 0;
-
+	if (sys.DebugMode == TRUE) {
+		her.Money = 999888777666555;
+		her.CargoWeight = 0;
+		her.HaveShip = TRUE;
+		her.MaxWeight = 900000000;
+		her.CargoWeight = 500000000;
+		her.ShipMaxWeight = 800000000;
+		her.ShipWeight = 700000000;
+	}
 
 	//ÉÅÉCÉìÉãÅ[Év
 	if (sys.DebugMode == TRUE) {
-		while (CheckHitKey(KEY_INPUT_ESCAPE) == 0) {
+		while (CheckHitKey(KEY_INPUT_DELETE) == 0) {
 			sys.ButtonOver();
 			sys.ButtonSys();
 			WaitTimer(16);
@@ -101,6 +108,13 @@ void INIT::ResetTitle() {
 
 }
 
+void SYSTEM::ResetBtnOn() {
+
+	for (int i = 0; i < 64; i++) {
+		sys.BtnOn[i] = FALSE;
+	}
+}
+
 //É{É^ÉìÇí«â¡Ç∑ÇÈÇ∆Ç´í«â¡
 
 void SYSTEM::DrawButton() {
@@ -119,7 +133,6 @@ void SYSTEM::DrawButton() {
 		DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
 		DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), init.FontHandle);
 		DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
-		ButtonNumber = 4;
 		break;
 	case fun.F_MAIN:
 		for (int i = 48; i < 9 + 48; i++) {
@@ -157,7 +170,6 @@ void SYSTEM::DrawButton() {
 		DrawStringToHandle(BtnX[4] + 24, BtnY[4] + 8, "Talk", GetColor(0, 0, 0), init.FontHandle);
 		DrawStringToHandle(BtnX[5] + 24, BtnY[5] + 8, "Exit", GetColor(0, 0, 0), init.FontHandle);
 
-		ButtonNumber = 64;
 		break;
 	}
 }
@@ -194,6 +206,9 @@ void SYSTEM::ButtonOver() {
 					QuestBtnOver(i);
 					break;
 				case Sw_PRICES:
+					PricesBtnOver(i);
+					break;
+				case Sw_PRICES2:
 					PricesBtnOver(i);
 					break;
 				case Sw_SAVE:
@@ -263,6 +278,9 @@ void SYSTEM::ButtonOver() {
 			case Sw_PRICES:
 				PricesBtnOut(OveredBtn);
 				break;
+			case Sw_PRICES2:
+				PricesBtnOut(OveredBtn);
+				break;
 			case Sw_SAVE:
 				SaveBtnOut(OveredBtn);
 				break;
@@ -307,7 +325,11 @@ void SYSTEM::ButtonSys() {
 
 	MInput1F = MInput;
 	MInput = GetMouseInput();
-	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1) {
+	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1 || CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1) {
+		if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+			OveredBtn = 63;
+		else if (CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
+			OveredBtn = 62;
 		switch (BtnSwitch) {
 		case Sw_TITLE:
 			TitleBtnSys(OveredBtn);
@@ -331,6 +353,9 @@ void SYSTEM::ButtonSys() {
 			QuestBtnSys(OveredBtn);
 			break;
 		case Sw_PRICES:
+			PricesBtnSys(OveredBtn);
+			break;
+		case Sw_PRICES2:
 			PricesBtnSys(OveredBtn);
 			break;
 		case Sw_SAVE:
@@ -372,6 +397,8 @@ void SYSTEM::ButtonSys() {
 
 //ÉÅÉbÉZÅ[ÉWèàóùÇí«â¡Ç∑ÇÈÇ∆Ç´í«â¡
 void SYSTEM::DrawMessageWindow() {
+
+	TCHAR Temp[64];
 	MWX = 480;
 	MWY = 800;
 	DrawGraph(MWX, MWY, init.GraMW, TRUE);
@@ -379,46 +406,45 @@ void SYSTEM::DrawMessageWindow() {
 	sys.MOver = FALSE;
 	switch (BtnSwitch) {
 	case Sw_QUIT:
-		BtnX[0] = MWX + 280;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
-		BtnX[1] = MWX + 640;
-		BtnY[1] = MWY + 140;
-		BtnW[1] = 90;
-		BtnH[1] = 42;
+		BtnX[62] = MWX + 280;
+		BtnY[62] = MWY + 140;
+		BtnW[62] = 90;
+		BtnH[62] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "èIóπÇµÇ‹Ç∑Ç©ÅH", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[1], BtnY[1], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
-		ButtonNumber = 2;
+		DrawStringToHandle(BtnX[62], BtnY[62], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_CARGO:
-		BtnX[0] = MWX + 640;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "êœâ◊ÇÃê‡ñæï∂Çï\é¶Ç∑ÇÈó\íËÇ≈Ç∑", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_TRANS:
-		BtnX[0] = MWX + 640;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "óAëóéËíiÇÃê‡ñæï∂Çï\é¶Ç∑ÇÈó\íËÇ≈Ç∑", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_FINAN:
-		BtnX[0] = MWX + 640;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "ç‡ñ±èÛãµÇÃâê‡ÇÇ≥ÇπÇÈó\íËÇ≈Ç∑", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_QUEST:
 		BtnX[63] = MWX + 640;
@@ -435,7 +461,17 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64, MWY + 64, "äXÇñKÇÍÇÈÇ∆çXêVÇµÇ‹Ç∑", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "ëäèÍÇå©ÇÈäXÇëIÇÒÇ≈ÇÀ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_PRICES2:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		sprintf_s(Temp, 64, "%sÇÃëäèÍÇ≈Ç∑", City[ClickedBtn].Name);
+		DrawStringToHandle(MWX + 64, MWY + 64, Temp, GetColor(255, 255, 255), init.FontHandle);
 		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_SAVE:
@@ -487,19 +523,18 @@ void SYSTEM::DrawMessageWindow() {
 		DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_EXIT:
-		BtnX[0] = MWX + 280;
-		BtnY[0] = MWY + 140;
-		BtnW[0] = 90;
-		BtnH[0] = 42;
-		BtnX[1] = MWX + 640;
-		BtnY[1] = MWY + 140;
-		BtnW[1] = 90;
-		BtnH[1] = 42;
+		BtnX[62] = MWX + 280;
+		BtnY[62] = MWY + 140;
+		BtnW[62] = 90;
+		BtnH[62] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
 
 		DrawStringToHandle(MWX + 64, MWY + 64, "äXÇèoÇ‹Ç∑Ç©ÅH", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[0], BtnY[0], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[1], BtnY[1], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
-		ButtonNumber = 2;
+		DrawStringToHandle(BtnX[62], BtnY[62], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	}
 
@@ -524,9 +559,9 @@ void SYSTEM::DrawWindow(int X, int Y, int W, int H) {
 
 
 void SYSTEM::DrawValue() {
-	int ValueX[5], ValueY[5], ValueW[5], ValueH[5];
+	int ValueX[7], ValueY[7], ValueW[7], ValueH[7];
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 7; i++) {
 		ValueX[i] = 175 * i;
 		ValueY[i] = 38;
 		ValueW[i] = 180;
@@ -534,6 +569,8 @@ void SYSTEM::DrawValue() {
 		DrawExtendGraph(ValueX[i], ValueY[i], ValueX[i] + ValueW[i], ValueY[i] + ValueH[i], init.GraBtn3, TRUE);
 	}
 	TCHAR Temp[64];
+	char* Temp2;
+	char* Temp3;
 	int x, y;
 	x = 8;
 	y = 42;
@@ -560,23 +597,81 @@ void SYSTEM::DrawValue() {
 	}
 	else
 		sprintf_s(Temp, 64, "%16lld", her.Money);
-	DrawStringToHandle(x + 128+64 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
 
-	her.MaxWeight = 100;
-	DrawExtendGraph(x + 512-64, 42, x + 512-64 + 24, 42 + 24, init.GraCarriage[6], TRUE);
-	sprintf_s(Temp, 32, "%d/%d", her.CargoWeight, her.MaxWeight);
-	DrawStringToHandle(x + 512-64 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 128 + 32 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+
+
+	DrawExtendGraph(x + 512-64- 10, 32, x + 512-64 + 24, 42 + 24, init.GraCarriage[6], TRUE);
+	Temp2 = AddComma(her.CargoWeight);
+	Temp3 = AddComma(her.MaxWeight);
+	//sprintf_s(Temp, 32, "%d/%d", her.CargoWeight, her.MaxWeight);
+	DrawStringToHandle(x + 512 - 128 + 28 - 5, 42, Temp2, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 - 64 + 28 + 150 - 5, 42, "/", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 + 28 + 30 - 5, 42, Temp3, GetColor(0, 0, 0), init.FontHandle);
+
+	DrawExtendGraph(x + 512 + 270, 42, x + 512 + 24 + 280, 42 + 24, init.GraShip[6], TRUE);
+	Temp2 = AddComma(her.ShipWeight);
+	Temp3 = AddComma(her.ShipMaxWeight);
+	DrawStringToHandle(x + 512 + 28 + 200, 42, Temp2, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 + 28 + 270 + 140, 42, "/", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 + 28 + 270 + 80, 42, Temp3, GetColor(0, 0, 0), init.FontHandle);
 
 	her.WTech = 14;
-	DrawExtendGraph(x + 512 + 175 + 64, 42, x + 512 + 175 + 64 + 24, 42 + 24, init.GraIdea, TRUE);
+	DrawExtendGraph(x + 512 + 525 + 64, 42, x + 512 + 525 + 64 + 24, 42 + 24, init.GraIdea, TRUE);
 	sprintf_s(Temp, 32, "%d", her.WTech);
-	DrawStringToHandle(x + 512 + 64 + 175 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 + 64 + 525 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
 
 	her.WIndustry = 12;
-	DrawExtendGraph(x + 512 + 123 + 175, 42, x + 512 + 123 + 175 + 24, 42 + 24, init.GraFactory, TRUE);
+	DrawExtendGraph(x + 512 + 123 + 525 , 42, x + 512 + 123 + 525 + 24, 42 + 24, init.GraFactory, TRUE);
 	sprintf_s(Temp, 32, "%d", her.WIndustry);
-	DrawStringToHandle(x + 512 + 123 + 175 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(x + 512 + 123 + 525 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
 }
+
+
+
+char* SYSTEM::AddComma(int Value) {
+
+	TCHAR Temp[64];
+
+
+/*	if (Value >= 1000000000) {
+		sprintf_s(Temp, 64, "%6d,%03d,%03d,%03d", Value / 1000000000, (Value - Value / 1000000000 * 1000000000) / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
+	}
+	else 
+*/	
+	if (Value >= 1000000) {
+		sprintf_s(Temp, 64, "%9d,%03d,%03d", Value / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
+	}
+	else if (Value >= 1000) {
+		sprintf_s(Temp, 64, "%13d,%03d", Value / 1000, Value - (Value / 1000) * 1000);
+	}
+	else
+		sprintf_s(Temp, 64, "%16d", Value);
+
+	return Temp;
+}
+
+
+/*TCHAR SYSTEM::AddComma(int Value) {
+
+	TCHAR Temp[32];
+	TCHAR Temp2[32];
+	int len;
+	int i = 0;
+	int digit = 0;
+
+	sprintf_s(Temp, 32, "%d", Value);
+	len = strlen(Temp);
+
+	while (i < len) {
+		Temp2[digit++] = Temp[i++];
+		if ((len - i) % 3 == 0 && i < len)
+			Temp2[digit++] = ',';
+	}
+	Temp2[digit] = '\0';
+	return Temp2;
+}
+*/
 
 void SYSTEM::TitleBtnOver(int i) {
 	switch (i) {
@@ -648,13 +743,13 @@ void SYSTEM::TitleBtnSys(int OveredBtn) {
 void SYSTEM::QuitBtnOver(int i) {
 
 	switch (i) {
-	case 0:
+	case 62:
 		QuitBtnReset();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ÇÕÇ¢", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[62], BtnY[62], "ÇÕÇ¢", GetColor(255, 0, 0), init.FontHandle);
 		break;
-	case 1:
+	case 63:
 		QuitBtnReset();
-		DrawStringToHandle(BtnX[1], BtnY[1], "Ç¢Ç¢Ç¶", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "Ç¢Ç¢Ç¶", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	}
 }
@@ -662,13 +757,13 @@ void SYSTEM::QuitBtnOver(int i) {
 void SYSTEM::QuitBtnOut(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 62:
 		QuitBtnReset();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[62], BtnY[62], "ÇÕÇ¢", GetColor(255, 255, 255), init.FontHandle);
 		break;
-	case 1:
+	case 63:
 		QuitBtnReset();
-		DrawStringToHandle(BtnX[1], BtnY[1], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "Ç¢Ç¢Ç¶", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	}
 }
@@ -694,23 +789,25 @@ void SYSTEM::QuitBtnSys(int OveredBtn) {
 	switch (fun.FStat) {
 	case fun.F_TITLE:
 		switch (OveredBtn) {
-		case 0:
+		case 62:
 			DxLib_End();
-		case 1:
+		case 63:
 			BtnSwitch = Sw_TITLE;
 			init.ResetTitle();
 			break;
 		}
+		break;
 	case fun.F_MAIN:
 		switch (OveredBtn) {
-		case 0:
+		case 62:
 			DxLib_End();
-		case 1:
+		case 63:
 			BtnSwitch = Sw_MMAP;
 			ResetMap();
 			SpawnHer();
 			break;
 		}
+		break;
 	}
 }
 
@@ -868,14 +965,14 @@ void SYSTEM::MapBtnSys(int OveredBtn) {
 void SYSTEM::CargoBtnOver(int i) {
 
 	switch (i) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_CARGO;
 		DrawWindow(520, 140, 5, 16);
 		DrawMessageWindow();
 		CargoData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -885,14 +982,14 @@ void SYSTEM::CargoBtnOver(int i) {
 void SYSTEM::CargoBtnOut(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_CARGO;
 		DrawWindow(520, 140, 5, 16);
 		DrawMessageWindow();
 		CargoData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -902,7 +999,7 @@ void SYSTEM::CargoBtnOut(int OveredBtn) {
 void SYSTEM::CargoBtnSys(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		BtnSwitch = Sw_MMAP;
 		ResetMap();
 		SpawnHer();
@@ -942,14 +1039,14 @@ void SYSTEM::CargoData() {
 void SYSTEM::TransBtnOver(int i) {
 
 	switch (i) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_TRANS;
 		DrawWindow(520, 140, 5, 16);
 		DrawMessageWindow();
 		TransData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -959,14 +1056,14 @@ void SYSTEM::TransBtnOver(int i) {
 void SYSTEM::TransBtnOut(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_TRANS;
 		DrawWindow(520, 140, 5, 16);
 		DrawMessageWindow();
 		TransData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -976,7 +1073,7 @@ void SYSTEM::TransBtnOut(int OveredBtn) {
 void SYSTEM::TransBtnSys(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		BtnSwitch = Sw_MMAP;
 		ResetMap();
 		SpawnHer();
@@ -1007,7 +1104,7 @@ void SYSTEM::TransData() {
 void SYSTEM::FinanBtnOver(int i) {
 
 	switch (i) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_FINAN;
@@ -1015,7 +1112,7 @@ void SYSTEM::FinanBtnOver(int i) {
 		DrawWindow(980, 140, 5, 16);
 		DrawMessageWindow();
 		FinanData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -1025,7 +1122,7 @@ void SYSTEM::FinanBtnOver(int i) {
 void SYSTEM::FinanBtnOut(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		ResetMap();
 		SpawnHer();
 		BtnSwitch = Sw_FINAN;
@@ -1033,7 +1130,7 @@ void SYSTEM::FinanBtnOut(int OveredBtn) {
 		DrawWindow(980, 140, 5, 16);
 		DrawMessageWindow();
 		FinanData();
-		DrawStringToHandle(BtnX[0], BtnY[0], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
 		break;
@@ -1043,7 +1140,7 @@ void SYSTEM::FinanBtnOut(int OveredBtn) {
 void SYSTEM::FinanBtnSys(int OveredBtn) {
 
 	switch (OveredBtn) {
-	case 0:
+	case 63:
 		BtnSwitch = Sw_MMAP;
 		ResetMap();
 		SpawnHer();
@@ -1169,53 +1266,143 @@ void SYSTEM::QuestData() {
 
 void SYSTEM::PricesBtnOver(int i) {
 
-	switch (i) {
-	case 63:
-		ResetMap();
-		SpawnHer();
-		BtnSwitch = Sw_PRICES;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		PricesData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+	switch (BtnSwitch) {
+	case Sw_PRICES:
+		printfDx("PRICES");
+		if (i == 63) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData();
+			DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		}
+		else if (BtnOn[i] == TRUE) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData();
+			DrawStringToHandle(BtnX[i], BtnY[i], City[i].Name, GetColor(255, 0, 0), init.FontHandle);
+		}
 		break;
-	case 1:
+	case Sw_PRICES2:
+		printfDx("PRICES2");
+		if (i == 63) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES2;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData2(ClickedBtn);
+			DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		}
 		break;
 	}
 }
 
 void SYSTEM::PricesBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 63:
-		ResetMap();
-		SpawnHer();
-		BtnSwitch = Sw_PRICES;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		PricesData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+	switch (BtnSwitch) {
+	case Sw_PRICES:
+		if (OveredBtn == 63) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData();
+			DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		}
+		else if (BtnOn[OveredBtn] == TRUE) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData();
+			DrawStringToHandle(BtnX[OveredBtn], BtnY[OveredBtn], City[OveredBtn].Name, GetColor(0, 0, 0), init.FontHandle);
+		}
 		break;
-	case 1:
+	case Sw_PRICES2:
+		if (OveredBtn == 63) {
+			ResetMap();
+			SpawnHer();
+			BtnSwitch = Sw_PRICES2;
+			DrawWindow(520, 140, 5, 16);
+			DrawMessageWindow();
+			PricesData2(ClickedBtn);
+			DrawStringToHandle(BtnX[63], BtnY[63], "ï¬Ç∂ÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		}
 		break;
 	}
 }
 
 void SYSTEM::PricesBtnSys(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 63:
+	if (OveredBtn == 63) {
 		BtnSwitch = Sw_MMAP;
 		ResetMap();
 		SpawnHer();
-		break;
-	case 1:
-		break;
+	}
+	else if (BtnOn[OveredBtn] == TRUE) {
+		ResetBtnOn();
+		ResetMap();
+		BtnSwitch = Sw_PRICES2;
+		ClickedBtn = OveredBtn;
+		SpawnHer();
+		DrawWindow(520, 140, 5, 16);
+		DrawMessageWindow();
+		PricesData2(OveredBtn);
 	}
 }
 
 void SYSTEM::PricesData() {
 
+	int x = 0;
+
+	for (int i = 0; i < 10; i++) {
+		BtnX[i] = 580;
+		BtnY[i] = 200 + i * 42;
+		BtnW[i] = 80;
+		BtnH[i] = 42;
+	}
+
+	for (int i = 0; i < 10; i++) {
+		DrawStringToHandle(BtnX[i], BtnY[i], City[i].Name, GetColor(0, 0, 0), init.FontHandle);
+		BtnOn[i] = TRUE;
+	}
+
+}
+
+void SYSTEM::PricesData2(int OveredBtn) {
+
+	int x = 0;
+	TCHAR Temp[64];
+
+	for (int i = 0; i < 13; i++) {
+		BtnX[i] = 580 + x * 180;
+		BtnY[i] = 240 + i * 38;
+		BtnW[i] = 140;
+		BtnH[i] = 38;
+		if (i >= 13)
+			x++;
+	}
+
+	DrawStringToHandle(580, 160, "ñºëO", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 200, 160, "é˘óv", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 400, 160, "ãüãã", GetColor(0, 0, 0), init.FontHandle);
+
+	for (int i = 0; i < 13; i++) {
+		DrawStringToHandle(BtnX[i], BtnY[i], Goods[i].Name, GetColor(0, 0, 0), init.FontHandle);
+		sprintf_s(Temp, 64, "%3.0f%%", HerMarket[OveredBtn][i].Demand * 100);
+		DrawStringToHandle(BtnX[i] + 200, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+		sprintf_s(Temp, 64, "%3.0f%%", HerMarket[OveredBtn][i].Supply * 100);
+		DrawStringToHandle(BtnX[i] + 400, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+		BtnOn[i] = TRUE;
+	}
 }
 
 void SYSTEM::SaveBtnOver(int i) {
@@ -1573,7 +1760,7 @@ void SYSTEM::SetMapBtn() {
 	BtnW[12] = x;
 	BtnH[12] = y;
 	BtnX[13] = 650;	//ñkòH
-	BtnY[13] = 300;
+	BtnY[13] = 280;
 	BtnW[13] = x;
 	BtnH[13] = y;
 	BtnX[14] = 880;	//ìåòH
@@ -1584,21 +1771,116 @@ void SYSTEM::SetMapBtn() {
 	BtnY[15] = 450;
 	BtnW[15] = x;
 	BtnH[15] = y;
+	BtnX[16] = 1685;	//ìáòH
+	BtnY[16] = 860;
+	BtnW[16] = x;
+	BtnH[16] = y;
 
 	BtnX[20] = 605;	//ç`1
-	BtnY[20] = 660;
+	BtnY[20] = 680;
 	BtnW[20] = x;
 	BtnH[20] = y;
 	BtnX[21] = 530; //äCòH1
-	BtnY[21] = 790;
+	BtnY[21] = 810;
 	BtnW[21] = x;
 	BtnH[21] = y;
 	BtnX[22] = 285;	//ç`2
-	BtnY[22] = 880;
+	BtnY[22] = 900;
 	BtnW[22] = x;
 	BtnH[22] = y;
+	BtnX[23] = 600; //äCòH2
+	BtnY[23] = 730;
+	BtnW[23] = x;
+	BtnH[23] = y;
+	BtnX[24] = 680; //äCòH3
+	BtnY[24] = 820;
+	BtnW[24] = x;
+	BtnH[24] = y;
+	BtnX[25] = 1300; //äCòH4
+	BtnY[25] = 720;
+	BtnW[25] = x;
+	BtnH[25] = y;
+	BtnX[26] = 1500; //äCòH5
+	BtnY[26] = 280;
+	BtnW[26] = x;
+	BtnH[26] = y;
+	BtnX[27] = 1620; //ç`3
+	BtnY[27] = 290;
+	BtnW[27] = x;
+	BtnH[27] = y;
+	BtnX[28] = 1440; //äCòH6
+	BtnY[28] = 790;
+	BtnW[28] = x;
+	BtnH[28] = y;
+	BtnX[29] = 1590; //ç`4
+	BtnY[29] = 790;
+	BtnW[29] = x;
+	BtnH[29] = y;
+	BtnX[30] = 110;	//êºç`
+	BtnY[30] = 410;
+	BtnW[30] = x;
+	BtnH[30] = y;
+	BtnX[31] = 0;	//êºäCòH
+	BtnY[31] = 520;
+	BtnW[31] = 0;
+	BtnH[31] = 0;
+	BtnX[32] = 1920;	//ìåäCòH
+	BtnY[32] = 520;
+	BtnW[32] = 0;
+	BtnH[32] = 0;
+	BtnX[33] = 1780;	//ìåäCòH2
+	BtnY[33] = 570;
+	BtnW[33] = x;
+	BtnH[33] = y;
+	BtnX[34] = 1680;	//ìåäCòH3
+	BtnY[34] = 570;
+	BtnW[34] = x;
+	BtnH[34] = y;
+	BtnX[35] = 0;	//êºäCòH2
+	BtnY[35] = 740;
+	BtnW[35] = 0;
+	BtnH[35] = 0;
+	BtnX[36] = 160;	//êºäCòH3
+	BtnY[36] = 830;
+	BtnW[36] = x;
+	BtnH[36] = y;
+	BtnX[37] = 320;	//êºäCòH4
+	BtnY[37] = 840;
+	BtnW[37] = x;
+	BtnH[37] = y;
+	BtnX[38] = 1130;	//ìåç`
+	BtnY[38] = 455;
+	BtnW[38] = x;
+	BtnH[38] = y;
+	BtnX[39] = 1330;	//ìåäCòH4
+	BtnY[39] = 420;
+	BtnW[39] = x;
+	BtnH[39] = y;
+	BtnX[40] = 680;	//ñkç`
+	BtnY[40] = 225;
+	BtnW[40] = x;
+	BtnH[40] = y;
+	BtnX[41] = 715;	//ñkì¸ÇËç]
+	BtnY[41] = 170;
+	BtnW[41] = x;
+	BtnH[41] = y;
+	BtnX[42] = 715;	//ñkèoå˚
+	BtnY[42] = 100;
+	BtnW[42] = x;
+	BtnH[42] = y;
+	BtnX[43] = 200;	//ñkäCòHñ¶
+	BtnY[43] = 60;
+	BtnW[43] = x;
+	BtnH[43] = y;
+	BtnX[44] = 1200;	//ñkäCòH
+	BtnY[44] = 120;
+	BtnW[44] = x;
+	BtnH[44] = y;
+	BtnX[45] = 1920;	//ÉèÅ[Év2
+	BtnY[45] = 740;
+	BtnW[45] = 0;
+	BtnH[45] = 0;
 
-	ButtonNumber = 64;
 	for (int i = 0; i < ButtonNumber; i++) {
 		BtnCx[i] = BtnX[i] + BtnW[i] / 2;
 		BtnCy[i] = BtnY[i] + BtnH[i] / 2;
@@ -1636,16 +1918,16 @@ void SYSTEM::Fade(int before, int after) {
 		}
 	}
 	else {
-		for (int i = 0; i < 160; i++) {
-			if (i >= 0 && i < 64) {
-				SetDrawBright(255 - (i * 4), 255 - (i * 4), 255 - (i * 4));
+		for (int i = 0; i < 102; i++) {
+			if (i >= 0 && i < 43) {
+				SetDrawBright(255 - (i * 6), 255 - (i * 6), 255 - (i * 6));
 				DrawExtendGraph(0, 0, init.WinX, init.WinY, before, TRUE);
 			}
-			if (i >= 64 && i < 96)
+			if (i >= 43 && i < 59)
 				SetDrawBright(0, 0, 0);
 
-			if (i >= 96 && i < 160) {
-				SetDrawBright((i - 96) * 4, (i - 96) * 4, (i - 96) * 4);
+			if (i >= 59 && i < 102) {
+				SetDrawBright((i - 59) * 6, (i - 59) * 6, (i - 59) * 6);
 				DrawExtendGraph(0, 0, init.WinX, init.WinY, after, TRUE);
 			}
 			if (ProcessMessage() == -1) break;
@@ -1680,6 +1962,8 @@ void SYSTEM::SpawnHer() {
 
 void SYSTEM::Move(int MoveTo) {
 
+	int MoveCount = 0;
+
 	Angle = atan2(BtnCy[MoveTo] - her.Y, BtnCx[MoveTo] - her.X);
 
 	while (!(((her.X > BtnCx[MoveTo] - 2) && (her.X <= BtnCx[MoveTo] + 2)) && ((her.Y > BtnCy[MoveTo] - 2) && (her.Y <= BtnCy[MoveTo] + 2)))) {
@@ -1694,7 +1978,6 @@ void SYSTEM::Move(int MoveTo) {
 		Angle2 = RAD_TO_DEG(Angle);
 
 
-
 		if (DebugMode == TRUE) {
 			clsDx();
 			printfDx("%lf\n", Angle);
@@ -1702,20 +1985,108 @@ void SYSTEM::Move(int MoveTo) {
 			printfDx("%lfÅã", Angle2);
 		}
 
-		if (Angle2 < 45 && Angle2 > -45) {
-			DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[6], TRUE);
+		if (her.OnShip == FALSE) {
+			if (MoveCount < 50) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[6], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[0], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[9], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[3], TRUE);
+				}
+			}
+			else if (MoveCount < 100) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[7], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[1], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[10], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[4], TRUE);
+				}
+			}
+			else if (MoveCount < 150) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[8], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[2], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[11], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[5], TRUE);
+				}
+			}
 		}
-		else if (Angle2 < 135 && Angle2 > 45) {
-			DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[0], TRUE);
+		else if (her.OnShip == TRUE) {
+			if (MoveCount < 50) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[6], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[0], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[9], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[3], TRUE);
+				}
+			}
+			else if (MoveCount < 100) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[7], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[1], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[10], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[4], TRUE);
+				}
+			}
+			else if (MoveCount < 150) {
+				if (Angle2 < 45 && Angle2 > -45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[8], TRUE);
+				}
+				else if (Angle2 < 135 && Angle2 > 45) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[2], TRUE);
+				}
+				else if (Angle2 < -45 && Angle2 > -135) {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[11], TRUE);
+				}
+				else {
+					DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraShip[5], TRUE);
+				}
+			}
 		}
-		else if (Angle2 < -45 && Angle2 > -135) {
-			DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[9], TRUE);
-		}
-		else {
-			DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[3], TRUE);
-		}
+
+
+		MoveCount++;
+		if (MoveCount >= 150)
+			MoveCount = 0;
+
 		WaitTimer(8);
 	}
+}
+
+void SYSTEM::WarpHer(int WarpTo) {
+
+	her.X = BtnCx[WarpTo];
+	her.Y = BtnCy[WarpTo];
 }
 
 void SYSTEM::MoveRoute() {
@@ -1733,6 +2104,13 @@ void SYSTEM::MoveRoute() {
 			her.On = 2;
 			break;
 		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(20);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(22);
+			her.OnShip = FALSE;
 			Move(3);
 			her.On = 3;
 			break;
@@ -1759,6 +2137,50 @@ void SYSTEM::MoveRoute() {
 			Move(6);
 			her.On = 6;
 			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
 		}
 		break;
 	case 1:
@@ -1771,6 +2193,18 @@ void SYSTEM::MoveRoute() {
 			Move(12);
 			Move(2);
 			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(0);
+			Move(20);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
 			break;
 		case 4:
 			Move(0);
@@ -1797,6 +2231,53 @@ void SYSTEM::MoveRoute() {
 			Move(15);
 			Move(6);
 			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(0);
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(0);
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(0);
+			Move(20);
+			her.OnShip = TRUE;
+			Move(23);
+			Move(24);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
 			break;
 		}
 		break;
@@ -1813,9 +2294,136 @@ void SYSTEM::MoveRoute() {
 			Move(1);
 			her.On = 1;
 			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(30);
+			her.OnShip = TRUE;
+			Move(31);
+			Move(35);
+			Move(36);
+			Move(37);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
+			break;
 		case 4:
-			Move(12);
+			Move(13);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			Move(13);
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			Move(13);
+			Move(4);
+			Move(14);
+			Move(15);
+			Move(6);
+			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(30);
+			her.OnShip = TRUE;
+			Move(31);
+			WarpHer(32);
+			Move(33);
+			Move(34);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(30);
+			her.OnShip = TRUE;
+			Move(31);
+			WarpHer(32);
+			Move(33);
+			Move(34);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(30);
+			her.OnShip = TRUE;
+			Move(31);
+			WarpHer(32);
+			Move(33);
+			Move(34);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
+		}
+		break;
+	case 3:
+		switch (OveredBtn) {
+		case 0:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
 			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(37);
+			Move(36);
+			Move(35);
+			Move(31);
+			Move(30);
+			her.OnShip = FALSE;
+			Move(2);
+			her.On = 2;
+			break;
+		case 4:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(20);
+			her.OnShip = FALSE;
 			Move(0);
 			Move(10);
 			Move(11);
@@ -1823,32 +2431,74 @@ void SYSTEM::MoveRoute() {
 			her.On = 4;
 			break;
 		case 5:
-			Move(12);
-			Move(1);
-			Move(0);
-			Move(10);
-			Move(11);
-			Move(4);
-			Move(13);
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(37);
+			Move(36);
+			Move(35);
+			Move(31);
+			Move(43);
+			Move(42);
+			Move(41);
+			Move(40);
+			her.OnShip = FALSE;
 			Move(5);
 			her.On = 5;
 			break;
 		case 6:
-			Move(12);
-			Move(1);
-			Move(0);
-			Move(10);
-			Move(11);
-			Move(4);
-			Move(14);
-			Move(15);
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(25);
+			Move(39);
+			Move(38);
+			her.OnShip = FALSE;
 			Move(6);
 			her.On = 6;
 			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(25);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(22);
+			her.OnShip = TRUE;
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
 		}
 		break;
-	case 3:
-
 	case 4:
 		switch (OveredBtn) {
 		case 0:
@@ -1865,13 +2515,23 @@ void SYSTEM::MoveRoute() {
 			her.On = 1;
 			break;
 		case 2:
+			Move(13);
+			Move(2);
+			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
 			Move(11);
 			Move(10);
 			Move(0);
-			Move(1);
-			Move(12);
-			Move(2);
-			her.On = 2;
+			Move(20);
+			her.OnShip = TRUE;
+			Move(21);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
 			break;
 		case 5:
 			Move(13);
@@ -1883,6 +2543,51 @@ void SYSTEM::MoveRoute() {
 			Move(15);
 			Move(6);
 			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(14);
+			Move(15);
+			Move(6);
+			Move(38);
+			her.OnShip = TRUE;
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(14);
+			Move(15);
+			Move(6);
+			Move(38);
+			her.OnShip = TRUE;
+			Move(39);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(14);
+			Move(15);
+			Move(6);
+			Move(38);
+			her.OnShip = TRUE;
+			Move(39);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
 			break;
 		}
 		break;
@@ -1907,14 +2612,25 @@ void SYSTEM::MoveRoute() {
 			break;
 		case 2:
 			Move(13);
-			Move(4);
-			Move(11);
-			Move(10);
-			Move(0);
-			Move(1);
-			Move(12);
 			Move(2);
 			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(40);
+			her.OnShip = TRUE;
+			Move(41);
+			Move(42);
+			Move(43);
+			Move(31);
+			Move(35);
+			Move(36);
+			Move(37);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
 			break;
 		case 4:
 			Move(13);
@@ -1928,6 +2644,49 @@ void SYSTEM::MoveRoute() {
 			Move(15);
 			Move(6);
 			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(40);
+			her.OnShip = TRUE;
+			Move(41);
+			Move(42);
+			Move(44);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(40);
+			her.OnShip = TRUE;
+			Move(41);
+			Move(42);
+			Move(44);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(40);
+			her.OnShip = TRUE;
+			Move(41);
+			Move(42);
+			Move(44);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
 			break;
 		}
 		break;
@@ -1956,19 +2715,27 @@ void SYSTEM::MoveRoute() {
 			Move(15);
 			Move(14);
 			Move(4);
-			Move(11);
-			Move(10);
-			Move(0);
-			Move(1);
-			Move(12);
+			Move(13);
 			Move(2);
 			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(38);
+			her.OnShip = TRUE;
+			Move(39);
+			Move(25);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
 			break;
 		case 4:
 			Move(15);
 			Move(14);
 			Move(4);
-			her.On = 5;
+			her.On = 4;
 			break;
 		case 5:
 			Move(15);
@@ -1976,11 +2743,438 @@ void SYSTEM::MoveRoute() {
 			Move(4);
 			Move(13);
 			Move(5);
+			her.On = 5;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(38);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(38);
+			her.OnShip = TRUE;
+			Move(39);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(38);
+			her.OnShip = TRUE;
+			Move(39);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
+		}
+		break;
+	case 7:
+		switch (OveredBtn) {
+		case 0:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(25);
+			Move(24);
+			Move(23);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(34);
+			Move(33);
+			Move(32);
+			WarpHer(31);
+			Move(30);
+			her.OnShip = FALSE;
+			Move(2);
+			Move(12);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(34);
+			Move(33);
+			Move(32);
+			WarpHer(31);
+			Move(30);
+			her.OnShip = FALSE;
+			Move(2);
+			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(34);
+			Move(33);
+			Move(45);
+			WarpHer(35);
+			Move(36);
+			Move(37);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
+			break;
+		case 4:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
+			Move(15);
+			Move(14);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(44);
+			Move(42);
+			Move(41);
+			Move(40);
+			her.OnShip = FALSE;
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
 			her.On = 6;
+			break;
+		case 8:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			her.On = 8;
+			break;
+		case 9:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(27);
+			her.OnShip = TRUE;
+			Move(26);
+			Move(25);
+			Move(28);
+			Move(29);
+			her.OnShip = FALSE;
+			Move(8);
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
+		}
+		break;
+	case 8:
+		switch (OveredBtn) {
+		case 0:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(26);
+			Move(24);
+			Move(23);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(24);
+			Move(23);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(34);
+			Move(33);
+			Move(32);
+			WarpHer(31);
+			Move(30);
+			her.OnShip = FALSE;
+			Move(2);
+			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
+			break;
+		case 4:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(39);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
+			Move(15);
+			Move(14);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(44);
+			Move(42);
+			Move(41);
+			Move(40);
+			her.OnShip = FALSE;
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(39);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
+			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(26);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 9:
+			Move(16);
+			Move(9);
+			her.On = 9;
+			break;
+		}
+		break;
+	case 9:
+		switch (OveredBtn) {
+		case 0:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(26);
+			Move(24);
+			Move(23);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			her.On = 0;
+			break;
+		case 1:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(24);
+			Move(23);
+			Move(20);
+			her.OnShip = FALSE;
+			Move(0);
+			Move(1);
+			her.On = 1;
+			break;
+		case 2:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(34);
+			Move(33);
+			Move(32);
+			WarpHer(31);
+			Move(30);
+			her.OnShip = FALSE;
+			Move(2);
+			her.On = 2;
+			break;
+		case 3:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(25);
+			Move(22);
+			her.OnShip = FALSE;
+			Move(3);
+			her.On = 3;
+			break;
+		case 4:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(39);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
+			Move(15);
+			Move(14);
+			Move(4);
+			her.On = 4;
+			break;
+		case 5:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(44);
+			Move(42);
+			Move(41);
+			Move(40);
+			her.OnShip = FALSE;
+			Move(5);
+			her.On = 5;
+			break;
+		case 6:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(39);
+			Move(38);
+			her.OnShip = FALSE;
+			Move(6);
+			her.On = 6;
+			break;
+		case 7:
+			if (her.HaveShip == FALSE)
+				return;
+			Move(16);
+			Move(8);
+			Move(29);
+			her.OnShip = TRUE;
+			Move(28);
+			Move(26);
+			Move(26);
+			Move(27);
+			her.OnShip = FALSE;
+			Move(7);
+			her.On = 7;
+			break;
+		case 8:
+			Move(16);
+			Move(8);
+			her.On = 8;
 			break;
 		}
 		break;
 	}
+	SetHerPrices(OveredBtn);
 	Fade(init.GraMap, init.GraCity);
 	fun.FStat = fun.F_CITY;
 	BtnSwitch = Sw_CITY;

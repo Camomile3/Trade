@@ -102,8 +102,24 @@ void CITY::SetCity(int I, int T, const char* N, int P, float D, float E, float T
 void CITY::InitCity() {
 
 	//ID タイプ 名前　人口　開発度　景気　技術　工業　インフラ
-	City[0].SetCity(0, 0, "～ロイア～", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[1].SetCity(0, 0, "～セカンド～", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[0].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
+	City[1].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[2].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
+	City[3].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[4].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
+	City[5].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[6].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
+	City[7].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[8].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
+	City[9].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+}
+
+void SYSTEM::SetHerPrices(int ID) {
+
+	for (int i = 0; i < 32; i++) {
+		HerMarket[ID][i].Demand = Market[ID][i].Demand;
+		HerMarket[ID][i].Supply = Market[ID][i].Supply;
+	}
 }
 
 /*	Goods[0].SetGoods(0, (char*)"石炭", 60);
