@@ -40,6 +40,8 @@ void FUN::main() {
 		her.CargoWeight = 500000000;
 		her.ShipMaxWeight = 800000000;
 		her.ShipWeight = 700000000;
+		her.MoveSpeed = 30;
+		her.ShipMoveSpeed = 50;
 
 		her.Year = 3;
 		her.Month = 3;
@@ -155,6 +157,14 @@ void SYSTEM::SetTwoBtn() {
 	BtnY[63] = MWY + 140;
 	BtnW[63] = 90;
 	BtnH[63] = 42;
+}
+
+void SYSTEM::SetFullBtn() {
+
+	BtnX[58] = 0;
+	BtnY[58] = 0;
+	BtnW[58] = 1920;
+	BtnH[58] = 1080;
 }
 
 //ボタンを追加するとき追加
@@ -368,7 +378,9 @@ void SYSTEM::ButtonSys() {
 	MInput1F = MInput;
 	MInput = GetMouseInput();
 	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1 || CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1) {
-		if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
+		if (OveredBtn == -1)
+			return;
+		else if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
 			OveredBtn = 63;
 		else if (CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
 			OveredBtn = 62;
@@ -528,24 +540,21 @@ void SYSTEM::DrawValue() {
 
 char* SYSTEM::AddComma(int Value) {
 
-	TCHAR Temp[64];
-
-
 /*	if (Value >= 1000000000) {
-		sprintf_s(Temp, 64, "%6d,%03d,%03d,%03d", Value / 1000000000, (Value - Value / 1000000000 * 1000000000) / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
+		sprintf_s(CommedValue, 64, "%6d,%03d,%03d,%03d", Value / 1000000000, (Value - Value / 1000000000 * 1000000000) / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
 	}
 	else 
 */	
 	if (Value >= 1000000) {
-		sprintf_s(Temp, 64, "%9d,%03d,%03d", Value / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
+		sprintf_s(CommedValue, 64, "%9d,%03d,%03d", Value / 1000000, (Value - Value / 1000000 * 1000000) / 1000, Value - (Value / 1000) * 1000);
 	}
 	else if (Value >= 1000) {
-		sprintf_s(Temp, 64, "%13d,%03d", Value / 1000, Value - (Value / 1000) * 1000);
+		sprintf_s(CommedValue, 64, "%13d,%03d", Value / 1000, Value - (Value / 1000) * 1000);
 	}
 	else
-		sprintf_s(Temp, 64, "%16d", Value);
+		sprintf_s(CommedValue, 64, "%16d", Value);
 
-	return Temp;
+	return CommedValue;
 }
 
 
@@ -1297,27 +1306,36 @@ void SYSTEM::PricesData() {
 void SYSTEM::PricesData2(int OveredBtn) {
 
 	int x = 0;
+	int y = 0;
 	TCHAR Temp[64];
 
-	for (int i = 0; i < 13; i++) {
-		BtnX[i] = 580 + x * 180;
-		BtnY[i] = 240 + i * 38;
+	for (int i = 0; i <= 17; i++) {
+		BtnX[i] = 580 + x * 400;
+		BtnY[i] = 240 + y * 38;
 		BtnW[i] = 140;
 		BtnH[i] = 38;
-		if (i >= 13)
+		y++;
+		if (i == 12) {
 			x++;
+			y = 0;
+		}
+		if (x >= 2)
+			break;
 	}
 
 	DrawStringToHandle(580, 160, "名前", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(580 + 200, 160, "需要", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(580 + 400, 160, "供給", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 140, 160, "需要", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 260, 160, "供給", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 400, 160, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 400 + 140, 160, "需要", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(580 + 400 + 260, 160, "供給", GetColor(0, 0, 0), init.FontHandle);
 
-	for (int i = 0; i < 13; i++) {
+	for (int i = 0; i <= 17; i++) {
 		DrawStringToHandle(BtnX[i], BtnY[i], Goods[i].Name, GetColor(0, 0, 0), init.FontHandle);
-		sprintf_s(Temp, 64, "%3.0f%%", HerMarket[OveredBtn][i].Demand * 100);
-		DrawStringToHandle(BtnX[i] + 200, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
-		sprintf_s(Temp, 64, "%3.0f%%", HerMarket[OveredBtn][i].Supply * 100);
-		DrawStringToHandle(BtnX[i] + 400, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+		sprintf_s(Temp, 64, "%3.0lf%%", HerMarket[OveredBtn][i].Demand * 100);
+		DrawStringToHandle(BtnX[i] + 140, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+		sprintf_s(Temp, 64, "%3.0lf%%", HerMarket[OveredBtn][i].Supply * 100);
+		DrawStringToHandle(BtnX[i] + 260, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
 		BtnOn[i] = TRUE;
 	}
 }
@@ -1992,8 +2010,14 @@ void SYSTEM::Move(int MoveTo) {
 			}
 		}
 
-		if (MoveCount % 20 == 0)
-			her.Day++;
+		if (her.OnShip == FALSE) {
+			if (MoveCount % her.MoveSpeed == 0)
+				her.Day++;
+		}
+		else if (her.OnShip == TRUE) {
+			if (MoveCount % her.ShipMoveSpeed == 0)
+				her.Day++;
+		}
 
 		sys.DaySys();
 

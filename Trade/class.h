@@ -40,7 +40,6 @@ class SYSTEM {
 	int BtnX[64], BtnY[64], BtnW[64], BtnH[64], BtnCx[64], BtnCy[64];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
-	int KInput, KInput1F, KInput2, KInput1F2;
 	int OveredBtn = -1;
 	int ClickedBtn = -1;
 	int ButtonNumber = 64;
@@ -55,6 +54,7 @@ class SYSTEM {
 	int TalkNumber = 0;
 	int ETalkCount = 0;
 	int SlotNumber;
+	TCHAR CommedValue[64];
 
 	double Angle, Angle2;
 	bool MOver = FALSE;
@@ -105,6 +105,7 @@ public:
 	void WaitYesNo();
 	void SearchEmpty(int);
 	void SetTwoBtn();
+	void SetFullBtn();
 	//タイトル
 	void DrawButton();
 	void TitleBtnOver(int);
@@ -215,6 +216,8 @@ public:
 	int MaxWeight;
 	int ShipWeight;
 	int ShipMaxWeight;
+	int MoveSpeed;
+	int ShipMoveSpeed;
 	int WTech;
 	int WIndustry;
 	bool HaveShip = FALSE;
@@ -225,36 +228,51 @@ class GOODS {
 public:
 	int ID;
 	const char* Name;
-	int Price;
+	int BasePrice;
+	double IndImpact;
+	double TechImpact;
+	int BaseProd;
+	double IndProdImpact;
+	double TechProdImpact;
+	double IndSizeImpact;
+	double TechSizeImpact;
+
 	int CalcedPrice;
+	int CalcedProd;
+	int CalcedSize;
 
 	void InitGoods();
-	void SetGoods(int, char*, int);
+	//ID　名前　基本値　工業影響度　技術影響度　生産基本値　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
+	void SetGoods(int, char*, int, double, double, int, double, double, double, double);
 };
 
 class MARKET {
 public:
-	float Supply;
-	float Demand;
+	double Supply;
+	double Demand;
 
-	//固有値　景気　需要　供給　工業
-	int CalcPrice(int, float, float, float, float);
-	int SaleCalcPrice(int, float, float, float, float);
-	void SetMarket(float, float);
+	//基本値　倍率　景気　需要　供給　工業　工業影響度　技術　技術影響度　開発度　インフラ
+	int CalcPrice(int, double, double, double, double, double, double, double, double, double);
+	int SaleCalcPrice(int, double, double, double, double, double, double, double, double, double);
+
+	//品物基本値　品物係数　人口　開発度　技術　技術生産影響度　インフラ　供給　需要　工業　工業生産影響度
+	int CalcProduction(int, int);
+	int CalcMarketSize(int, int);
+	void SetMarket(double, double);
 };
 
 class CITY {
 public:
 	int ID;
 	const char* Name;
-	int Type;
-	int Population;
-	float Develop;
-	float Economy;
-	float Technology;
-	float Industry;
-	float Infra;
+	const char* Type;
+	double Population;
+	double Develop;
+	double Economy;
+	double Technology;
+	double Industry;
+	double Infra;
 
-	void SetCity(int, int, const char*, int, float, float, float, float, float);
+	void SetCity(int, const char*, const char*, double, double, double, double, double, double);
 	void InitCity();
 };

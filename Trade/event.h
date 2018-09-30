@@ -13,32 +13,27 @@ void SYSTEM::Event(int Num) {
 		case 0:
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "よう、そこの嬢ちゃん。あんた商人だろ？ちょっと頼まれてくれや。", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 1:
+			WaitClick();		
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "内容によるわ。", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 2:
+			WaitClick();
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "なに、ちょっとこいつを買い取って欲しいのさ。", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 3:
+			WaitClick();
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "これは・・・", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 4:
+			WaitClick();
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "良い織物だ。でもなんでこれを？", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 5:
+			WaitClick();
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "得意先が倒れちまってな、売る当てが無いんだ。", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 6:
+			WaitClick();
 			ResetCity();
-			DrawStringToHandle(MWX + 64, MWY + 64, "一束70レイルで300箱だ、悪くない話だろ？", GetColor(255, 255, 255), init.FontHandle);
-			break;
-		case 7:
+			DrawStringToHandle(MWX + 64, MWY + 64, "一箱70レイルで300箱だ、悪くない話だろ？", GetColor(255, 255, 255), init.FontHandle);
+			WaitClick();
+			ETalkCount++;
+		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
 			SetTwoBtn();
@@ -49,7 +44,7 @@ void SYSTEM::Event(int Num) {
 
 			if (EventSwitch == 62) {
 				ResetCity();
-				DrawStringToHandle(MWX + 64, MWY + 64, "わかった、一束65レイルでどう？", GetColor(255, 255, 255), init.FontHandle);
+				DrawStringToHandle(MWX + 64, MWY + 64, "わかった、一箱65レイルでどう？", GetColor(255, 255, 255), init.FontHandle);
 				WaitClick();
 				ResetCity();
 				DrawStringToHandle(MWX + 64, MWY + 64, "68だ。それ以上はまけないぞ。", GetColor(255, 255, 255), init.FontHandle);

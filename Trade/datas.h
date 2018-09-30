@@ -193,50 +193,100 @@ void SYSTEM::DrawMessageWindow() {
 
 }
 
-void GOODS::SetGoods(int i, char* n, int p) {
+//ID　名前　基本値　係数　工業影響度　技術影響度　生産基本値　生産係数　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
+void GOODS::SetGoods(int i, char* n, int b, double ind, double tech, int bp, double ipi, double tpi, double isi, double tsi) {
 	ID = i;
 	Name = n;
-	Price = p;
+	BasePrice = b;
+	IndImpact = ind;
+	TechImpact = tech;
+	BaseProd = bp;
+	IndProdImpact = ipi;
+	TechProdImpact = tpi;
+	IndSizeImpact = isi;
+	TechSizeImpact = tsi;
 }
 
+//ID　名前　基本値　工業影響度　技術影響度　生産基本値　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
 void GOODS::InitGoods() {
-	Goods[0].SetGoods(0, (char*)"石炭", 60);
-	Goods[1].SetGoods(1, (char*)"鉱石", 80);
-	Goods[2].SetGoods(2, (char*)"レアメタル", 100);
-	Goods[3].SetGoods(3, (char*)"食料", 100);
-	Goods[4].SetGoods(4, (char*)"木材", 100);
-	Goods[5].SetGoods(5, (char*)"石油", 100);
-	Goods[6].SetGoods(6, (char*)"金属", 100);
-	Goods[7].SetGoods(7, (char*)"缶詰", 100);
-	Goods[8].SetGoods(8, (char*)"銃火器", 100);
-	Goods[9].SetGoods(9, (char*)"紙", 100);
-	Goods[10].SetGoods(10, (char*)"書籍", 100);
-	Goods[11].SetGoods(11, (char*)"東洋贅沢品", 100);
-	Goods[12].SetGoods(12, (char*)"西洋贅沢品", 100);
-	Goods[13].SetGoods(13, (char*)"農業贅沢品", 100);
-	Goods[14].SetGoods(14, (char*)"綿花", 100);
-	Goods[15].SetGoods(15, (char*)"生糸", 100);
-	Goods[16].SetGoods(16, (char*)"綿織物", 100);
-	Goods[17].SetGoods(17, (char*)"絹織物", 100);
+	Goods[0].SetGoods(0, (char*)"食料", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[1].SetGoods(1, (char*)"石炭", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[2].SetGoods(2, (char*)"鉱石", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[3].SetGoods(3, (char*)"レアメタル", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[4].SetGoods(4, (char*)"木材", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[5].SetGoods(5, (char*)"金属", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[6].SetGoods(6, (char*)"缶詰", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[7].SetGoods(7, (char*)"銃火器", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[8].SetGoods(8, (char*)"紙", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[9].SetGoods(9, (char*)"書籍", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[10].SetGoods(10, (char*)"東洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[11].SetGoods(11, (char*)"西洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[12].SetGoods(12, (char*)"農業贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[13].SetGoods(13, (char*)"綿花", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[14].SetGoods(14, (char*)"生糸", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[15].SetGoods(15, (char*)"綿織物", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[16].SetGoods(16, (char*)"絹織物", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[17].SetGoods(17, (char*)"石油", 100, 1, 1, 100, 1, 1, 1, 1);
 }
 
 
-//固有値　景気　需要　供給　工業
-int MARKET::CalcPrice(int p, float m, float d, float s, float i) {
-	
-	float CalclatedPrice = p * m * d / s / i;
+//基本値　倍率　景気　需要　供給　工業　工業影響度　技術　技術影響度　開発度　インフラ
+int MARKET::CalcPrice(int b, double e, double d, double s, double i, double indimp, double t, double techimp, double dev, double inf) {
+
+	double CalclatedPrice = b * ((e + (d / s) * (d / s) + (i * indimp) + (t * techimp) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 6);
+
+//	double CalclatedPrice = b + p * e * d / s * (i * indimp) * (t * techimp) * (-0.05 * dev + 1) * (-0.1 * inf + 1);
 
 	return (int)CalclatedPrice;
 }
 
-int MARKET::SaleCalcPrice(int p, float m, float d, float s, float i) {
+int MARKET::SaleCalcPrice(int b, double e, double d, double s, double i, double indimp, double t,  double techimp, double dev, double inf) {
 
-	float CalclatedPrice = (p * m * d / s / i) * (float)0.8;
+	double CalclatedPrice = (b * ((e + (d / s) * (d / s) + (i * indimp) + (t * techimp) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 6)) * 0.8;
 
 	return (int)CalclatedPrice;
 }
 
-void MARKET::SetMarket(float D, float S) {
+//品物基本値　人口　開発度　技術　技術生産影響度　インフラ　供給　需要　工業　工業生産影響度
+int MARKET::CalcProduction(int ID, int herOn) {
+
+	int bp = Goods[ID].BaseProd;
+	double p = City[herOn].Population;
+	double dev = City[herOn].Develop;
+	double tech = City[herOn].Technology;
+	double techimp = Goods[ID].TechProdImpact;
+	double inf = City[herOn].Infra;
+	double d = Market[herOn][ID].Demand;
+	double s = Market[herOn][ID].Supply;
+	double ind = City[herOn].Industry;
+	double indimp = Goods[ID].IndProdImpact;
+
+	double CalclatedProduction = bp * ((p / 10000000) + dev + tech * techimp + inf + std::pow(s, 4.0) + (0.1*d + 1) + (0.1*ind*indimp + 1) / 7);
+
+	//double CalclatedProduction = bp + (((p / 10000000) + dev + tech * techimp + inf + s * 2 + (0.1*d+1) + (0.1*ind*indimp+1)) * pm) / 8;
+
+	return (int)CalclatedProduction;
+}
+
+int MARKET::CalcMarketSize(int ID, int herOn) {
+
+	int bp = Goods[ID].BaseProd;
+	double p = City[herOn].Population;
+	double dev = City[herOn].Develop;
+	double tech = City[herOn].Technology;
+	double techimp = Goods[ID].TechSizeImpact;
+	double inf = City[herOn].Infra;
+	double d = Market[herOn][ID].Demand;
+	double s = Market[herOn][ID].Supply;
+	double ind = City[herOn].Industry;
+	double indimp = Goods[ID].IndSizeImpact;
+
+	double CalclatedMarketSize = bp * ((p / 10000000) + dev + tech * techimp + inf + d * d + (0.1*s + 1) + (0.1*ind*indimp + 1) / 7);
+
+	return (int)CalclatedMarketSize;
+}
+
+void MARKET::SetMarket(double D, double S) {
 
 	Demand = D;
 	Supply = S;
@@ -244,38 +294,38 @@ void MARKET::SetMarket(float D, float S) {
 
 void INIT::InitMarket() {
 
-	Market[0][0].SetMarket((float)1.3, (float)0.5);
-	Market[0][1].SetMarket((float)1.4, (float)0.4);
-	Market[0][2].SetMarket((float)0.5, (float)0.1);
-	Market[0][3].SetMarket((float)1.3, (float)1.0);
-	Market[0][4].SetMarket((float)1.3, (float)0.95);
-	Market[0][5].SetMarket((float)0.01, (float)0.01);
-	Market[0][6].SetMarket((float)1.3, (float)1.0);
-	Market[0][7].SetMarket((float)1.3, (float)0.8);
-	Market[0][8].SetMarket((float)1.3, (float)0.5);
-	Market[0][9].SetMarket((float)1.3, (float)0.5);
-	Market[0][10].SetMarket((float)1.3, (float)0.5);
-	Market[0][11].SetMarket((float)1.3, (float)0.5);
-	Market[0][12].SetMarket((float)0.8, (float)1.2);
-	Market[0][13].SetMarket((float)1.3, (float)0.5);
+	Market[0][0].SetMarket(1.3, 0.5);
+	Market[0][1].SetMarket(1.4, 0.4);
+	Market[0][2].SetMarket(0.5, 0.1);
+	Market[0][3].SetMarket(1.3, 1.0);
+	Market[0][4].SetMarket(1.3, 0.95);
+	Market[0][5].SetMarket(0.01, 0.01);
+	Market[0][6].SetMarket(1.3, 1.0);
+	Market[0][7].SetMarket(1.3, 0.8);
+	Market[0][8].SetMarket(1.3, 0.5);
+	Market[0][9].SetMarket(1.3, 0.5);
+	Market[0][10].SetMarket(1.3, 0.5);
+	Market[0][11].SetMarket(1.0, 1.7);
+	Market[0][12].SetMarket(0.8, 1.2);
+	Market[0][13].SetMarket(1.3, 0.5);
 
-	Market[1][0].SetMarket((float)1.3, (float)0.5);
-	Market[1][1].SetMarket((float)1.4, (float)0.4);
-	Market[1][2].SetMarket((float)0.5, (float)0.1);
-	Market[1][3].SetMarket((float)1.3, (float)1.0);
-	Market[1][4].SetMarket((float)1.3, (float)0.95);
-	Market[1][5].SetMarket((float)0.01, (float)0.01);
-	Market[1][6].SetMarket((float)1.3, (float)1.0);
-	Market[1][7].SetMarket((float)1.3, (float)0.8);
-	Market[1][8].SetMarket((float)1.3, (float)0.5);
-	Market[1][9].SetMarket((float)1.3, (float)0.5);
-	Market[1][10].SetMarket((float)1.3, (float)0.5);
-	Market[1][11].SetMarket((float)1.3, (float)0.5);
-	Market[1][12].SetMarket((float)1.5, (float)0.3);
-	Market[1][13].SetMarket((float)1.3, (float)0.5);
+	Market[1][0].SetMarket(1.3, 0.5);
+	Market[1][1].SetMarket(1.4, 0.4);
+	Market[1][2].SetMarket(0.5, 0.1);
+	Market[1][3].SetMarket(1.3, 1.0);
+	Market[1][4].SetMarket(1.3, 0.95);
+	Market[1][5].SetMarket(0.01, 0.01);
+	Market[1][6].SetMarket(1.3, 1.0);
+	Market[1][7].SetMarket(1.3, 0.8);
+	Market[1][8].SetMarket(1.3, 0.5);
+	Market[1][9].SetMarket(1.3, 0.5);
+	Market[1][10].SetMarket(1.3, 0.5);
+	Market[1][11].SetMarket(1.3, 0.5);
+	Market[1][12].SetMarket(1.5, 0.3);
+	Market[1][13].SetMarket(1.3, 0.5);
 }
 
-void CITY::SetCity(int I, int T, const char* N, int P, float D, float E, float Tech, float Ind, float Inf) {
+void CITY::SetCity(int I, const char* T, const char* N, double P, double D, double E, double Tech, double Ind, double Inf) {
 
 	ID = I;
 	Type = T;
@@ -291,16 +341,16 @@ void CITY::SetCity(int I, int T, const char* N, int P, float D, float E, float T
 void CITY::InitCity() {
 
 	//ID タイプ 名前　人口　開発度　景気　技術　工業　インフラ
-	City[0].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[1].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
-	City[2].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[3].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
-	City[4].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[5].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
-	City[6].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[7].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
-	City[8].SetCity(0, 0, "ロイア", 8000000, (float)0.7, (float)1.3, (float)0.2, (float)0.2, (float)0.2);
-	City[9].SetCity(0, 0, "セカンド", 8000000, (float)0.7, (float)1.0, (float)0.2, (float)0.2, (float)0.2);
+	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[1].SetCity(0, "貴族の町", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
+	City[2].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[3].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
+	City[4].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[5].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
+	City[6].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[7].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
+	City[8].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[9].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
 }
 
 void SYSTEM::SetHerPrices(int ID) {
@@ -335,7 +385,7 @@ void SYSTEM::BuyData() {
 		BuySort(6);
 		BuySort(7);
 		BuySort(8);
-		BuySort(12);
+		BuySort(11);
 		break;
 	case 1:
 		BuySort(0);

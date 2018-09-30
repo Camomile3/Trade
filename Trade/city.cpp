@@ -135,8 +135,8 @@ void SYSTEM::CityBtnSys(int OveredBtn) {
 				return;
 			}
 		}
-		ResetCity();
 		TalkNumber++;
+		ResetCity();
 		break;
 	case 5:
 		BtnSwitch = Sw_EXIT;
@@ -160,9 +160,9 @@ void SYSTEM::CityData() {
 	DrawStringToHandle(x, y + 260, "Industry", GetColor(0, 0, 0), init.FontHandle);
 	DrawStringToHandle(x, y + 300, "Infrastructure", GetColor(0, 0, 0), init.FontHandle);
 
-	sprintf_s(Temp, 32, "%d", City[her.On].Type);
+	sprintf_s(Temp, 32, "%s", City[her.On].Type);
 	DrawStringToHandle(x + 200, y + 20 + 40, Temp, GetColor(0, 0, 0), init.FontHandle);
-	sprintf_s(Temp, 32, "%d", City[her.On].Population);
+	sprintf_s(Temp, 32, "%.0lf", City[her.On].Population);
 	DrawStringToHandle(x + 200, y + 20 + 40 * 2, Temp, GetColor(0, 0, 0), init.FontHandle);
 	sprintf_s(Temp, 32, "%d%%", (int)(City[her.On].Develop * 100));
 	DrawStringToHandle(x + 200, y + 20 + 40 * 3, Temp, GetColor(0, 0, 0), init.FontHandle);
@@ -201,17 +201,25 @@ void SYSTEM::BuySort(int ID) {
 		if (GoodsOn[i] == FALSE) {
 			BtnX[ID] = SortX[i];
 			BtnY[ID] = SortY[i];
+			BtnW[ID] = 150;
 			GoodsOn[i] = TRUE;
 			BtnOn[ID] = TRUE;
 			break;
 		}
 	}
 
-	Goods[ID].CalcedPrice = Market[her.On][ID].CalcPrice(Goods[ID].Price, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, (float)1);
+	Goods[ID].CalcedPrice = Market[her.On][ID].CalcPrice(Goods[ID].BasePrice, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, City[her.On].Industry, Goods[ID].IndImpact, City[her.On].Technology, Goods[ID].TechImpact, City[her.On].Develop, City[her.On].Infra);
+	Goods[ID].CalcedProd = Market[her.On][ID].CalcProduction(ID, her.On);
 
 	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedPrice);
 	DrawStringToHandle(BtnX[ID] + 200, BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedProd);
+	DrawStringToHandle(BtnX[ID] + 360, BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+	sprintf_s(Temp, 32, "%3.0lf%%", Market[her.On][ID].Demand * 100);
+	DrawStringToHandle(BtnX[ID] + 520, BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+	sprintf_s(Temp, 32, "%3.0lf%%", Market[her.On][ID].Supply * 100);
+	DrawStringToHandle(BtnX[ID] + 520 + 160, BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
 }
 
 //Goods.Nameは品目の名前
@@ -295,6 +303,15 @@ void SYSTEM::BuySys(int ID) {
 
 	bool LEnd = FALSE;
 
+	if (ID <= -1 || OveredBtn == 63 || OveredBtn == 62) {
+		BtnSwitch = Sw_BUY;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		DrawBuyString();
+		BuyData();
+		OveredBtn = -1;
+		return;
+	}
 	SearchEmpty(ID);
 
 	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
@@ -303,7 +320,6 @@ void SYSTEM::BuySys(int ID) {
 	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 9999, 0, FALSE);
 	TempPrice = Goods[ID].CalcedPrice * TempNumber;
 
-	printfDx("Price=%d\n", Goods[ID].Price);
 	printfDx("BoughtNumber=%d\n", TempNumber);
 	printfDx("BoughtPrice=%d\n", TempPrice);
 	printfDx("CargoPrice=%d\n", her.CargoPrice[SlotNumber]);
@@ -413,6 +429,7 @@ void SYSTEM::SaleSort(int ID) {
 		if (GoodsOn[i] == FALSE) {
 			BtnX[ID] = SortX[i];
 			BtnY[ID] = SortY[i];
+			BtnW[ID] = 150;
 			GoodsOn[i] = TRUE;
 			BtnOn[ID] = TRUE;
 			sprintf_s(Temp, 32, "%d", her.CargoPrice[i] / her.Cargo[i]);	//一個当買値
@@ -422,8 +439,7 @@ void SYSTEM::SaleSort(int ID) {
 			break;
 		}
 	}
-
-	Goods[ID].CalcedPrice = Market[her.On][ID].SaleCalcPrice(Goods[ID].Price, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, (float)1);
+	Goods[ID].CalcedPrice = Market[her.On][ID].SaleCalcPrice(Goods[ID].BasePrice, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, City[her.On].Industry, Goods[ID].IndImpact, City[her.On].Technology, Goods[ID].TechImpact, City[her.On].Develop, City[her.On].Infra);
 
 	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 
@@ -537,7 +553,6 @@ void SYSTEM::SaleSys(int ID) {
 	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 9999, 0, FALSE);
 	TempPrice = Goods[ID].CalcedPrice * TempNumber;
 
-	printfDx("Price=%d\n", Goods[ID].Price);
 	printfDx("BoughtNumber=%d\n", TempNumber);
 	printfDx("BoughtPrice=%d\n", TempPrice);
 	printfDx("CargoPrice=%d\n", her.CargoPrice[SlotNumber]);
@@ -748,7 +763,6 @@ void SYSTEM::TalkBtnSys(int OveredBtn) {
 
 	switch (BtnSwitch) {
 	case Sw_TALK:
-		ETalkCount++;
 		Event(EventNumber);
 		break;
 	case Sw_TALK2:
