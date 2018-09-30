@@ -1,6 +1,8 @@
 #include "Dxlib.h"
 #include "class.h"
 
+#define TransportTech (i == 0) || (i == 1 && City[her.On].Technology * 100 >= 30) || (i == 2 && City[her.On].Technology * 100 >= 30) || (i == 3 && City[her.On].Technology * 100 >= 40) || (i == 4 && City[her.On].Technology * 100 >= 70) || (i == 5 && City[her.On].Technology * 100 >= 80) || (i == 6 && City[her.On].Technology * 100 >= 90) || (i == 7 && City[her.On].Technology * 100 >= 100) || (i == 8) || (i == 9 && City[her.On].Technology * 100 >= 30) || (i == 10 && City[her.On].Technology * 100 >= 30) || (i == 11 && City[her.On].Technology * 100 >= 40) || (i == 12 && City[her.On].Technology * 100 >= 70) || (i == 13 && City[her.On].Technology * 100 >= 80) || (i == 14 && City[her.On].Technology * 100 >= 90) || (i == 15 && City[her.On].Technology * 100 >= 100)
+
 extern FUN fun;
 extern INIT init;
 extern HEROINE her;
@@ -8,6 +10,7 @@ extern GOODS Goods[32];
 extern CITY City[16];
 extern MARKET Market[16][32];
 extern MARKET HerMarket[16][32];
+extern TRANSPORT trans[7];
 
 void SYSTEM::ResetCity() {
 
@@ -20,7 +23,7 @@ void SYSTEM::ResetCity() {
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraCity, TRUE);
 	DrawWindow(160, 120, 1, 8);
 	DrawWindow(1480, 120, 2, 12);
-	DrawButton();
+	DrawButton(-1);
 	DrawMessageWindow();
 	CityData();
 }
@@ -117,13 +120,13 @@ void SYSTEM::CityBtnSys(int OveredBtn) {
 		BtnSwitch = Sw_INVEST;
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		InvestData();
+		InvestData(-1);
 		break;
 	case 3:
 		BtnSwitch = Sw_MANAGE;
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		ManageData();
+		ManageData(-1);
 		break;
 	case 4:
 
@@ -285,6 +288,8 @@ void SYSTEM::DrawBuyString() {
 	DrawStringToHandle(X + 200 + 160 * 3, Y, "ãüãã", GetColor(0, 0, 0), init.FontHandle);
 }
 
+//BuyDataÇÕdatas.hÇ÷à⁄ìÆ
+
 void SYSTEM::SearchEmpty(int ID) {
 
 	for (int i = 0; i < 64; i++) {
@@ -301,9 +306,7 @@ void SYSTEM::SearchEmpty(int ID) {
 
 void SYSTEM::BuySys(int ID) {
 
-	bool LEnd = FALSE;
-
-	if (ID <= -1 || OveredBtn == 63 || OveredBtn == 62) {
+	if (ID < 0 || OveredBtn == 63 || OveredBtn == 62) {
 		BtnSwitch = Sw_BUY;
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
@@ -327,50 +330,12 @@ void SYSTEM::BuySys(int ID) {
 	if (TempPrice > her.Money) {
 		ResetCity();
 		DrawStringToHandle(MWX + 64, MWY + 64, "èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒ", GetColor(255, 255, 255), init.FontHandle);
-		while (1) {
-			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
-				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
-					while (1) {
-						MInput1F = MInput;
-						MInput = GetMouseInput();
-						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-							LEnd = TRUE;
-						WaitTimer(16);
-						if (LEnd) { break; }
-					}
-				}
-			}
-			WaitTimer(16);
-			if (LEnd) { break; }
-		}
+		WaitClick();
 	}
 	else if (TempNumber + her.CargoWeight > her.MaxWeight) {
 		ResetCity();
 		DrawStringToHandle(MWX + 64, MWY + 64, "èdó ÉIÅ[ÉoÅ[Ç≈Ç∑", GetColor(255, 255, 255), init.FontHandle);
-		while (1) {
-			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
-				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
-					while (1) {
-						MInput1F = MInput;
-						MInput = GetMouseInput();
-						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-							LEnd = TRUE;
-						WaitTimer(16);
-						if (LEnd) { break; }
-					}
-				}
-			}
-			WaitTimer(16);
-			if (LEnd) { break; }
-		}
+		WaitClick();
 	}
 	else if (TempNumber != 0)
 	{
@@ -383,26 +348,7 @@ void SYSTEM::BuySys(int ID) {
 		if (her.Cargo[SlotNumber] != 0) {
 			ResetCity();
 			DrawStringToHandle(MWX + 64, MWY + 64, "çwì¸ÇµÇ‹ÇµÇΩ", GetColor(255, 255, 255), init.FontHandle);
-			while (1) {
-				if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
-					if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
-						while (1) {
-							MInput1F = MInput;
-							MInput = GetMouseInput();
-							if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-								LEnd = TRUE;
-							if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-								LEnd = TRUE;
-							if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-								LEnd = TRUE;
-							WaitTimer(16);
-							if (LEnd) { break; }
-						}
-					}
-				}
-				WaitTimer(16);
-				if (LEnd) { break; }
-			}
+			WaitClick();
 		}
 	}
 	BtnSwitch = Sw_BUY;
@@ -623,50 +569,218 @@ void SYSTEM::SaleSys(int ID) {
 
 void SYSTEM::InvestBtnOver(int i) {
 
-	switch (i) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_INVEST;
-		DrawWindow(520, 140, 5, 16);
-		InvestData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 0, 0), init.FontHandle);
-		break;
-	case 1:
-		break;
-	}
-}
-
-void SYSTEM::InvestBtnOut(int OveredBtn) {
-
-	switch (OveredBtn) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_INVEST;
-		DrawWindow(520, 140, 5, 16);
-		InvestData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case 1:
+	switch (BtnSwitch) {
+	case Sw_INVEST:
+	case Sw_INVEST2:
+	case Sw_INVEST3:
+	case Sw_INVEST4:
+		if (i == 63) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			InvestData(i);
+			DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 0, 0), init.FontHandle);
+		}
+		else if (BtnOn[i] == TRUE) {
+			if (TransportTech) {
+				ResetCity();
+				DrawWindow(520, 140, 5, 16);
+				InvestData(i);
+				DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 0, 0), init.FontHandle);
+			}
+		}
 		break;
 	}
 }
 
-void SYSTEM::InvestBtnSys(int OveredBtn) {
+void SYSTEM::InvestBtnOut(int i) {
 
-	switch (OveredBtn) {
-	case 63:
-		BtnSwitch = Sw_CITY;
-		ResetCity();
-		break;
-	case 1:
+	switch (BtnSwitch) {
+	case Sw_INVEST:
+	case Sw_INVEST2:
+	case Sw_INVEST3:
+	case Sw_INVEST4:
+		if (i == 63) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			InvestData(i);
+			DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 255, 255), init.FontHandle);
+		}
+		else if (BtnOn[i] == TRUE) {
+			if (TransportTech) {
+				ResetCity();
+				DrawWindow(520, 140, 5, 16);
+				InvestData(i);
+				DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+			}
+		}
 		break;
 	}
 }
 
-void SYSTEM::InvestData() {
+void SYSTEM::InvestBtnSys(int i) {
 
+	switch (BtnSwitch) {
+	case Sw_INVEST:
+		switch (i) {
+		case 63:
+			BtnSwitch = Sw_CITY;
+			ResetCity();
+			break;
+		case 0:
+			ResetCity();
+			BtnSwitch = Sw_INVEST2;
+			DrawWindow(520, 140, 5, 16);
+			InvestData(-1);
+			break;
+		case 1:
+			ResetCity();
+			BtnSwitch = Sw_INVEST3;
+			DrawWindow(520, 140, 5, 16);
+			InvestData(-1);
+			break;
+		case 2:
+			ResetCity();
+			BtnSwitch = Sw_INVEST4;
+			DrawWindow(520, 140, 5, 16);
+			InvestData(-1);
+			break;
+		}
+		break;
+	case Sw_INVEST2:
+		if (i == 63){
+			BtnSwitch = Sw_CITY;
+			ResetCity();
+			break;
+		}
+		else if (TransportTech) {
+			if (i < 8) {
+				BtnSwitch = Sw_INVESTBUY;
+				ResetCity();
+				InvestBuySys(i);
+			}
+			else if (i >= 8) {
+				BtnSwitch = Sw_INVESTBUY;
+				ResetCity();
+				InvestSaleSys(i);
+			}
+		}
+		break;
+	case Sw_INVEST3:
+		break;
+	case Sw_INVEST4:
+		break;
+	}
 }
 
+void SYSTEM::InvestData(int Btn) {
+
+	int x = 0;
+	int y = 0;
+	int i = 0;
+
+	switch (BtnSwitch) {
+	case Sw_INVEST:
+		for (int i = 0; i < 3; i++) {
+			BtnX[i] = 600;
+			BtnY[i] = 200 + i * 70;
+			BtnOn[i] = TRUE;
+		}
+		TempChar[0] = "óAëóéËíiîÑîÉ";
+		TempChar[1] = "åöï®îÑîÉ";
+		TempChar[2] = "ìäéë";
+
+		if (Btn != 0)
+			DrawStringToHandle(BtnX[0], BtnY[0], TempChar[0], GetColor(0, 0, 0), init.FontHandle);
+		if (Btn != 1)
+			DrawStringToHandle(BtnX[1], BtnY[1], TempChar[1], GetColor(0, 0, 0), init.FontHandle);
+		if (Btn != 2)
+			DrawStringToHandle(BtnX[2], BtnY[2], TempChar[2], GetColor(0, 0, 0), init.FontHandle);
+		break;
+	case Sw_INVEST2:
+
+		TempChar[0] = "îné‘çwì¸";
+		TempChar[1] = "îøëDçwì¸";
+		TempChar[2] = "ëÂå^îné‘çwì¸";
+		TempChar[3] = "ëÂå^îøëDçwì¸";
+		TempChar[4] = "ÉgÉâÉbÉNçwì¸";
+		TempChar[5] = "èˆãCëDçwì¸";
+		TempChar[6] = "ëÂå^ÉgÉâÉbÉNçwì¸";
+		TempChar[7] = "ëÂå^èˆãCëDçwì¸";
+		TempChar[8] = "îné‘îÑãp";
+		TempChar[9] = "îøëDîÑãp";
+		TempChar[10] = "ëÂå^îné‘îÑãp";
+		TempChar[11] = "ëÂå^îøëDîÑãp";
+		TempChar[12] = "ÉgÉâÉbÉNîÑãp";
+		TempChar[13] = "èˆãCëDîÑãp";
+		TempChar[14] = "ëÂå^ÉgÉâÉbÉNîÑãp";
+		TempChar[15] = "ëÂå^èˆãCëDîÑãp";
+
+		//0îné‘0Å@1îøëD30Å@2ëÂå^îné‘30Å@3ëÂå^îøëD40Å@4ÉgÉâÉbÉN70Å@5èˆãCëD80Å@6ëÂå^ÉgÉâÉbÉN90Å@7ëÂå^èˆãCëD100
+		while (i < 16) {
+			BtnX[i] = 600 + x * 200;
+			BtnY[i] = 200 + y * 50;
+			BtnW[i] = 180;
+			BtnOn[i] = TRUE;
+			if (Btn != i)
+				if (TransportTech)
+				DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+			y++;
+			i++;
+			if (i == 8) {
+				x++;
+				y = 0;
+			}
+		}
+
+		break;
+	case Sw_INVEST3:
+		break;
+	case Sw_INVEST4:
+		break;
+	}
+}
+
+void SYSTEM::InvestBuySys(int ID) {
+
+	DrawStringToHandle(MWX + 64, MWY + 64, "Ç¢Ç≠Ç¬çwì¸ÇµÇ‹Ç∑Ç©ÅH", GetColor(255, 255, 255), init.FontHandle);
+
+	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 1000000, 0, FALSE);
+	TempPrice = trans[ID].Price * TempNumber;
+
+	if (TempPrice > her.Money) {
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒ", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	else if (trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒ", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	else if (trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999 ) {
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒ", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	else if (TempNumber != 0)
+	{
+		her.Transport[ID] += TempNumber;
+		her.Money -= TempPrice;
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "çwì¸ÇµÇ‹ÇµÇΩ", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	BtnSwitch = Sw_INVEST;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	InvestData(-1);
+	OveredBtn = -1;
+	printfDx("%d\n", her.Transport[0]);
+}
+
+void SYSTEM::InvestSaleSys(int ID) {
+
+}
 
 void SYSTEM::ManageBtnOver(int i) {
 
@@ -675,7 +789,7 @@ void SYSTEM::ManageBtnOver(int i) {
 		ResetCity();
 		BtnSwitch = Sw_MANAGE;
 		DrawWindow(520, 140, 5, 16);
-		ManageData();
+		ManageData(i);
 		DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
@@ -690,7 +804,7 @@ void SYSTEM::ManageBtnOut(int OveredBtn) {
 		ResetCity();
 		BtnSwitch = Sw_MANAGE;
 		DrawWindow(520, 140, 5, 16);
-		ManageData();
+		ManageData(OveredBtn);
 		DrawStringToHandle(BtnX[63], BtnY[63], "ñﬂÇÈ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
@@ -710,7 +824,7 @@ void SYSTEM::ManageBtnSys(int OveredBtn) {
 	}
 }
 
-void SYSTEM::ManageData() {
+void SYSTEM::ManageData(int i) {
 
 }
 
@@ -787,7 +901,7 @@ void SYSTEM::ResetTalk() {
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraCity, TRUE);
 	DrawWindow(160, 120, 1, 8);
 	DrawWindow(1480, 120, 2, 12);
-	DrawButton();
+	DrawButton(-1);
 	DrawMessageWindow();
 	CityData();
 	Event(EventNumber);

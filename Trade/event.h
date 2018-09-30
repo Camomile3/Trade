@@ -41,6 +41,10 @@ void SYSTEM::Event(int Num) {
 			DrawStringToHandle(MWX + 64, MWY + 64, "Ç«Ç§Ç∑ÇÈÅH", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[62], BtnY[62], "îÉÇ§", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[63], BtnY[63], "îÉÇÌÇ»Ç¢", GetColor(255, 255, 255), init.FontHandle);
+			if (Stopper == TRUE) {
+				WaitClick();
+				Stopper = FALSE;
+			}
 
 			if (EventSwitch == 62) {
 				ResetCity();
@@ -68,6 +72,7 @@ void SYSTEM::Event(int Num) {
 				WaitClick();
 				ETalkCount = 0;
 				EventFlag[0] = FALSE;
+				Stopper = TRUE;
 				BtnSwitch = Sw_CITY;
 				ResetCity();
 			}
@@ -83,6 +88,7 @@ void SYSTEM::Event(int Num) {
 				WaitClick();
 				ETalkCount = 0;
 				EventFlag[0] = FALSE;
+				Stopper = TRUE;
 				BtnSwitch = Sw_CITY;
 				ResetCity();
 

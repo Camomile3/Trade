@@ -17,7 +17,6 @@ public:
 	int GraShip[12];
 	void SetFont();
 	void LoadGra();
-	void ResetTitle();
 	void InitMarket();
 	void Cargo();
 };
@@ -58,6 +57,8 @@ class SYSTEM {
 
 	double Angle, Angle2;
 	bool MOver = FALSE;
+	bool LEnd = FALSE;
+	bool Stopper = TRUE;
 	enum {
 		Sw_TITLE,
 		Sw_NEW,
@@ -79,6 +80,11 @@ class SYSTEM {
 		Sw_SALE,
 		Sw_SALE2,
 		Sw_INVEST,
+		Sw_INVEST2,
+		Sw_INVEST3,
+		Sw_INVEST4,
+		Sw_INVESTBUY,
+		Sw_INVESTSALE,
 		Sw_MANAGE,
 		Sw_TALK,
 		Sw_TALK2,
@@ -90,6 +96,7 @@ public:
 	bool EventFlag[128];
 	int EventSwitch;
 	int EventNumber;
+	const char* TempChar[32];
 
 	//メインシステム
 	void ButtonOver();
@@ -107,7 +114,8 @@ public:
 	void SetTwoBtn();
 	void SetFullBtn();
 	//タイトル
-	void DrawButton();
+	void ResetTitle();
+	void DrawButton(int);
 	void TitleBtnOver(int);
 	void TitleBtnOverOut(int);
 	void TitleBtnSys(int);
@@ -144,7 +152,7 @@ public:
 	void PricesBtnOut(int);
 	void PricesBtnSys(int);
 	void PricesData();
-	void PricesData2(int);
+	void PricesData2(int, int);
 	void SaveBtnOver(int);
 	void SaveBtnOut(int);
 	void SaveBtnSys(int);
@@ -188,11 +196,13 @@ public:
 	void InvestBtnOver(int);
 	void InvestBtnOut(int);
 	void InvestBtnSys(int);
-	void InvestData();
+	void InvestData(int);
+	void InvestBuySys(int);
+	void InvestSaleSys(int);
 	void ManageBtnOver(int);
 	void ManageBtnOut(int);
 	void ManageBtnSys(int);
-	void ManageData();
+	void ManageData(int);
 	void TalkBtnOver(int);
 	void TalkBtnOut(int);
 	void TalkBtnSys(int);
@@ -220,6 +230,7 @@ public:
 	int ShipMoveSpeed;
 	int WTech;
 	int WIndustry;
+	int Transport[8];	//0馬車0　1帆船10　2大型馬車30　3大型帆船40　4トラック70　5蒸気船80　6大型トラック90　7大型蒸気船100
 	bool HaveShip = FALSE;
 	bool OnShip = FALSE;
 };
@@ -275,4 +286,16 @@ public:
 
 	void SetCity(int, const char*, const char*, double, double, double, double, double, double);
 	void InitCity();
+};
+
+class TRANSPORT {
+public:
+	int ID;
+	const char* Name;
+	int Capacity;
+	int Price;
+	bool Sea;
+
+	void SetTrans(int, const char*, int, int, bool);
+	void InitTrans();
 };

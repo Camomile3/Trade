@@ -6,9 +6,11 @@ GOODS Goods[32];
 CITY City[16];
 MARKET Market[16][32];
 MARKET HerMarket[16][32];
+TRANSPORT trans[8];
 extern HEROINE her;
 extern SYSTEM sys;
 extern INIT init;
+extern TRANSPORT trans[8];
 
 //メッセージ処理を追加するとき追加
 void SYSTEM::DrawMessageWindow() {
@@ -155,6 +157,9 @@ void SYSTEM::DrawMessageWindow() {
 		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_INVEST:
+	case Sw_INVEST2:
+	case Sw_INVEST3:
+	case Sw_INVEST4:
 		BtnX[63] = MWX + 640;
 		BtnY[63] = MWY + 140;
 		BtnW[63] = 90;
@@ -341,7 +346,7 @@ void CITY::SetCity(int I, const char* T, const char* N, double P, double D, doub
 void CITY::InitCity() {
 
 	//ID タイプ 名前　人口　開発度　景気　技術　工業　インフラ
-	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
+	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 0.5, 0.2, 0.2);
 	City[1].SetCity(0, "貴族の町", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
 	City[2].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
 	City[3].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
@@ -395,4 +400,25 @@ void SYSTEM::BuyData() {
 		BuySort(6);
 		BuySort(12);
 	}
+}
+
+void TRANSPORT::SetTrans(int i, const char* n, int c, int p, bool s) {
+
+	ID = i;
+	Name = n;
+	Capacity = c;
+	Price = p;
+	Sea = s;
+}
+
+void TRANSPORT::InitTrans() {
+
+	trans[0].SetTrans(0, "馬車", 50, 500, FALSE);
+	trans[1].SetTrans(1, "帆船", 200, 5000, TRUE);
+	trans[2].SetTrans(2, "大型馬車", 100, 1500, FALSE);
+	trans[3].SetTrans(3, "大型帆船", 300, 10000, TRUE);
+	trans[4].SetTrans(4, "トラック", 50, 500, FALSE);
+	trans[5].SetTrans(5, "蒸気船", 50, 500, TRUE);
+	trans[6].SetTrans(6, "大型トラック", 50, 500, FALSE);
+	trans[7].SetTrans(7, "大型蒸気船", 50, 500, TRUE);
 }
