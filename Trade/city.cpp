@@ -104,7 +104,7 @@ void SYSTEM::CityBtnSys(int OveredBtn) {
 		ResetButton();
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		DrawBuyWindow();
+		DrawBuyString();
 		BuyData();
 		break;
 	case 1:
@@ -112,6 +112,31 @@ void SYSTEM::CityBtnSys(int OveredBtn) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		SaleData();
+		break;
+	case 2:
+		BtnSwitch = Sw_INVEST;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		InvestData();
+		break;
+	case 3:
+		BtnSwitch = Sw_MANAGE;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		ManageData();
+		break;
+	case 4:
+
+		for (int i = 0; i < 128; i++) {
+			if (EventFlag[i] == TRUE) {
+				BtnSwitch = Sw_TALK;
+				EventNumber = i;
+				Event(EventNumber);
+				return;
+			}
+		}
+		ResetCity();
+		TalkNumber++;
 		break;
 	case 5:
 		BtnSwitch = Sw_EXIT;
@@ -196,14 +221,14 @@ void SYSTEM::BuyBtnOver(int i) {
 	if (i == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		DrawBuyWindow();
+		DrawBuyString();
 		BuyData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 0, 0), init.FontHandle);
 	}
 	else if (BtnOn[i] == TRUE) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		DrawBuyWindow();
+		DrawBuyString();
 		BuyData();
 		DrawStringToHandle(BtnX[i], BtnY[i], Goods[i].Name, GetColor(255, 0, 0), init.FontHandle);
 	}
@@ -214,14 +239,14 @@ void SYSTEM::BuyBtnOut(int OveredBtn) {
 	if (OveredBtn == 63) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		DrawBuyWindow();
+		DrawBuyString();
 		BuyData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 255, 255), init.FontHandle);
 	}
 	else if (BtnOn[OveredBtn] == TRUE) {
 		ResetCity();
 		DrawWindow(520, 140, 5, 16);
-		DrawBuyWindow();
+		DrawBuyString();
 		BuyData();
 		DrawStringToHandle(BtnX[OveredBtn], BtnY[OveredBtn], Goods[OveredBtn].Name, GetColor(0, 0, 0), init.FontHandle);
 	}
@@ -240,7 +265,7 @@ void SYSTEM::BuyBtnSys(int OveredBtn) {
 	}
 }
 
-void SYSTEM::DrawBuyWindow() {
+void SYSTEM::DrawBuyString() {
 
 	int X = 560;
 	int Y = 160;
@@ -252,12 +277,7 @@ void SYSTEM::DrawBuyWindow() {
 	DrawStringToHandle(X + 200 + 160 * 3, Y, "‹Ÿ‹‹", GetColor(0, 0, 0), init.FontHandle);
 }
 
-
-
-void SYSTEM::BuySys(int ID) {
-
-	int SlotNumber;
-	bool LEnd = FALSE;
+void SYSTEM::SearchEmpty(int ID) {
 
 	for (int i = 0; i < 64; i++) {
 		if (her.HiddenID[i] == ID) {
@@ -269,6 +289,13 @@ void SYSTEM::BuySys(int ID) {
 			break;
 		}
 	}
+}
+
+void SYSTEM::BuySys(int ID) {
+
+	bool LEnd = FALSE;
+
+	SearchEmpty(ID);
 
 	DrawStringToHandle(MWX + 64, MWY + 64, "‚¢‚­‚Âw“ü‚µ‚Ü‚·‚©H", GetColor(255, 255, 255), init.FontHandle);
 	printfDx("SlotNumber=%d\n", SlotNumber);
@@ -365,7 +392,7 @@ void SYSTEM::BuySys(int ID) {
 	BtnSwitch = Sw_BUY;
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
-	DrawBuyWindow();
+	DrawBuyString();
 	BuyData();
 	OveredBtn = -1;
 }
@@ -586,9 +613,7 @@ void SYSTEM::InvestBtnOver(int i) {
 		ResetCity();
 		BtnSwitch = Sw_INVEST;
 		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		DrawBuyWindow();
-		BuyData();
+		InvestData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
@@ -603,9 +628,7 @@ void SYSTEM::InvestBtnOut(int OveredBtn) {
 		ResetCity();
 		BtnSwitch = Sw_INVEST;
 		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		DrawBuyWindow();
-		BuyData();
+		InvestData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
@@ -637,8 +660,7 @@ void SYSTEM::ManageBtnOver(int i) {
 		ResetCity();
 		BtnSwitch = Sw_MANAGE;
 		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		BuyData();
+		ManageData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
@@ -653,8 +675,7 @@ void SYSTEM::ManageBtnOut(int OveredBtn) {
 		ResetCity();
 		BtnSwitch = Sw_MANAGE;
 		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		BuyData();
+		ManageData();
 		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
@@ -681,14 +702,20 @@ void SYSTEM::ManageData() {
 
 void SYSTEM::TalkBtnOver(int i) {
 
-	switch (i) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_TALK;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		BuyData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 0, 0), init.FontHandle);
+	switch (EventNumber) {
+	case 0:
+		switch (i) {
+		case 62:
+			ResetTalk();
+			SetTwoBtn();
+			DrawStringToHandle(BtnX[62], BtnY[62], "”ƒ‚¤", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		case 63:
+			ResetTalk();
+			SetTwoBtn();
+			DrawStringToHandle(BtnX[63], BtnY[63], "”ƒ‚í‚È‚¢", GetColor(255, 0, 0), init.FontHandle);
+			break;
+		}
 		break;
 	case 1:
 		break;
@@ -697,14 +724,20 @@ void SYSTEM::TalkBtnOver(int i) {
 
 void SYSTEM::TalkBtnOut(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_TALK;
-		DrawWindow(520, 140, 5, 16);
-		DrawMessageWindow();
-		BuyData();
-		DrawStringToHandle(BtnX[63], BtnY[63], "–ß‚é", GetColor(255, 255, 255), init.FontHandle);
+	switch (EventNumber) {
+	case 0:
+		switch (OveredBtn) {
+		case 62:
+			ResetTalk();
+			SetTwoBtn();
+			DrawStringToHandle(BtnX[62], BtnY[62], "”ƒ‚¤", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 63:
+			ResetTalk();
+			SetTwoBtn();
+			DrawStringToHandle(BtnX[63], BtnY[63], "”ƒ‚í‚È‚¢", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		}
 		break;
 	case 1:
 		break;
@@ -713,18 +746,37 @@ void SYSTEM::TalkBtnOut(int OveredBtn) {
 
 void SYSTEM::TalkBtnSys(int OveredBtn) {
 
-	switch (OveredBtn) {
-	case 63:
-		BtnSwitch = Sw_CITY;
-		ResetCity();
+	switch (BtnSwitch) {
+	case Sw_TALK:
+		ETalkCount++;
+		Event(EventNumber);
 		break;
-	case 1:
+	case Sw_TALK2:
+		EventSwitch = OveredBtn;
+		Event(EventNumber);
 		break;
 	}
 }
 
 void SYSTEM::TalkData() {
 
+}
+
+void SYSTEM::ResetTalk() {
+
+	for (int i = 0; i < 64; i++) {
+		GoodsOn[i] = FALSE;
+		BtnX[i] = -1;
+		BtnY[i] = -1;
+	}
+	ClearDrawScreen();
+	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraCity, TRUE);
+	DrawWindow(160, 120, 1, 8);
+	DrawWindow(1480, 120, 2, 12);
+	DrawButton();
+	DrawMessageWindow();
+	CityData();
+	Event(EventNumber);
 }
 
 void SYSTEM::ExitBtnOver(int i) {

@@ -52,6 +52,9 @@ class SYSTEM {
 	int MWX,MWY;
 	long long TempPrice;
 	int TempNumber;
+	int TalkNumber = 0;
+	int ETalkCount = 0;
+	int SlotNumber;
 
 	double Angle, Angle2;
 	bool MOver = FALSE;
@@ -78,21 +81,30 @@ class SYSTEM {
 		Sw_INVEST,
 		Sw_MANAGE,
 		Sw_TALK,
+		Sw_TALK2,
 		Sw_EXIT,
 	};
 	int BtnSwitch = Sw_TITLE;
 public:
 	bool DebugMode = TRUE;
+	bool EventFlag[128];
+	int EventSwitch;
+	int EventNumber;
 
 	//メインシステム
 	void ButtonOver();
 	void ButtonSys();
+	void DaySys();
 	void DrawMessageWindow();
 	void DrawWindow(int, int, int, int);
 	void InitSys();
 	void ResetButton();
 	void ResetBtnOn();
 	char* AddComma(int);
+	void WaitClick();
+	void WaitYesNo();
+	void SearchEmpty(int);
+	void SetTwoBtn();
 	//タイトル
 	void DrawButton();
 	void TitleBtnOver(int);
@@ -154,6 +166,7 @@ public:
 	//街
 	void SetHerPrices(int);
 	void ResetCity();
+	void ResetTalk();
 	void CityBtnOver(int);
 	void CityBtnOut(int);
 	void CityBtnSys(int);
@@ -161,7 +174,7 @@ public:
 	void BuyBtnOver(int);
 	void BuyBtnOut(int);
 	void BuyBtnSys(int);
-	void DrawBuyWindow();
+	void DrawBuyString();
 	void BuyData();
 	void BuySys(int);
 	void BuySort(int);
@@ -183,6 +196,7 @@ public:
 	void TalkBtnOut(int);
 	void TalkBtnSys(int);
 	void TalkData();
+	void Event(int);
 	void ExitBtnOver(int);
 	void ExitBtnOut(int);
 	void ExitBtnSys(int);

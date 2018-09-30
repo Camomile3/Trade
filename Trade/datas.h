@@ -7,6 +7,191 @@ CITY City[16];
 MARKET Market[16][32];
 MARKET HerMarket[16][32];
 extern HEROINE her;
+extern SYSTEM sys;
+extern INIT init;
+
+//メッセージ処理を追加するとき追加
+void SYSTEM::DrawMessageWindow() {
+
+	TCHAR Temp[64];
+	MWX = 480;
+	MWY = 800;
+	DrawGraph(MWX, MWY, init.GraMW, TRUE);
+
+	sys.MOver = FALSE;
+	switch (BtnSwitch) {
+	case Sw_QUIT:
+		BtnX[62] = MWX + 280;
+		BtnY[62] = MWY + 140;
+		BtnW[62] = 90;
+		BtnH[62] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "終了しますか？", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_CARGO:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "積荷の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_TRANS:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "輸送手段の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_FINAN:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "財務状況の解説をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_QUEST:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "メインクエストとかサブとか", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_PRICES:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "相場を見る街を選んでね", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_PRICES2:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		sprintf_s(Temp, 64, "%sの相場です", City[ClickedBtn].Name);
+		DrawStringToHandle(MWX + 64, MWY + 64, Temp, GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_SAVE:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "セーブするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_LOAD:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "ロードするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_OPTION:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "オプション項目の説明をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_CITY:
+		switch (TalkNumber) {
+		case 0:
+			DrawStringToHandle(MWX + 64, MWY + 64, "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 1:
+			DrawStringToHandle(MWX + 64, MWY + 64, "こんにちな！ここはモヘミンチョだよ！", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 2:
+			DrawStringToHandle(MWX + 64, MWY + 64, "おはよう　ダメージ。もう　あさがよい。", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 3:
+			DrawStringToHandle(MWX + 64, MWY + 64, "あれ　テイデンかミ", GetColor(255, 255, 255), init.FontHandle);
+			break;
+		case 4:
+			DrawStringToHandle(MWX + 64, MWY + 64, "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
+			TalkNumber = 0;
+			break;
+		}
+		break;
+	case Sw_BUY:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "購入する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_SALE:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "売却する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_INVEST:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "投資画面です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_MANAGE:
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "経営画面です", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	case Sw_TALK2:
+
+		break;
+	case Sw_EXIT:
+		BtnX[62] = MWX + 280;
+		BtnY[62] = MWY + 140;
+		BtnW[62] = 90;
+		BtnH[62] = 42;
+		BtnX[63] = MWX + 640;
+		BtnY[63] = MWY + 140;
+		BtnW[63] = 90;
+		BtnH[63] = 42;
+
+		DrawStringToHandle(MWX + 64, MWY + 64, "街を出ますか？", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
+		break;
+	}
+
+}
 
 void GOODS::SetGoods(int i, char* n, int p) {
 	ID = i;
@@ -29,6 +214,10 @@ void GOODS::InitGoods() {
 	Goods[11].SetGoods(11, (char*)"東洋贅沢品", 100);
 	Goods[12].SetGoods(12, (char*)"西洋贅沢品", 100);
 	Goods[13].SetGoods(13, (char*)"農業贅沢品", 100);
+	Goods[14].SetGoods(14, (char*)"綿花", 100);
+	Goods[15].SetGoods(15, (char*)"生糸", 100);
+	Goods[16].SetGoods(16, (char*)"綿織物", 100);
+	Goods[17].SetGoods(17, (char*)"絹織物", 100);
 }
 
 

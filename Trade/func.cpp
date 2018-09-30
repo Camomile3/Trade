@@ -1,6 +1,7 @@
 #include "DxLib.h"
 #include "class.h"
 #include "datas.h"
+#include "event.h"
 
 #define M_PI	3.14159265358979323846
 #define DEG_TO_RAD(deg) (((deg)/360)*2*M_PI)
@@ -32,13 +33,19 @@ void FUN::main() {
 	init.InitMarket();
 
 	if (sys.DebugMode == TRUE) {
-		her.Money = 999888777666555;
+		her.Money = 100000000000;
 		her.CargoWeight = 0;
 		her.HaveShip = TRUE;
 		her.MaxWeight = 900000000;
 		her.CargoWeight = 500000000;
 		her.ShipMaxWeight = 800000000;
 		her.ShipWeight = 700000000;
+
+		her.Year = 3;
+		her.Month = 3;
+		her.Day = 25;
+
+		sys.EventFlag[0] = TRUE;
 	}
 
 	//メインループ
@@ -46,6 +53,7 @@ void FUN::main() {
 		while (CheckHitKey(KEY_INPUT_DELETE) == 0) {
 			sys.ButtonOver();
 			sys.ButtonSys();
+			sys.DaySys();
 			WaitTimer(16);
 			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
 		}
@@ -54,6 +62,7 @@ void FUN::main() {
 		while (1) {
 			sys.ButtonOver();
 			sys.ButtonSys();
+			sys.DaySys();
 			WaitTimer(16);
 			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
 		}
@@ -95,6 +104,27 @@ void INIT::LoadGra() {
 	}
 }
 
+void SYSTEM::DaySys() {
+
+	if (her.Day > 31 && (her.Month == 1 || her.Month == 3 || her.Month == 5 || her.Month == 7 || her.Month == 8 || her.Month == 10 || her.Month == 12 )) {
+		her.Day = 1;
+		her.Month++;
+	}
+	else if(her.Day > 30 && (her.Month == 4 || her.Month == 6 || her.Month == 9 || her.Month == 11)){
+		her.Day = 1;
+		her.Month++;
+	}
+	else if (her.Day > 28 && her.Month == 2) {
+		her.Day = 1;
+		her.Month++;
+	}
+
+	if (her.Month > 12) {
+		her.Month = 1;
+		her.Year++;
+	}
+}
+
 void INIT::Cargo() {
 	for (int i = 0; i < 8; i++) {
 		her.HiddenID[i] = -1;
@@ -113,6 +143,18 @@ void SYSTEM::ResetBtnOn() {
 	for (int i = 0; i < 64; i++) {
 		sys.BtnOn[i] = FALSE;
 	}
+}
+
+void SYSTEM::SetTwoBtn() {
+
+	BtnX[62] = MWX + 280;
+	BtnY[62] = MWY + 140;
+	BtnW[62] = 90;
+	BtnH[62] = 42;
+	BtnX[63] = MWX + 640;
+	BtnY[63] = MWY + 140;
+	BtnW[63] = 90;
+	BtnH[63] = 42;
 }
 
 //ボタンを追加するとき追加
@@ -235,7 +277,7 @@ void SYSTEM::ButtonOver() {
 				case Sw_MANAGE:
 					ManageBtnOver(i);
 					break;
-				case Sw_TALK:
+				case Sw_TALK2:
 					TalkBtnOver(i);
 					break;
 				case Sw_EXIT:
@@ -305,7 +347,7 @@ void SYSTEM::ButtonOver() {
 			case Sw_MANAGE:
 				ManageBtnOut(OveredBtn);
 				break;
-			case Sw_TALK:
+			case Sw_TALK2:
 				TalkBtnOut(OveredBtn);
 				break;
 			case Sw_EXIT:
@@ -385,6 +427,9 @@ void SYSTEM::ButtonSys() {
 		case Sw_TALK:
 			TalkBtnSys(OveredBtn);
 			break;
+		case Sw_TALK2:
+			TalkBtnSys(OveredBtn);
+			break;
 		case Sw_EXIT:
 			ExitBtnSys(OveredBtn);
 			break;
@@ -393,151 +438,6 @@ void SYSTEM::ButtonSys() {
 			printfDx("MOUSE LEFT ON %d \n", OveredBtn);
 		return;
 	}
-}
-
-//メッセージ処理を追加するとき追加
-void SYSTEM::DrawMessageWindow() {
-
-	TCHAR Temp[64];
-	MWX = 480;
-	MWY = 800;
-	DrawGraph(MWX, MWY, init.GraMW, TRUE);
-
-	sys.MOver = FALSE;
-	switch (BtnSwitch) {
-	case Sw_QUIT:
-		BtnX[62] = MWX + 280;
-		BtnY[62] = MWY + 140;
-		BtnW[62] = 90;
-		BtnH[62] = 42;
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "終了しますか？", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_CARGO:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "積荷の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_TRANS:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "輸送手段の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_FINAN:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "財務状況の解説をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_QUEST:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "メインクエストとかサブとか", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_PRICES:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "相場を見る街を選んでね", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_PRICES2:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		sprintf_s(Temp, 64, "%sの相場です", City[ClickedBtn].Name);
-		DrawStringToHandle(MWX + 64, MWY + 64, Temp, GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_SAVE:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "セーブするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_LOAD:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "ロードするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_OPTION:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "オプション項目の説明をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_CITY:
-		DrawStringToHandle(MWX + 64, MWY + 64, "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_BUY:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "購入する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_SALE:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "売却する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case Sw_EXIT:
-		BtnX[62] = MWX + 280;
-		BtnY[62] = MWY + 140;
-		BtnW[62] = 90;
-		BtnH[62] = 42;
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		DrawStringToHandle(MWX + 64, MWY + 64, "街を出ますか？", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	}
-
 }
 
 void SYSTEM::DrawWindow(int X, int Y, int W, int H) {
@@ -575,9 +475,6 @@ void SYSTEM::DrawValue() {
 	x = 8;
 	y = 42;
 
-	her.Year = 3;
-	her.Month = 9;
-	her.Day = 25;
 	DrawExtendGraph(x, y, x + 24, y + 24, init.GraCalender, TRUE);
 	sprintf_s(Temp, 32, "%2d/%d/%d", her.Year, her.Month, her.Day);
 	DrawStringToHandle(x + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
@@ -672,6 +569,26 @@ char* SYSTEM::AddComma(int Value) {
 	return Temp2;
 }
 */
+
+void SYSTEM::WaitClick() {
+	while(CheckHitKey(KEY_INPUT_DELETE) == 0) {
+		MInput1F = MInput;
+		MInput = GetMouseInput();
+		if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1 || CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1) {
+			break;
+		if (ProcessMessage() == -1) break;
+		}
+	}
+}
+
+void SYSTEM::WaitYesNo() {
+	while (CheckHitKey(KEY_INPUT_DELETE) == 0) {
+		sys.ButtonOver();
+		sys.ButtonSys();
+		WaitTimer(16);
+		if (ProcessMessage() == -1) break;
+	}
+}
 
 void SYSTEM::TitleBtnOver(int i) {
 	switch (i) {
@@ -1982,7 +1899,8 @@ void SYSTEM::Move(int MoveTo) {
 			clsDx();
 			printfDx("%lf\n", Angle);
 			printfDx("%lf°", RAD_TO_DEG(Angle));
-			printfDx("%lf°", Angle2);
+			printfDx("%lf°\n", Angle2);
+			printfDx("%d\n", her.Day);
 		}
 
 		if (her.OnShip == FALSE) {
@@ -2074,6 +1992,10 @@ void SYSTEM::Move(int MoveTo) {
 			}
 		}
 
+		if (MoveCount % 20 == 0)
+			her.Day++;
+
+		sys.DaySys();
 
 		MoveCount++;
 		if (MoveCount >= 150)
