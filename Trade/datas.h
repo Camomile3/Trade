@@ -346,7 +346,7 @@ void CITY::SetCity(int I, const char* T, const char* N, double P, double D, doub
 void CITY::InitCity() {
 
 	//ID タイプ 名前　人口　開発度　景気　技術　工業　インフラ
-	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 0.5, 0.2, 0.2);
+	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 1.0, 0.2, 0.2);
 	City[1].SetCity(0, "貴族の町", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
 	City[2].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
 	City[3].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);

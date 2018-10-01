@@ -1,7 +1,7 @@
 #include "Dxlib.h"
 #include "class.h"
 
-#define TransportTech (i == 0) || (i == 1 && City[her.On].Technology * 100 >= 30) || (i == 2 && City[her.On].Technology * 100 >= 30) || (i == 3 && City[her.On].Technology * 100 >= 40) || (i == 4 && City[her.On].Technology * 100 >= 70) || (i == 5 && City[her.On].Technology * 100 >= 80) || (i == 6 && City[her.On].Technology * 100 >= 90) || (i == 7 && City[her.On].Technology * 100 >= 100) || (i == 8) || (i == 9 && City[her.On].Technology * 100 >= 30) || (i == 10 && City[her.On].Technology * 100 >= 30) || (i == 11 && City[her.On].Technology * 100 >= 40) || (i == 12 && City[her.On].Technology * 100 >= 70) || (i == 13 && City[her.On].Technology * 100 >= 80) || (i == 14 && City[her.On].Technology * 100 >= 90) || (i == 15 && City[her.On].Technology * 100 >= 100)
+#define TransportTech (i == 0) || (i == 1 && City[her.On].Technology * 100 >= 30) || (i == 2 && City[her.On].Technology * 100 >= 30) || (i == 3 && City[her.On].Technology * 100 >= 40) || (i == 4 && City[her.On].Technology * 100 >= 70) || (i == 5 && City[her.On].Technology * 100 >= 80) || (i == 6 && City[her.On].Technology * 100 >= 90) || (i == 7 && City[her.On].Technology * 100 >= 100) || (i == 8) || (i == 9 && City[her.On].Technology * 100 >= 30) || (i == 10 && City[her.On].Technology * 100 >= 30) || (i == 11 && City[her.On].Technology * 100 >= 40) || (i == 12 && City[her.On].Technology * 100 >= 70) || (i == 13 && City[her.On].Technology * 100 >= 80) || (i == 14 && City[her.On].Technology * 100 >= 90) || (i == 15 && City[her.On].Technology * 100 >= 100) || (i == 16) || (i == 17 && City[her.On].Technology * 100 >= 30) || (i == 18 && City[her.On].Technology * 100 >= 30) || (i == 19 && City[her.On].Technology * 100 >= 40) || (i == 20 && City[her.On].Technology * 100 >= 70) || (i == 21 && City[her.On].Technology * 100 >= 80) || (i == 22 && City[her.On].Technology * 100 >= 90) || (i == 23 && City[her.On].Technology * 100 >= 100)
 
 extern FUN fun;
 extern INIT init;
@@ -698,27 +698,35 @@ void SYSTEM::InvestData(int Btn) {
 		break;
 	case Sw_INVEST2:
 
-		TempChar[0] = "馬車購入";
-		TempChar[1] = "帆船購入";
-		TempChar[2] = "大型馬車購入";
-		TempChar[3] = "大型帆船購入";
-		TempChar[4] = "トラック購入";
-		TempChar[5] = "蒸気船購入";
-		TempChar[6] = "大型トラック購入";
-		TempChar[7] = "大型蒸気船購入";
-		TempChar[8] = "馬車売却";
-		TempChar[9] = "帆船売却";
-		TempChar[10] = "大型馬車売却";
-		TempChar[11] = "大型帆船売却";
-		TempChar[12] = "トラック売却";
-		TempChar[13] = "蒸気船売却";
-		TempChar[14] = "大型トラック売却";
-		TempChar[15] = "大型蒸気船売却";
+		TempChar[0] = "購入";
+		TempChar[1] = "購入";
+		TempChar[2] = "購入";
+		TempChar[3] = "購入";
+		TempChar[4] = "購入";
+		TempChar[5] = "購入";
+		TempChar[6] = "購入";
+		TempChar[7] = "購入";
+		TempChar[8] = "売却";
+		TempChar[9] = "売却";
+		TempChar[10] = "売却";
+		TempChar[11] = "売却";
+		TempChar[12] = "売却";
+		TempChar[13] = "売却";
+		TempChar[14] = "売却";
+		TempChar[15] = "売却";
+		TempChar[16] = "馬車";
+		TempChar[17] = "帆船";
+		TempChar[18] = "大型馬車";
+		TempChar[19] = "大型帆船";
+		TempChar[20] = "トラック";
+		TempChar[21] = "蒸気船";
+		TempChar[22] = "大型トラック";
+		TempChar[23] = "大型蒸気船";
 
 		//0馬車0　1帆船30　2大型馬車30　3大型帆船40　4トラック70　5蒸気船80　6大型トラック90　7大型蒸気船100
-		while (i < 16) {
-			BtnX[i] = 600 + x * 200;
-			BtnY[i] = 200 + y * 50;
+		while (i < 24) {
+			BtnX[i] = 1000 + x * 200;
+			BtnY[i] = 180 + y * 50;
 			BtnW[i] = 180;
 			BtnOn[i] = TRUE;
 			if (Btn != i)
@@ -728,6 +736,10 @@ void SYSTEM::InvestData(int Btn) {
 			i++;
 			if (i == 8) {
 				x++;
+				y = 0;
+			}
+			if (i == 16) {
+				x = -2;
 				y = 0;
 			}
 		}
@@ -749,17 +761,17 @@ void SYSTEM::InvestBuySys(int ID) {
 
 	if (TempPrice > her.Money) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "所持金が足りません", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "所持金が足りません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999 ) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (TempNumber != 0)
@@ -767,7 +779,7 @@ void SYSTEM::InvestBuySys(int ID) {
 		her.Transport[ID] += TempNumber;
 		her.Money -= TempPrice;
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "購入しました", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64, MWY + 64, "購入しました。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	BtnSwitch = Sw_INVEST;
@@ -780,6 +792,34 @@ void SYSTEM::InvestBuySys(int ID) {
 
 void SYSTEM::InvestSaleSys(int ID) {
 
+	TCHAR Temp[32];
+
+	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ売却しますか？", GetColor(255, 255, 255), init.FontHandle);
+	sprintf_s(Temp, 32, "0～%d", her.Transport[ID]);
+	DrawStringToHandle(MWX + 64, MWY + 64 + 42, Temp, GetColor(255, 255, 255), init.FontHandle);
+
+	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 1000000, 0, FALSE);
+	TempPrice =(int)(trans[ID].Price * TempNumber * 0.8);
+
+	if (her.Transport[ID] < TempNumber) {
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "所持数を超えています。", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	else if (TempNumber != 0)
+	{
+		her.Transport[ID] -= TempNumber;
+		her.Money += TempPrice;
+		ResetCity();
+		DrawStringToHandle(MWX + 64, MWY + 64, "売却しました。", GetColor(255, 255, 255), init.FontHandle);
+		WaitClick();
+	}
+	BtnSwitch = Sw_INVEST;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	InvestData(-1);
+	OveredBtn = -1;
+	printfDx("%d\n", her.Transport[0]);
 }
 
 void SYSTEM::ManageBtnOver(int i) {

@@ -208,6 +208,8 @@ public:
 	void TalkBtnSys(int);
 	void TalkData();
 	void Event(int);
+	void EventFunc(const char*);
+	void EventEnd(int);
 	void ExitBtnOver(int);
 	void ExitBtnOut(int);
 	void ExitBtnSys(int);
