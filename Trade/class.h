@@ -113,6 +113,7 @@ public:
 	void SearchEmpty(int);
 	void SetTwoBtn();
 	void SetFullBtn();
+	void LoopMusic(const char*);
 	//ƒ^ƒCƒgƒ‹
 	void ResetTitle();
 	void DrawButton(int);
@@ -208,7 +209,9 @@ public:
 	void TalkBtnSys(int);
 	void TalkData();
 	void Event(int);
-	void EventFunc(const char*);
+	void EventFunc(const char*, const char*);
+	void EventFunc2(const char*, const char*, const char*);
+	void EventMessage(const char*);
 	void EventEnd(int);
 	void ExitBtnOver(int);
 	void ExitBtnOut(int);

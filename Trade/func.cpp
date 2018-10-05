@@ -32,6 +32,7 @@ void FUN::main() {
 	City->InitCity();
 	init.InitMarket();
 	trans->InitTrans();
+	sys.LoopMusic("Moment");
 
 	if (sys.DebugMode == TRUE) {
 		her.Money = 1000;
@@ -49,7 +50,7 @@ void FUN::main() {
 		her.Month = 9;
 		her.Day = 25;
 
-		sys.EventFlag[0] = TRUE;
+		sys.EventFlag[3] = TRUE;
 	}
 
 	//メインループ
@@ -167,6 +168,14 @@ void SYSTEM::SetFullBtn() {
 	BtnY[58] = 0;
 	BtnW[58] = 1920;
 	BtnH[58] = 1080;
+}
+
+void SYSTEM::LoopMusic(const char* string) {
+
+	TCHAR Temp[64];
+
+	sprintf_s(Temp, 64, "Resource/BGM/%s.mp3", string);
+	PlayMusic(Temp, DX_PLAYTYPE_LOOP);
 }
 
 //ボタンを追加するとき追加
@@ -586,7 +595,7 @@ char* SYSTEM::AddComma(int Value) {
 
 void SYSTEM::WaitClick() {
 
-	while (CheckHitKey(KEY_INPUT_LALT) == 0 || CheckHitKey(KEY_INPUT_F4) == 0) {
+	while (CheckHitKey(KEY_INPUT_DELETE) == 0 && (CheckHitKey(KEY_INPUT_LALT) == 0 || CheckHitKey(KEY_INPUT_F4) == 0)) {
 		if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
 			if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
 				while (1) {

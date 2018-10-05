@@ -317,10 +317,10 @@ void SYSTEM::BuySys(int ID) {
 	}
 	SearchEmpty(ID);
 
-	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
 	printfDx("SlotNumber=%d\n", SlotNumber);
 
-	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 9999, 0, FALSE);
+	TempNumber = KeyInputNumber(MWX + 64 + 32, MWY + 96, 9999, 0, FALSE);
 	TempPrice = Goods[ID].CalcedPrice * TempNumber;
 
 	printfDx("BoughtNumber=%d\n", TempNumber);
@@ -329,12 +329,12 @@ void SYSTEM::BuySys(int ID) {
 
 	if (TempPrice > her.Money) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "所持金が足りません", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "所持金が足りません", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (TempNumber + her.CargoWeight > her.MaxWeight) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "重量オーバーです", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "重量オーバーです", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (TempNumber != 0)
@@ -347,7 +347,7 @@ void SYSTEM::BuySys(int ID) {
 
 		if (her.Cargo[SlotNumber] != 0) {
 			ResetCity();
-			DrawStringToHandle(MWX + 64, MWY + 64, "購入しました", GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "購入しました", GetColor(255, 255, 255), init.FontHandle);
 			WaitClick();
 		}
 	}
@@ -493,10 +493,10 @@ void SYSTEM::SaleSys(int ID) {
 		}
 	}
 
-	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ売却しますか？", GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "いくつ売却しますか？", GetColor(255, 255, 255), init.FontHandle);
 	printfDx("SlotNumber=%d\n", SlotNumber);
 
-	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 9999, 0, FALSE);
+	TempNumber = KeyInputNumber(MWX + 64 + 32, MWY + 96, 9999, 0, FALSE);
 	TempPrice = Goods[ID].CalcedPrice * TempNumber;
 
 	printfDx("BoughtNumber=%d\n", TempNumber);
@@ -505,7 +505,7 @@ void SYSTEM::SaleSys(int ID) {
 
 	if (TempNumber > her.Cargo[SlotNumber]) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "所有量を超えています", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "所有量を超えています", GetColor(255, 255, 255), init.FontHandle);
 		while (1) {
 			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
 				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
@@ -537,7 +537,7 @@ void SYSTEM::SaleSys(int ID) {
 			her.HiddenID[SlotNumber] = -1;
 
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "売却しました", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "売却しました", GetColor(255, 255, 255), init.FontHandle);
 		while (1) {
 			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
 				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
@@ -754,24 +754,24 @@ void SYSTEM::InvestData(int Btn) {
 
 void SYSTEM::InvestBuySys(int ID) {
 
-	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "いくつ購入しますか？", GetColor(255, 255, 255), init.FontHandle);
 
-	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 1000000, 0, FALSE);
+	TempNumber = KeyInputNumber(MWX + 64 + 32, MWY + 96, 1000000, 0, FALSE);
 	TempPrice = trans[ID].Price * TempNumber;
 
 	if (TempPrice > her.Money) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "所持金が足りません。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "所持金が足りません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999 ) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "これ以上買えません。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (TempNumber != 0)
@@ -779,7 +779,7 @@ void SYSTEM::InvestBuySys(int ID) {
 		her.Transport[ID] += TempNumber;
 		her.Money -= TempPrice;
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "購入しました。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "購入しました。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	BtnSwitch = Sw_INVEST;
@@ -794,16 +794,16 @@ void SYSTEM::InvestSaleSys(int ID) {
 
 	TCHAR Temp[32];
 
-	DrawStringToHandle(MWX + 64, MWY + 64, "いくつ売却しますか？", GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "いくつ売却しますか？", GetColor(255, 255, 255), init.FontHandle);
 	sprintf_s(Temp, 32, "0～%d", her.Transport[ID]);
-	DrawStringToHandle(MWX + 64, MWY + 64 + 42, Temp, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MWX + 64 + 32, MWY + 64  + 42, Temp, GetColor(255, 255, 255), init.FontHandle);
 
-	TempNumber = KeyInputNumber(MWX + 64, MWY + 96, 1000000, 0, FALSE);
+	TempNumber = KeyInputNumber(MWX + 64 + 32, MWY + 96, 1000000, 0, FALSE);
 	TempPrice =(int)(trans[ID].Price * TempNumber * 0.8);
 
 	if (her.Transport[ID] < TempNumber) {
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "所持数を超えています。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "所持数を超えています。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	else if (TempNumber != 0)
@@ -811,7 +811,7 @@ void SYSTEM::InvestSaleSys(int ID) {
 		her.Transport[ID] -= TempNumber;
 		her.Money += TempPrice;
 		ResetCity();
-		DrawStringToHandle(MWX + 64, MWY + 64, "売却しました。", GetColor(255, 255, 255), init.FontHandle);
+		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "売却しました。", GetColor(255, 255, 255), init.FontHandle);
 		WaitClick();
 	}
 	BtnSwitch = Sw_INVEST;
@@ -872,7 +872,7 @@ void SYSTEM::ManageData(int i) {
 void SYSTEM::TalkBtnOver(int i) {
 
 	switch (EventNumber) {
-	case 0:
+	case 5:
 		switch (i) {
 		case 62:
 			ResetTalk();
@@ -894,7 +894,7 @@ void SYSTEM::TalkBtnOver(int i) {
 void SYSTEM::TalkBtnOut(int OveredBtn) {
 
 	switch (EventNumber) {
-	case 0:
+	case 5:
 		switch (OveredBtn) {
 		case 62:
 			ResetTalk();
