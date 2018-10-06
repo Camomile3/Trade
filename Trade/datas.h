@@ -12,13 +12,19 @@ extern SYSTEM sys;
 extern INIT init;
 extern TRANSPORT trans[8];
 
+
+void SYSTEM::MessageWindowMessage(const char* String) {
+
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), String, GetColor(255, 255, 255), init.FontHandle);
+}
+
 //メッセージ処理を追加するとき追加
 void SYSTEM::DrawMessageWindow() {
 
 	TCHAR Temp[64];
 	MWX = 480;
 	MWY = 800;
-	DrawGraph(MWX, MWY, init.GraMW, TRUE);
+	DrawExtendGraph(MultiResoIntX(MWX), MultiResoIntY(MWY), MultiResoIntX(MWX + 960), MultiResoIntY(MWY +200), init.GraMW, TRUE);
 
 	sys.MOver = FALSE;
 	switch (BtnSwitch) {
@@ -32,18 +38,17 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "終了しますか？", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(62);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("終了しますか？");
 		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
 		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_CARGO:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "積荷の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		MessageWindowMessage("積荷の説明文を表示する予定です");
+
 		break;
 	case Sw_TRANS:
 		BtnX[63] = MWX + 640;
@@ -51,7 +56,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "輸送手段の説明文を表示する予定です", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("輸送手段の説明文を表示する予定です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_FINAN:
@@ -60,7 +67,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "財務状況の解説をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("財務状況の解説をさせる予定です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_QUEST:
@@ -69,7 +78,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "メインクエストとかサブとか", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("メインクエストとかサブとか");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_PRICES:
@@ -78,7 +89,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "相場を見る街を選んでね", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("相場を見る街を選んでね");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_PRICES2:
@@ -87,8 +100,10 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
+		MultiResoBtn(63);
+
 		sprintf_s(Temp, 64, "%sの相場です", City[ClickedBtn].Name);
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , Temp, GetColor(255, 255, 255), init.FontHandle);
+		MessageWindowMessage(Temp);
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_SAVE:
@@ -97,7 +112,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "セーブするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("セーブするスロットを選んでね");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_LOAD:
@@ -106,7 +123,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "ロードするスロットを選んでね", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("ロードするスロットを選んでね");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_OPTION:
@@ -115,37 +134,35 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "オプション項目の説明をさせる予定です", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("オプション項目の説明をさせる予定です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_CITY:
 		switch (TalkNumber) {
 		case 0:
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
+			MessageWindowMessage("景気がよく非常に活気がある。");
 			break;
 		case 1:
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "こんにちな！ここはモヘミンチョだよ！", GetColor(255, 255, 255), init.FontHandle);
+			MessageWindowMessage("こんにちな！ここはモヘミンチョだよ！");
 			break;
 		case 2:
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "おはよう　ダメージ。もう　あさがよい。", GetColor(255, 255, 255), init.FontHandle);
+			MessageWindowMessage("おはよう　ダメージ。もう　あさがよい。");
 			break;
 		case 3:
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "あれ　テイデンかミ", GetColor(255, 255, 255), init.FontHandle);
+			MessageWindowMessage("あれ　テイデンかミ");
 			break;
 		case 4:
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "景気がよく非常に活気がある。", GetColor(255, 255, 255), init.FontHandle);
+			MessageWindowMessage("景気がよく非常に活気がある。");
 			TalkNumber = 0;
 			break;
 		}
 		break;
 	case Sw_BUY:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "購入する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		MessageWindowMessage("購入する貿易品を選んでください");
+
 		break;
 	case Sw_SALE:
 		BtnX[63] = MWX + 640;
@@ -153,7 +170,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "売却する貿易品を選んでください", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("売却する貿易品を選んでください");
 		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_INVEST:
@@ -165,7 +184,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "投資画面です", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("投資画面です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_MANAGE:
@@ -174,7 +195,9 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "経営画面です", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("経営画面です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_TALK2:
@@ -190,7 +213,10 @@ void SYSTEM::DrawMessageWindow() {
 		BtnW[63] = 90;
 		BtnH[63] = 42;
 
-		DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "街を出ますか？", GetColor(255, 255, 255), init.FontHandle);
+		MultiResoBtn(62);
+		MultiResoBtn(63);
+
+		MessageWindowMessage("街を出ますか？");
 		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
 		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
 		break;

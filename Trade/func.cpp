@@ -24,6 +24,8 @@ void FUN::main() {
 	SetMouseDispFlag(TRUE);
 
 	//初期化
+	sys.Volume = 100;
+	sys.LoopMusic("Title");
 	init.SetFont();
 	init.LoadGra();
 	sys.ResetTitle();
@@ -32,12 +34,13 @@ void FUN::main() {
 	City->InitCity();
 	init.InitMarket();
 	trans->InitTrans();
-	sys.LoopMusic("Moment");
 
 	if (sys.DebugMode == TRUE) {
-		her.Money = 1000;
+		her.Money = 10000000;
 		her.CargoWeight = 0;
 		her.Transport[0] = 1;
+		for (int i = 1; i < 8; i++)
+			her.Transport[i] = 0;
 		her.HaveShip = TRUE;
 		her.MaxWeight = 900000000;
 		her.CargoWeight = 500000000;
@@ -54,24 +57,16 @@ void FUN::main() {
 	}
 
 	//メインループ
-	if (sys.DebugMode == TRUE) {
-		while (CheckHitKey(KEY_INPUT_DELETE) == 0 && (CheckHitKey(KEY_INPUT_LALT) == 0 || CheckHitKey(KEY_INPUT_F4) == 0)) {
-			sys.ButtonOver();
-			sys.ButtonSys();
-			sys.DaySys();
-			WaitTimer(16);
-			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
-		}
+
+	while (CheckHitKey(KEY_INPUT_DELETE) == 0 && (CheckHitKey(KEY_INPUT_LALT) == 0 || CheckHitKey(KEY_INPUT_F4) == 0)) {
+		sys.ButtonOver();
+		sys.ButtonSys();
+		sys.DragSys();
+		sys.DaySys();
+		WaitTimer(16);
+		if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
 	}
-	else {
-		while (1) {
-			sys.ButtonOver();
-			sys.ButtonSys();
-			sys.DaySys();
-			WaitTimer(16);
-			if (ProcessMessage() == -1) break;                 //エラーが起きたら終了
-		}
-	}
+
 }
 
 //フォントセット
@@ -81,30 +76,31 @@ void INIT::SetFont() {
 		MessageBox(NULL, "LoadingFontERROR", "", MB_OK);
 	}
 
-	FontHandle = CreateFontToHandle("JKゴシックL", 24, 0, DX_FONTTYPE_ANTIALIASING_8X8);
+	FontHandle = CreateFontToHandle("JKゴシックL", sys.MultiResoIntX(24), 0, DX_FONTTYPE_ANTIALIASING_8X8);
 	if (FontHandle == 0) {
 		MessageBox(NULL, "CreateFontToHandleERROR", "", MB_OK);
 	}
 }
 
 void INIT::LoadGra() {
-	GraT = LoadGraph("Resource/BG_Title.png");
-	GraMW = LoadGraph("Resource/MW_1.png");
-	GraBtn = LoadGraph("Resource/Btn1.png");
-	GraBtn2 = LoadGraph("Resource/Btn2.png");
-	GraBtn3 = LoadGraph("Resource/Btn3.png");
-	GraMap = LoadGraph("Resource/Map.jpg");
-	GraCity = LoadGraph("Resource/BG_City.png");
+	GraT = LoadGraph("Resource/BG/Title.png");
+	GraMW = LoadGraph("Resource/Graphic/MW_1.png");
+	GraBtn = LoadGraph("Resource/Graphic/Btn1.png");
+	GraBtn2 = LoadGraph("Resource/Graphic/Btn2.png");
+	GraBtn3 = LoadGraph("Resource/Graphic/Btn3.png");
+	GraBtn4 = LoadGraph("Resource/Graphic/Btn4.png");
+	GraMap = LoadGraph("Resource/Graphic/Map.jpg");
+	GraCity = LoadGraph("Resource/BG/City.png");
 	GraHer = LoadGraph("Resource/Heroine.png");
-	GraCalender = LoadGraph("Resource/I_Calender.png");
-	GraGold = LoadGraph("Resource/I_Gold.png");
-	GraIdea = LoadGraph("Resource/I_Idea.png");
-	GraFactory = LoadGraph("Resource/I_Factory.png");
+	GraCalender = LoadGraph("Resource/Graphic/I_Calender.png");
+	GraGold = LoadGraph("Resource/Graphic/I_Gold.png");
+	GraIdea = LoadGraph("Resource/Graphic/I_Idea.png");
+	GraFactory = LoadGraph("Resource/Graphic/I_Factory.png");
 	char str[32];
 	for (int i = 0; i < 12; i++) {
-		sprintf_s(str, 32, "Resource/Carriage%d.png", i);
+		sprintf_s(str, 32, "Resource/Graphic/Carriage%d.png", i);
 		GraCarriage[i] = LoadGraph(str);
-		sprintf_s(str, 32, "Resource/Ship%d.png",i);
+		sprintf_s(str, 32, "Resource/Graphic/Ship%d.png",i);
 		GraShip[i] = LoadGraph(str);
 	}
 }
@@ -137,10 +133,24 @@ void INIT::Cargo() {
 }
 
 void SYSTEM::ResetTitle() {
-	ClearDrawScreen();
-	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraT, TRUE);
-	sys.DrawButton(OveredBtn);
 
+	switch (BtnSwitch) {
+	case Sw_TITLE:
+	case Sw_QUIT:
+		ClearDrawScreen();
+		DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraT, TRUE);
+		DrawButton(OveredBtn);
+		break;
+	case Sw_SAVE:
+	case Sw_LOAD:
+	case Sw_OPTION:
+		ClearDrawScreen();
+		DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraT, TRUE);
+		DrawButton(OveredBtn);
+		if (BtnSwitch == Sw_OPTION)
+			DrawOptionString();
+		break;
+	}
 }
 
 void SYSTEM::ResetBtnOn() {
@@ -160,6 +170,9 @@ void SYSTEM::SetTwoBtn() {
 	BtnY[63] = MWY + 140;
 	BtnW[63] = 90;
 	BtnH[63] = 42;
+
+	MultiResoBtn(62);
+	MultiResoBtn(63);
 }
 
 void SYSTEM::SetFullBtn() {
@@ -168,19 +181,75 @@ void SYSTEM::SetFullBtn() {
 	BtnY[58] = 0;
 	BtnW[58] = 1920;
 	BtnH[58] = 1080;
+
+	MultiResoBtn(58);
 }
 
 void SYSTEM::LoopMusic(const char* string) {
 
 	TCHAR Temp[64];
+	double x = 1;
 
 	sprintf_s(Temp, 64, "Resource/BGM/%s.mp3", string);
 	PlayMusic(Temp, DX_PLAYTYPE_LOOP);
+	x = GetVolumeMulti(string);
+	SetVolumeMusic((int)(Volume * x));
+
+}
+
+double SYSTEM::GetVolumeMulti(const char* string) {
+
+	printfDx("%s\n", string);
+
+	if (!strcmp(string, "Title"))
+		return 1;
+
+	else if (!strcmp(string, "Field"))
+		return 0.9;
+
+	else if (!strcmp(string, "City1"))
+		return 0.60;
+	else
+		return 1;
+}
+
+void SYSTEM::MultiResoBtn(int i) {
+
+		BtnX[i] = (int)(BtnX[i] * (init.WinX / 1920.0));
+		BtnY[i] = (int)(BtnY[i] * (init.WinY / 1080.0));
+		BtnW[i] = (int)(BtnW[i] * (init.WinX / 1920.0));
+		BtnH[i] = (int)(BtnH[i] * (init.WinY / 1080.0));
+		BtnCx[i] = (int)(BtnCx[i] * (init.WinX / 1920.0));
+		BtnCy[i] = (int)(BtnCy[i] * (init.WinY / 1080.0));
+}
+
+int SYSTEM::MultiResoIntX(int x) {
+
+	int y = (int)(x * (init.WinX / 1920.0));
+	return y;
+}
+
+int SYSTEM::MultiResoIntY(int x) {
+
+	int y = (int)(x * (init.WinY / 1080.0));
+	return y;
+}
+
+SYSTEM::QuadS SYSTEM::MultiResoIntQuad(int a, int b, int c, int d) {
+
+	Quad.a = (int)(a * (init.WinX / 1920.0));
+	Quad.b = (int)(b * (init.WinY / 1080.0));
+	Quad.c = (int)(c * (init.WinX / 1920.0));
+	Quad.d = (int)(d * (init.WinY / 1080.0));
+
+	return Quad;
 }
 
 //ボタンを追加するとき追加
 
 void SYSTEM::DrawButton(int OveredBtn) {
+
+	int y = MultiResoIntY(8);
 
 	switch (fun.FStat) {
 	case fun.F_TITLE:
@@ -190,16 +259,23 @@ void SYSTEM::DrawButton(int OveredBtn) {
 			BtnW[i] = 180;
 			BtnH[i] = 42;
 
-			DrawGraph(BtnX[i], BtnY[i], init.GraBtn, TRUE);
-		};
+			MultiResoBtn(i);
+		}
+
+
+
+		for (int i = 0; i < 4; i++) {
+			DrawExtendGraph(BtnX[i], BtnY[i], BtnX[i] + BtnW[i], BtnY[i] + BtnH[i], init.GraBtn, TRUE);
+		}
+
 		if (OveredBtn != 0)
-			DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[0] + MultiResoIntX(36), BtnY[0] + MultiResoIntY(8), "NewGame", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 1)
-			DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[1] + MultiResoIntX(34), BtnY[1] + MultiResoIntY(8), "LoadGame", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 2)
-			DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[2] + MultiResoIntX(54), BtnY[2] + MultiResoIntY(8), "Option", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 3)
-			DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[3] + MultiResoIntX(36), BtnY[3] + MultiResoIntY(8), "QuitGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case fun.F_MAIN:
 		for (int i = 48; i < 9 + 48; i++) {
@@ -208,27 +284,33 @@ void SYSTEM::DrawButton(int OveredBtn) {
 			BtnW[i] = 175;
 			BtnH[i] = 42;
 
-			DrawGraph(BtnX[i], BtnY[i], init.GraBtn, TRUE);
-		};
+			MultiResoBtn(i);
+		}
+
+
+
+		for (int i = 48; i < 9 + 48; i++) {
+			DrawExtendGraph(BtnX[i], BtnY[i], BtnX[i] + MultiResoIntX(180), BtnY[i] + MultiResoIntY(42), init.GraBtn, TRUE);
+		}
 
 		if (OveredBtn != 48)
-		DrawStringToHandle(BtnX[48] + 58, BtnY[48] + 8, "Cargo", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[48] + MultiResoIntX(58), BtnY[48] + y, "Cargo", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 49)
-		DrawStringToHandle(BtnX[49] + 34, BtnY[49] + 8, "Transport", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[49] + MultiResoIntX(34), BtnY[49] + y, "Transport", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 50)
-		DrawStringToHandle(BtnX[50] + 36, BtnY[50] + 8, "Financial", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[50] + MultiResoIntX(36), BtnY[50] + y, "Financial", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 51)
-		DrawStringToHandle(BtnX[51] + 58, BtnY[51] + 8, "Quest", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[51] + MultiResoIntX(58), BtnY[51] + y, "Quest", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 52)
-		DrawStringToHandle(BtnX[52] + 54, BtnY[52] + 8, "Prices", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[52] + MultiResoIntX(54), BtnY[52] + y, "Prices", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 53)
-		DrawStringToHandle(BtnX[53] + 36, BtnY[53] + 8, "SaveGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[53] + MultiResoIntX(36), BtnY[53] + y, "SaveGame", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 54)
-		DrawStringToHandle(BtnX[54] + 36, BtnY[54] + 8, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[54] + MultiResoIntX(36), BtnY[54] + y, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 55)
-		DrawStringToHandle(BtnX[55] + 54, BtnY[55] + 8, "Option", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[55] + MultiResoIntX(54), BtnY[55] + y, "Option", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 56)
-		DrawStringToHandle(BtnX[56] + 36, BtnY[56] + 8, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[56] + MultiResoIntX(36), BtnY[56] + y, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
 
 		break;
 	case fun.F_CITY:
@@ -237,19 +319,24 @@ void SYSTEM::DrawButton(int OveredBtn) {
 			BtnY[i] = 160 + i * 38;
 			BtnW[i] = 176;
 			BtnH[i] = 38;
+
+			MultiResoBtn(i);
 		};
+
+
+
 		if (OveredBtn != 0)
-			DrawStringToHandle(BtnX[0] + 24, BtnY[0] + 8, "Purchase", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[0] + MultiResoIntX(24), BtnY[0] + y, "Purchase", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 1)
-			DrawStringToHandle(BtnX[1] + 24, BtnY[1] + 8, "Sale", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[1] + MultiResoIntX(24), BtnY[1] + y, "Sale", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 2)
-			DrawStringToHandle(BtnX[2] + 24, BtnY[2] + 8, "Invest", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[2] + MultiResoIntX(24), BtnY[2] + y, "Invest", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 3)
-			DrawStringToHandle(BtnX[3] + 24, BtnY[3] + 8, "Manage", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[3] + MultiResoIntX(24), BtnY[3] + y, "Manage", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 4)
-			DrawStringToHandle(BtnX[4] + 24, BtnY[4] + 8, "Talk", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[4] + MultiResoIntX(24), BtnY[4] + y, "Talk", GetColor(0, 0, 0), init.FontHandle);
 		if (OveredBtn != 5)
-			DrawStringToHandle(BtnX[5] + 24, BtnY[5] + 8, "Exit", GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[5] + MultiResoIntX(24), BtnY[5] + y, "Exit", GetColor(0, 0, 0), init.FontHandle);
 
 		break;
 	}
@@ -490,12 +577,41 @@ void SYSTEM::ButtonSys() {
 	}
 }
 
+void SYSTEM::DragSys() {
+
+	switch (BtnSwitch) {
+	case Sw_OPTION:
+		if ((OveredBtn == 16) || OveredBtn == 17) {
+			while ((MInput & MOUSE_INPUT_LEFT) == 1) {
+				MInput = GetMouseInput();
+				GetMousePoint(&MouseX, &MouseY);
+
+				BtnX[OveredBtn] = MouseX - (BtnW[OveredBtn] / 2);
+
+				//初期化
+				ResetTitle();
+				DrawButton(OveredBtn);
+				DrawMessageWindow();
+				DrawWindow(520, 140, 5, 16);
+				DrawOptionString();
+				DrawExtendGraph(BtnX[16], BtnY[16], BtnX[16] + BtnW[16], BtnY[16] + BtnH[16], init.GraBtn4, TRUE);
+				WaitTimer(16);
+				if (ProcessMessage() == -1) break;
+			}
+		}
+		break;
+	}
+}
+
 void SYSTEM::DrawWindow(int X, int Y, int W, int H) {
 	int i = 0;
 	int n = 0;
 
+	X = MultiResoIntX(X);
+	Y = MultiResoIntY(Y);
+
 	while (1) {
-		DrawGraph(X + n * 176, Y + i * 38, init.GraBtn2, TRUE);
+		DrawExtendGraph(X + n * MultiResoIntX(176), Y + i * MultiResoIntY(38), X + n * MultiResoIntX(176) + MultiResoIntX(180), Y + i * MultiResoIntY(38) + MultiResoIntY(44), init.GraBtn2, TRUE);
 		i++;
 		if (i == H) {
 			n++;
@@ -510,24 +626,28 @@ void SYSTEM::DrawValue() {
 	int ValueX[7], ValueY[7], ValueW[7], ValueH[7];
 
 	for (int i = 0; i < 7; i++) {
-		ValueX[i] = 175 * i;
-		ValueY[i] = 38;
-		ValueW[i] = 180;
-		ValueH[i] = 32;
+		ValueX[i] = MultiResoIntX(175 * i);
+		ValueY[i] = MultiResoIntY(38);
+		ValueW[i] = MultiResoIntX(180);
+		ValueH[i] = MultiResoIntY(32);
 		DrawExtendGraph(ValueX[i], ValueY[i], ValueX[i] + ValueW[i], ValueY[i] + ValueH[i], init.GraBtn3, TRUE);
 	}
 	TCHAR Temp[64];
 	char* Temp2;
 	char* Temp3;
+	int a = 0;
 	int x, y;
 	x = 8;
 	y = 42;
 
-	DrawExtendGraph(x, y, x + 24, y + 24, init.GraCalender, TRUE);
-	sprintf_s(Temp, 32, "%2d/%d/%d", her.Year, her.Month, her.Day);
-	DrawStringToHandle(x + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	MultiResoIntQuad(x, y, x + 24, y + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraCalender, TRUE);
 
-	DrawExtendGraph(x + 128+32, 42, x + 128+32 + 24, 42 + 24, init.GraGold, TRUE);
+	sprintf_s(Temp, 32, "%2d/%d/%d", her.Year, her.Month, her.Day);
+	DrawStringToHandle(MultiResoIntX(x + 28), MultiResoIntY(42), Temp, GetColor(0, 0, 0), init.FontHandle);
+
+	MultiResoIntQuad(x + 128 + 32, 42, x + 128 + 32 + 24, 42 + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraGold, TRUE);
 	if (her.Money >= 1000000000000) {
 		sprintf_s(Temp, 64, "%2lld,%03lld,%03lld,%03lld,%03lld", her.Money / 1000000000000, (her.Money - her.Money / 1000000000000 * 1000000000000) / 1000000000, (her.Money - her.Money / 1000000000 * 1000000000) / 1000000, (her.Money - her.Money / 1000000 * 1000000) / 1000, her.Money - (her.Money / 1000) * 1000);
 	}
@@ -543,33 +663,37 @@ void SYSTEM::DrawValue() {
 	else
 		sprintf_s(Temp, 64, "%16lld", her.Money);
 
-	DrawStringToHandle(x + 128 + 32 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 128 + 32 + 28), MultiResoIntY(42), Temp, GetColor(0, 0, 0), init.FontHandle);
 
-
-	DrawExtendGraph(x + 512-64- 10, 32, x + 512-64 + 24, 42 + 24, init.GraCarriage[6], TRUE);
+	MultiResoIntQuad(x + 512 - 64 - 10, 32, x + 512 - 64 + 24, 42 + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraCarriage[6], TRUE);
 	Temp2 = AddComma(her.CargoWeight);
 	Temp3 = AddComma(her.MaxWeight);
 	//sprintf_s(Temp, 32, "%d/%d", her.CargoWeight, her.MaxWeight);
-	DrawStringToHandle(x + 512 - 128 + 28 - 5, 42, Temp2, GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(x + 512 - 64 + 28 + 150 - 5, 42, "/", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(x + 512 + 28 + 30 - 5, 42, Temp3, GetColor(0, 0, 0), init.FontHandle);
 
-	DrawExtendGraph(x + 512 + 270, 42, x + 512 + 24 + 280, 42 + 24, init.GraShip[6], TRUE);
+	DrawStringToHandle(MultiResoIntX(x + 512 - 128 + 28 - 5), MultiResoIntY(42), Temp2, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 - 64 + 28 + 150 - 5), MultiResoIntY(42), "/", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 28 + 30 - 5), MultiResoIntY(42), Temp3, GetColor(0, 0, 0), init.FontHandle);
+
+	MultiResoIntQuad(x + 512 + 270, 42, x + 512 + 24 + 280, 42 + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraShip[6], TRUE);
 	Temp2 = AddComma(her.ShipWeight);
 	Temp3 = AddComma(her.ShipMaxWeight);
-	DrawStringToHandle(x + 512 + 28 + 200, 42, Temp2, GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(x + 512 + 28 + 270 + 140, 42, "/", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(x + 512 + 28 + 270 + 80, 42, Temp3, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 28 + 200), MultiResoIntY(42), Temp2, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 28 + 270 + 140), MultiResoIntY(42), "/", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 28 + 270 + 80), MultiResoIntY(42), Temp3, GetColor(0, 0, 0), init.FontHandle);
 
 	her.WTech = 14;
-	DrawExtendGraph(x + 512 + 525 + 64, 42, x + 512 + 525 + 64 + 24, 42 + 24, init.GraIdea, TRUE);
+	MultiResoIntQuad(x + 512 + 525 + 64, 42, x + 512 + 525 + 64 + 24, 42 + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraIdea, TRUE);
 	sprintf_s(Temp, 32, "%d", her.WTech);
-	DrawStringToHandle(x + 512 + 64 + 525 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 64 + 525 + 28), MultiResoIntY(42), Temp, GetColor(0, 0, 0), init.FontHandle);
 
 	her.WIndustry = 12;
-	DrawExtendGraph(x + 512 + 123 + 525 , 42, x + 512 + 123 + 525 + 24, 42 + 24, init.GraFactory, TRUE);
+	MultiResoIntQuad(x + 512 + 123 + 525, 42, x + 512 + 123 + 525 + 24, 42 + 24);
+	DrawExtendGraph(Quad.a, Quad.b, Quad.c, Quad.d, init.GraFactory, TRUE);
 	sprintf_s(Temp, 32, "%d", her.WIndustry);
-	DrawStringToHandle(x + 512 + 123 + 525 + 28, 42, Temp, GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(x + 512 + 123 + 525 + 28), MultiResoIntY(42), Temp, GetColor(0, 0, 0), init.FontHandle);
 }
 
 
@@ -622,20 +746,6 @@ void SYSTEM::WaitClick() {
 	}
 }
 
-/*
-void SYSTEM::WaitClick() {
-	while(CheckHitKey(KEY_INPUT_DELETE) == 0) {
-		MInput1F = MInput;
-		MInput = GetMouseInput();
-		if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1 || CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1) {
-			break;
-		}
-		if (ProcessMessage() == -1) break;
-		WaitTimer(16);
-	}
-}
-*/
-
 void SYSTEM::WaitYesNo() {
 	while (CheckHitKey(KEY_INPUT_DELETE) == 0) {
 		sys.ButtonOver();
@@ -649,40 +759,43 @@ void SYSTEM::TitleBtnOver(int i) {
 	switch (i) {
 	case 0:
 		ResetTitle();
-		DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[0] + MultiResoIntX(36), BtnY[0] + MultiResoIntY(8), "NewGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
 		ResetTitle();
-		DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[1] + MultiResoIntX(34), BtnY[1] + MultiResoIntY(8), "LoadGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 2:
 		ResetTitle();
-		DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[2] + MultiResoIntX(54), BtnY[2] + MultiResoIntY(8), "Option", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 3:
 		ResetTitle();
-		DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[3] + MultiResoIntX(36), BtnY[3] + MultiResoIntY(8), "QuitGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	}
 }
 
 void SYSTEM::TitleBtnOverOut(int OveredBtn) {
+
+	int y = 8;
+
 	switch (OveredBtn) {
 	case 0:
 		ResetTitle();
-		DrawStringToHandle(BtnX[0] + 36, BtnY[0] + 8, "NewGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[0] + MultiResoIntX(36), BtnY[0] + MultiResoIntY(y), "NewGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 1:
 		ResetTitle();
-		DrawStringToHandle(BtnX[1] + 34, BtnY[1] + 8, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[1] + MultiResoIntX(34), BtnY[1] + MultiResoIntY(y), "LoadGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 2:
 		ResetTitle();
-		DrawStringToHandle(BtnX[2] + 54, BtnY[2] + 8, "Option", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[2] + MultiResoIntX(54), BtnY[2] + MultiResoIntY(y), "Option", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 3:
 		ResetTitle();
-		DrawStringToHandle(BtnX[3] + 36, BtnY[3] + 8, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[3] + MultiResoIntX(36), BtnY[3] + MultiResoIntY(y), "QuitGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	}
 }
@@ -703,6 +816,7 @@ void SYSTEM::TitleBtnSys(int OveredBtn) {
 		BtnSwitch = Sw_OPTION;
 		DrawWindow(520, 140, 5, 16);
 		DrawMessageWindow();
+		DrawOptionString();
 		OptionData();
 		break;
 	case 3:
@@ -785,6 +899,8 @@ void SYSTEM::QuitBtnSys(int OveredBtn) {
 
 void SYSTEM::MapBtnOver(int i) {
 
+	int y = MultiResoIntY(8);
+
 	switch (i) {
 	case 0:
 		//効果音もしくはカーソルが反応する処理を入れる予定
@@ -801,98 +917,100 @@ void SYSTEM::MapBtnOver(int i) {
 	case 48:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[48] + 58, BtnY[48] + 8, "Cargo", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[48] + MultiResoIntX(58), BtnY[48] + y, "Cargo", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 49:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[49] + 34, BtnY[49] + 8, "Transport", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[49] + MultiResoIntX(34), BtnY[49] + y, "Transport", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 50:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[50] + 36, BtnY[50] + 8, "Financial", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[50] + MultiResoIntX(36), BtnY[50] + y, "Financial", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 51:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[51] + 58, BtnY[51] + 8, "Quest", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[51] + MultiResoIntX(58), BtnY[51] + y, "Quest", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 52:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[52] + 54, BtnY[52] + 8, "Prices", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[52] + MultiResoIntX(54), BtnY[52] + y, "Prices", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 53:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[53] + 36, BtnY[53] + 8, "SaveGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[53] + MultiResoIntX(36), BtnY[53] + y, "SaveGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 54:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[54] + 36, BtnY[54] + 8, "LoadGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[54] + MultiResoIntX(36), BtnY[54] + y, "LoadGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 55:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[55] + 54, BtnY[55] + 8, "Option", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[55] + MultiResoIntX(54), BtnY[55] + y, "Option", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 56:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[56] + 36, BtnY[56] + 8, "QuitGame", GetColor(255, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[56] + MultiResoIntX(36), BtnY[56] + y, "QuitGame", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	}
 }
 
 void SYSTEM::MapBtnOut(int OveredBtn) {
 
+	int y = MultiResoIntY(8);
+
 	switch (OveredBtn) {
 	case 48:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[48] + 58, BtnY[48] + 8, "Cargo", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[48] + MultiResoIntX(58), BtnY[48] + y, "Cargo", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 49:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[49] + 34, BtnY[49] + 8, "Transport", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[49] + MultiResoIntX(34), BtnY[49] + y, "Transport", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 50:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[50] + 36, BtnY[50] + 8, "Financial", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[50] + MultiResoIntX(36), BtnY[50] + y, "Financial", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 51:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[51] + 58, BtnY[51] + 8, "Quest", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[51] + MultiResoIntX(58), BtnY[51] + y, "Quest", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 52:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[52] + 54, BtnY[52] + 8, "Prices", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[52] + MultiResoIntX(54), BtnY[52] + y, "Prices", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 53:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[53] + 36, BtnY[53] + 8, "SaveGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[53] + MultiResoIntX(36), BtnY[53] + y, "SaveGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 54:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[54] + 36, BtnY[54] + 8, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[54] + MultiResoIntX(36), BtnY[54] + y, "LoadGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 55:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[55] + 54, BtnY[55] + 8, "Option", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[55] + MultiResoIntX(54), BtnY[55] + y, "Option", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	case 56:
 		ResetMap();
 		SpawnHer();
-		DrawStringToHandle(BtnX[56] + 36, BtnY[56] + 8, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
+		DrawStringToHandle(BtnX[56] + MultiResoIntX(36), BtnY[56] + y, "QuitGame", GetColor(0, 0, 0), init.FontHandle);
 		break;
 	}
 }
@@ -1020,15 +1138,27 @@ void SYSTEM::CargoBtnSys(int OveredBtn) {
 void SYSTEM::CargoData() {
 
 	char Temp[32];
-	DrawStringToHandle(580, 160, "名前", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(780, 160, "数量", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(980, 160, "買値", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(1180, 160, "一個当たり買値", GetColor(0, 0, 0), init.FontHandle);
+	int y = MultiResoIntY(160);
+
+	DrawStringToHandle(MultiResoIntX(580), y, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(780), y, "数量", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(980), y, "買値", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(1180), y, "一個当たり買値", GetColor(0, 0, 0), init.FontHandle);
 
 	for (int i = 1; i < 8; i++) {
 		BtnX[i] = 580;
 		BtnY[i] = 200 + i * 42;
 	}
+
+	BtnX[63] = MWX + 640;
+	BtnY[63] = MWY + 140;
+	BtnW[63] = 90;
+	BtnH[63] = 42;
+
+	MultiResoBtn(63);
+
+	DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+
 	for (int i = 0; i < 8; i++) {
 		if (her.Cargo[i] != 0) {
 			DrawStringToHandle(BtnX[i + 1], BtnY[i + 1], Goods[her.HiddenID[i]].Name, GetColor(0, 0, 0), init.FontHandle);
@@ -1096,32 +1226,34 @@ void SYSTEM::TransData() {
 	TCHAR Temp[32];
 	int x = 0;
 	int y = 0;
+	int z = MultiResoIntY(160);
 
-	DrawStringToHandle(580, 160, "名前", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(740, 160, "数量", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(900, 160, "輸送力", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(1060, 160, "合計", GetColor(0, 0, 0), init.FontHandle);
-	DrawStringToHandle(1220, 160, "移動タイプ", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(580), z, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(740), z, "数量", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(900), z, "輸送力", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(1060), z, "合計", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(1220), z, "移動タイプ", GetColor(0, 0, 0), init.FontHandle);
 
 	for (int i = 0; i < 8; i++) {
-		BtnX[i] = 580 + x * 160;
-		BtnY[i] = 200 + y * 64;
+		BtnX[i] = 580;
+		BtnY[i] = 200 + i * 64;
+		MultiResoBtn(i);
+	}
+	for (int i = 0; i < 8; i++) {
 		if (her.Transport[i] != 0) {
 			sprintf_s(Temp, 32, "%s", trans[i].Name);
 			DrawStringToHandle(BtnX[i], BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
 			sprintf_s(Temp, 32, "%d", her.Transport[i]);
-			DrawStringToHandle(BtnX[i] + 160, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[i] + MultiResoIntX(160), BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
 			sprintf_s(Temp, 32, "%d", trans[i].Capacity);
-			DrawStringToHandle(BtnX[i] + 160 * 2, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[i] + MultiResoIntX(160 * 2), BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
 			sprintf_s(Temp, 32, "%d", her.Transport[i] * trans[i].Capacity);
-			DrawStringToHandle(BtnX[i] + 160 * 3, BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+			DrawStringToHandle(BtnX[i] + MultiResoIntX(160 * 3), BtnY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
 			if (trans[i].Sea == FALSE)
-				DrawStringToHandle(BtnX[i] + 160 * 4, BtnY[i], "陸", GetColor(0, 0, 0), init.FontHandle);
+				DrawStringToHandle(BtnX[i] + MultiResoIntX(160 * 4), BtnY[i], "陸", GetColor(0, 0, 0), init.FontHandle);
 			else
-				DrawStringToHandle(BtnX[i] + 160 * 4, BtnY[i], "海", GetColor(0, 0, 0), init.FontHandle);
+				DrawStringToHandle(BtnX[i] + MultiResoIntX(160 * 4), BtnY[i], "海", GetColor(0, 0, 0), init.FontHandle);
 		}
-		y++;
-		x = 0;
 	}
 }
 
@@ -1178,63 +1310,88 @@ void SYSTEM::FinanData() {
 
 	int x = 0;
 	int y = 0;
+	const char* Temp[64];
+	int i = 0;
 
-	DrawStringToHandle(410, 160, "貸借対照表", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(410), MultiResoIntY(160), "貸借対照表", GetColor(0, 0, 0), init.FontHandle);
 
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "現金", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "商品", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "流動資産合計", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "建物", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "土地", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "備品", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "車両運搬具", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "固定資産合計", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "資産合計", GetColor(0, 0, 0), init.FontHandle); y++;
-	x++; y = 0;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "借入金", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "未払金", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "負債合計", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "資本金", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "当期純利益", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "純資産合計", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 416 + 100, y * 32 + 240, "負債純資産合計", GetColor(0, 0, 0), init.FontHandle);
-	x = 0; y = 0;
+	Temp[0] = "現金";
+	Temp[1] = "商品";
+	Temp[2] = "";
+	Temp[3] = "流動資産合計";
+	Temp[4] = "";
+	Temp[5] = "建物";
+	Temp[6] = "土地";
+	Temp[7] = "備品";
+	Temp[8] = "車両運搬具";
+	Temp[9] = "";
+	Temp[10] = "固定資産合計";
+	Temp[11] = "資産合計";
+
+	Temp[12] = "借入金";
+	Temp[13] = "未払金";
+	Temp[14] = "";
+	Temp[15] = "負債合計";
+	Temp[16] = "";
+	Temp[17] = "資本金";
+	Temp[18] = "";
+	Temp[19] = "";
+	Temp[20] = "当期純利益";
+	Temp[21] = "";
+	Temp[22] = "純資産合計";
+	Temp[23] = "負債純資産合計";
+	while (i <= 23) {
+
+		DrawStringToHandle(MultiResoIntX(x * 416 + 100), MultiResoIntY(y * 32 + 240), Temp[i], GetColor(0, 0, 0), init.FontHandle); y++;
+		if (i == 11) {
+			x++;
+			y = 0;
+		}
+		else if (i == 23) {
+			x = 0;
+			y = 0;
+		}
+		i++;
+	}
+
 	DrawStringToHandle(1350, 160, "損益計算書", GetColor(0, 0, 0), init.FontHandle);
 
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "売上高", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "売上原価", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "販売費及び一般管理費", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "税引前当期純利益", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "当期純利益", GetColor(0, 0, 0), init.FontHandle);
-	x++; y = 0;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "期首商品棚卸高", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "当期商品仕入高", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "期末商品棚卸高", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "給料", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "支払家賃", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "減価償却費", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "", GetColor(0, 0, 0), init.FontHandle); y++;
-	DrawStringToHandle(x * 128 + 1024, y * 32 + 240, "法人税等", GetColor(0, 0, 0), init.FontHandle); y++;
+	Temp[24] = "売上高";
+	Temp[25] = "";
+	Temp[26] = "売上原価";
+	Temp[27] = "";
+	Temp[28] = "";
+	Temp[29] = "";
+	Temp[30] = "販売費及び一般管理費";
+	Temp[31] = "";
+	Temp[32] = "";
+	Temp[33] = "";
+	Temp[34] = "税引前当期純利益";
+	Temp[35] = "";
+	Temp[36] = "当期純利益";
+
+	Temp[37] = "";
+	Temp[38] = "";
+	Temp[39] = "";
+	Temp[40] = "期首商品棚卸高";
+	Temp[41] = "当期商品仕入高";
+	Temp[42] = "期末商品棚卸高";
+	Temp[43] = "";
+	Temp[44] = "給料";
+	Temp[45] = "支払家賃";
+	Temp[46] = "減価償却費";
+	Temp[47] = "";
+	Temp[48] = "法人税等";
+
+	while (i <= 48) {
+
+		DrawStringToHandle(MultiResoIntX(x * 128 + 1024), MultiResoIntY(y * 32 + 240), Temp[i], GetColor(0, 0, 0), init.FontHandle); y++;
+		if (i == 36) {
+			x++;
+			y = 0;
+		}
+		i++;
+	}
 }
 
 void SYSTEM::QuestBtnOver(int i) {
@@ -1620,6 +1777,7 @@ void SYSTEM::OptionBtnOver(int i) {
 			BtnSwitch = Sw_OPTION;
 			DrawWindow(520, 140, 5, 16);
 			DrawMessageWindow();
+			DrawOptionString();
 			OptionData();
 			DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 0, 0), init.FontHandle);
 			break;
@@ -1635,6 +1793,7 @@ void SYSTEM::OptionBtnOver(int i) {
 			BtnSwitch = Sw_OPTION;
 			DrawWindow(520, 140, 5, 16);
 			DrawMessageWindow();
+			DrawOptionString();
 			OptionData();
 			DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 0, 0), init.FontHandle);
 			break;
@@ -1655,6 +1814,7 @@ void SYSTEM::OptionBtnOut(int OveredBtn) {
 			BtnSwitch = Sw_OPTION;
 			DrawWindow(520, 140, 5, 16);
 			DrawMessageWindow();
+			DrawOptionString();
 			OptionData();
 			DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 			break;
@@ -1670,6 +1830,7 @@ void SYSTEM::OptionBtnOut(int OveredBtn) {
 			BtnSwitch = Sw_OPTION;
 			DrawWindow(520, 140, 5, 16);
 			DrawMessageWindow();
+			DrawOptionString();
 			OptionData();
 			DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
 			break;
@@ -1709,20 +1870,38 @@ void SYSTEM::OptionBtnSys(int OveredBtn) {
 
 void SYSTEM::OptionData() {
 
+	BtnX[16] = 700;
+	BtnY[16] = 200;
+	BtnW[16] = 16;
+	BtnH[16] = 32;
+
+	MultiResoBtn(16);
+
+	DrawExtendGraph(BtnX[16], BtnY[16], BtnX[16] + BtnW[16], BtnY[16] + BtnH[16], init.GraBtn4, TRUE);
+}
+
+void SYSTEM::DrawOptionString() {
+
+	DrawStringToHandle(MultiResoIntX(640), MultiResoIntY(200), "BGM", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(640), MultiResoIntY(280), "SE", GetColor(0, 0, 0), init.FontHandle);
 }
 
 void SYSTEM::InitMap() {
 	OveredBtn = -1;
 	SetMapBtn();
 	if (DebugMode == TRUE) {
+		LoopMusic("Field");
 		DebugMap();
+		DrawButton(-1);
+		DrawValue();
 		DebugBox();
 		clsDx();
 	}
-	else
-		sys.Fade(init.GraT, init.GraMap);
-	DrawButton(-1);
-	DrawValue();
+	else {
+		sys.Fade(init.GraT, init.GraMap, "Field");
+		DrawButton(-1);
+		DrawValue();
+	}
 	InitHer();
 
 }
@@ -1733,15 +1912,8 @@ void SYSTEM::ResetMap() {
 	DrawExtendGraph(0, 0, init.WinX, init.WinY, init.GraMap, TRUE);
 	DrawButton(OveredBtn);
 	DrawValue();
-	//DrawExtendGraph((int)her.X - 32, (int)her.Y - 64, (int)her.X + 32, (int)her.Y, init.GraCarriage[0], TRUE);
-	//DrawExtendGraph((int)her.X - 16, (int)her.Y - 64, (int)her.X + 16, (int)her.Y, init.GraHer, FALSE);
 	if (DebugMode == TRUE) {
 		DebugBox();
-		for (int i = 0; i < ButtonNumber; i++) {
-			BtnCx[i] = BtnX[i] + BtnW[i] / 2;
-			BtnCy[i] = BtnY[i] + BtnH[i] / 2;
-			DrawCircle(BtnCx[i], BtnCy[i], 2, GetColor(0, 255, 0), TRUE);
-		}
 		clsDx();
 	}
 }
@@ -1934,6 +2106,9 @@ void SYSTEM::SetMapBtn() {
 	BtnW[45] = 0;
 	BtnH[45] = 0;
 
+	for (int i = 0; i <= 45; i++) {
+		MultiResoBtn(i);
+	}
 	for (int i = 0; i < ButtonNumber; i++) {
 		BtnCx[i] = BtnX[i] + BtnW[i] / 2;
 		BtnCy[i] = BtnY[i] + BtnH[i] / 2;
@@ -1949,7 +2124,7 @@ void SYSTEM::DebugBox() {
 	}
 }
 
-void SYSTEM::Fade(int before, int after) {
+void SYSTEM::Fade(int before, int after, const char* Music) {
 
 
 	SetDrawScreen(DX_SCREEN_BACK);
@@ -1959,6 +2134,9 @@ void SYSTEM::Fade(int before, int after) {
 				SetDrawBright(255 - (i * 2), 255 - (i * 2), 255 - (i * 2));
 				DrawExtendGraph(0, 0, init.WinX, init.WinY, before, TRUE);
 			}
+
+			if (i == 128)
+				LoopMusic(Music);
 			if (i >= 128 && i < 192)
 				SetDrawBright(0, 0, 0);
 
@@ -1977,6 +2155,9 @@ void SYSTEM::Fade(int before, int after) {
 				SetDrawBright(255 - (i * 6), 255 - (i * 6), 255 - (i * 6));
 				DrawExtendGraph(0, 0, init.WinX, init.WinY, before, TRUE);
 			}
+
+			if (i == 43)
+				LoopMusic(Music);
 			if (i >= 43 && i < 59)
 				SetDrawBright(0, 0, 0);
 
@@ -3240,7 +3421,7 @@ void SYSTEM::MoveRoute() {
 		break;
 	}
 	SetHerPrices(OveredBtn);
-	Fade(init.GraMap, init.GraCity);
+	Fade(init.GraMap, init.GraCity, "City1");
 	fun.FStat = fun.F_CITY;
 	BtnSwitch = Sw_CITY;
 	InitSys();

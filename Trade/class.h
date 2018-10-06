@@ -7,7 +7,7 @@ public:
 	int WinX;
 	int WinY;
 	int GraT;
-	int GraBtn, GraBtn2, GraBtn3;
+	int GraBtn, GraBtn2, GraBtn3, GraBtn4;
 	int GraMW;
 	int GraMap;
 	int GraCity;
@@ -54,6 +54,12 @@ class SYSTEM {
 	int ETalkCount = 0;
 	int SlotNumber;
 	TCHAR CommedValue[64];
+	const char* SelectString[8];
+
+	typedef struct Quad {
+		int a, b, c, d;
+	} QuadS;
+	QuadS Quad;
 
 	double Angle, Angle2;
 	bool MOver = FALSE;
@@ -92,6 +98,10 @@ class SYSTEM {
 	};
 	int BtnSwitch = Sw_TITLE;
 public:
+	//システムセーブデータ
+	int Volume;
+
+
 	bool DebugMode = TRUE;
 	bool EventFlag[128];
 	int EventSwitch;
@@ -101,9 +111,12 @@ public:
 	//メインシステム
 	void ButtonOver();
 	void ButtonSys();
+	void DragSys();
 	void DaySys();
 	void DrawMessageWindow();
+	void MessageWindowMessage(const char*);
 	void DrawWindow(int, int, int, int);
+	void Fade(int, int, const char*);
 	void InitSys();
 	void ResetButton();
 	void ResetBtnOn();
@@ -114,6 +127,11 @@ public:
 	void SetTwoBtn();
 	void SetFullBtn();
 	void LoopMusic(const char*);
+	double GetVolumeMulti(const char*);
+	void MultiResoBtn(int);
+	int MultiResoIntX(int);
+	int MultiResoIntY(int);
+	QuadS MultiResoIntQuad(int, int, int, int);
 	//タイトル
 	void ResetTitle();
 	void DrawButton(int);
@@ -125,7 +143,6 @@ public:
 	void QuitBtnSys(int);
 	void QuitBtnReset();
 	//メインマップ
-	void Fade(int, int);
 	void ResetMap();
 	void InitMap();
 	void DrawValue();
@@ -166,6 +183,7 @@ public:
 	void OptionBtnOut(int);
 	void OptionBtnSys(int);
 	void OptionData();
+	void DrawOptionString();
 	void DebugBox();
 	void DebugMap();
 	void InitHer();

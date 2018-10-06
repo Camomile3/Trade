@@ -7,24 +7,24 @@ extern INIT init;
 void SYSTEM::EventFunc(const char* Name, const char* string) {
 
 	ResetCity();
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64 - 16, Name, GetColor(255, 255, 255), init.FontHandle);
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64 + 16, string, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 - 16), Name, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 + 16), string, GetColor(255, 255, 255), init.FontHandle);
 	WaitClick();
 }
 
 void SYSTEM::EventFunc2(const char* Name, const char* string, const char* string2) {
 
 	ResetCity();
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64 - 16, Name, GetColor(255, 255, 255), init.FontHandle);
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64 + 16, string, GetColor(255, 255, 255), init.FontHandle);
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64 + 16 + 32, string2, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 - 16), Name, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 + 16), string, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 + 16 + 32), string2, GetColor(255, 255, 255), init.FontHandle);
 	WaitClick();
 }
 
 void SYSTEM::EventMessage(const char* string) {
 
 	ResetCity();
-	DrawStringToHandle(MWX + 64 + 32, MWY + 64, string, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), string, GetColor(255, 255, 255), init.FontHandle);
 	WaitClick();
 }
 
@@ -186,7 +186,7 @@ void SYSTEM::Event(int Num) {
 			ResetCity();
 			SetTwoBtn();
 
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64, "じゃあ・・・", GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), "じゃあ・・・", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[62], BtnY[62], "設備投資するわ", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[63], BtnY[63], "そのまま頑張って", GetColor(255, 255, 255), init.FontHandle);
 			if (Stopper == TRUE) {
@@ -276,9 +276,11 @@ void SYSTEM::Event(int Num) {
 			ResetCity();
 			SetTwoBtn();
 
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64, "工場ね・・・", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[62], BtnY[62], "行ってみる", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "興味無い", GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), "工場ね・・・", GetColor(255, 255, 255), init.FontHandle);
+			SelectString[0] = "行ってみる";
+			SelectString[1] = "興味無い";
+			DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 255, 255), init.FontHandle);
 
 			if (Stopper == TRUE) {
 				WaitClick();
@@ -287,6 +289,9 @@ void SYSTEM::Event(int Num) {
 
 			if (EventSwitch == 62) {
 
+				EventSwitch = -1;
+				Stopper = TRUE;
+				OveredBtn = -1;
 				EventFunc("リネット", "ちょっと見てこようかしら。");
 				//暗転
 				EventFunc("営業担当", "ようこそいらっしゃいました。");
@@ -299,13 +304,15 @@ void SYSTEM::Event(int Num) {
 				EventFunc("営業担当", "いかがいたしますか？");
 				ETalkCount++;
 		case 2:
-			Stopper = TRUE;
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
 			SetTwoBtn();
 
-			DrawStringToHandle(BtnX[62], BtnY[62], "契約する", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "契約しない", GetColor(255, 255, 255), init.FontHandle);
+			SelectString[0] = "契約する";
+			SelectString[1] = "契約しない";
+
+			DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 255, 255), init.FontHandle);
 
 			if (Stopper == TRUE) {
 				WaitClick();
@@ -434,7 +441,7 @@ void SYSTEM::Event(int Num) {
 			ResetCity();
 			SetTwoBtn();
 
-			DrawStringToHandle(MWX + 64 + 32, MWY + 64 , "どうする？", GetColor(255, 255, 255), init.FontHandle);
+			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64) , "どうする？", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[62], BtnY[62], "買う", GetColor(255, 255, 255), init.FontHandle);
 			DrawStringToHandle(BtnX[63], BtnY[63], "買わない", GetColor(255, 255, 255), init.FontHandle);
 			if (Stopper == TRUE) {
