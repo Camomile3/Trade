@@ -6,12 +6,11 @@ GOODS Goods[32];
 CITY City[16];
 MARKET Market[16][32];
 MARKET HerMarket[16][32];
-TRANSPORT trans[8];
+TRANSPORT Trans[8];
+BUILDING Building[16][3];
 extern HEROINE her;
 extern SYSTEM sys;
 extern INIT init;
-extern TRANSPORT trans[8];
-
 
 void SYSTEM::MessageWindowMessage(const char* String) {
 
@@ -138,6 +137,7 @@ void SYSTEM::DrawMessageWindow() {
 
 		MessageWindowMessage("オプション項目の説明をさせる予定です");
 		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		printfDx("Sw_Option");
 		break;
 	case Sw_CITY:
 		switch (TalkNumber) {
@@ -176,9 +176,9 @@ void SYSTEM::DrawMessageWindow() {
 		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case Sw_INVEST:
-	case Sw_INVEST2:
-	case Sw_INVEST3:
-	case Sw_INVEST4:
+	case Sw_INVESTT:
+	case Sw_INVESTB:
+	case Sw_INVESTI:
 		BtnX[63] = MWX + 640;
 		BtnY[63] = MWY + 140;
 		BtnW[63] = 90;
@@ -392,20 +392,26 @@ void SYSTEM::SetHerPrices(int ID) {
 	}
 }
 
-/*	Goods[0].SetGoods(0, (char*)"石炭", 60);
-	Goods[1].SetGoods(1, (char*)"鉱石", 80);
-	Goods[2].SetGoods(2, (char*)"レアメタル", 100);
-	Goods[3].SetGoods(3, (char*)"食料", 100);
-	Goods[4].SetGoods(4, (char*)"木材", 100);
-	Goods[5].SetGoods(5, (char*)"石油", 100);
-	Goods[6].SetGoods(6, (char*)"金属", 100);
-	Goods[7].SetGoods(7, (char*)"缶詰", 100);
-	Goods[8].SetGoods(8, (char*)"銃火器", 100);
-	Goods[9].SetGoods(9, (char*)"紙", 100);
-	Goods[10].SetGoods(10, (char*)"書籍", 100);
-	Goods[11].SetGoods(11, (char*)"東洋贅沢品", 100);
-	Goods[12].SetGoods(12, (char*)"西洋贅沢品", 100);
-	Goods[13].SetGoods(13, (char*)"農業贅沢品", 100);*/
+/*
+	Goods[0].SetGoods(0, (char*)"食料", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[1].SetGoods(1, (char*)"石炭", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[2].SetGoods(2, (char*)"鉱石", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[3].SetGoods(3, (char*)"レアメタル", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[4].SetGoods(4, (char*)"木材", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[5].SetGoods(5, (char*)"金属", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[6].SetGoods(6, (char*)"缶詰", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[7].SetGoods(7, (char*)"銃火器", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[8].SetGoods(8, (char*)"紙", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[9].SetGoods(9, (char*)"書籍", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[10].SetGoods(10, (char*)"東洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[11].SetGoods(11, (char*)"西洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[12].SetGoods(12, (char*)"農業贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[13].SetGoods(13, (char*)"綿花", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[14].SetGoods(14, (char*)"生糸", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[15].SetGoods(15, (char*)"綿織物", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[16].SetGoods(16, (char*)"絹織物", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[17].SetGoods(17, (char*)"石油", 100, 1, 1, 100, 1, 1, 1, 1);
+*/
 
 void SYSTEM::BuyData() {
 
@@ -439,12 +445,55 @@ void TRANSPORT::SetTrans(int i, const char* n, int c, int p, bool s) {
 
 void TRANSPORT::InitTrans() {
 
-	trans[0].SetTrans(0, "馬車", 50, 500, FALSE);
-	trans[1].SetTrans(1, "帆船", 200, 5000, TRUE);
-	trans[2].SetTrans(2, "大型馬車", 100, 1500, FALSE);
-	trans[3].SetTrans(3, "大型帆船", 300, 10000, TRUE);
-	trans[4].SetTrans(4, "トラック", 50, 500, FALSE);
-	trans[5].SetTrans(5, "蒸気船", 50, 500, TRUE);
-	trans[6].SetTrans(6, "大型トラック", 50, 500, FALSE);
-	trans[7].SetTrans(7, "大型蒸気船", 50, 500, TRUE);
+	Trans[0].SetTrans(0, "馬車", 50, 500, FALSE);
+	Trans[1].SetTrans(1, "帆船", 200, 5000, TRUE);
+	Trans[2].SetTrans(2, "大型馬車", 100, 1500, FALSE);
+	Trans[3].SetTrans(3, "大型帆船", 300, 10000, TRUE);
+	Trans[4].SetTrans(4, "トラック", 50, 500, FALSE);
+	Trans[5].SetTrans(5, "蒸気船", 50, 500, TRUE);
+	Trans[6].SetTrans(6, "大型トラック", 50, 500, FALSE);
+	Trans[7].SetTrans(7, "大型蒸気船", 50, 500, TRUE);
+}
+
+void BUILDING::SetBuilding(int p, int m , int r) {
+
+	Price = p;
+	Maint = m;
+	Rent = r;
+}
+
+//[街番号][0事務所 1倉庫 2工場]
+
+void INIT::InitBuilding() {
+
+	Building[0][0].SetBuilding(20000, 200, 1000);
+	Building[0][1].SetBuilding(30000, 400, 1500);
+	Building[0][2].SetBuilding(100000, 2000, 5000);
+	Building[1][0].SetBuilding(20000, 200, 1000);
+	Building[1][1].SetBuilding(20000, 200, 1000);
+	Building[1][2].SetBuilding(20000, 200, 1000);
+	Building[2][0].SetBuilding(20000, 200, 1000);
+	Building[2][1].SetBuilding(20000, 200, 1000);
+	Building[2][2].SetBuilding(20000, 200, 1000);
+	Building[3][0].SetBuilding(20000, 200, 1000);
+	Building[3][1].SetBuilding(20000, 200, 1000);
+	Building[3][2].SetBuilding(20000, 200, 1000);
+	Building[4][0].SetBuilding(20000, 200, 1000);
+	Building[4][1].SetBuilding(20000, 200, 1000);
+	Building[4][2].SetBuilding(20000, 200, 1000);
+	Building[5][0].SetBuilding(20000, 200, 1000);
+	Building[5][1].SetBuilding(20000, 200, 1000);
+	Building[5][2].SetBuilding(20000, 200, 1000);
+	Building[6][0].SetBuilding(20000, 200, 1000);
+	Building[6][1].SetBuilding(20000, 200, 1000);
+	Building[6][2].SetBuilding(20000, 200, 1000);
+	Building[7][0].SetBuilding(20000, 200, 1000);
+	Building[7][1].SetBuilding(20000, 200, 1000);
+	Building[7][2].SetBuilding(20000, 200, 1000);
+	Building[8][0].SetBuilding(20000, 200, 1000);
+	Building[8][1].SetBuilding(20000, 200, 1000);
+	Building[8][2].SetBuilding(20000, 200, 1000);
+	Building[9][0].SetBuilding(20000, 200, 1000);
+	Building[9][1].SetBuilding(20000, 200, 1000);
+	Building[9][2].SetBuilding(20000, 200, 1000);
 }

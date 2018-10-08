@@ -10,7 +10,8 @@ extern GOODS Goods[32];
 extern CITY City[16];
 extern MARKET Market[16][32];
 extern MARKET HerMarket[16][32];
-extern TRANSPORT trans[7];
+extern TRANSPORT Trans[8];
+extern BUILDING Building[16][3];
 
 void SYSTEM::ResetCity() {
 
@@ -575,9 +576,9 @@ void SYSTEM::InvestBtnOver(int i) {
 
 	switch (BtnSwitch) {
 	case Sw_INVEST:
-	case Sw_INVEST2:
-	case Sw_INVEST3:
-	case Sw_INVEST4:
+	case Sw_INVESTT:
+	case Sw_INVESTB:
+	case Sw_INVESTI:
 		if (i == 63) {
 			ResetCity();
 			DrawWindow(520, 140, 5, 16);
@@ -593,6 +594,14 @@ void SYSTEM::InvestBtnOver(int i) {
 			}
 		}
 		break;
+	case Sw_INVESTBUYB:
+		if (BtnOn[i] == TRUE) {
+			ResetCity();
+			MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 0, 0), init.FontHandle);
+		}
+		break;
 	}
 }
 
@@ -600,9 +609,9 @@ void SYSTEM::InvestBtnOut(int i) {
 
 	switch (BtnSwitch) {
 	case Sw_INVEST:
-	case Sw_INVEST2:
-	case Sw_INVEST3:
-	case Sw_INVEST4:
+	case Sw_INVESTT:
+	case Sw_INVESTB:
+	case Sw_INVESTI:
 		if (i == 63) {
 			ResetCity();
 			DrawWindow(520, 140, 5, 16);
@@ -618,71 +627,49 @@ void SYSTEM::InvestBtnOut(int i) {
 			}
 		}
 		break;
+	case Sw_INVESTBUYB:
+		if (BtnOn[i] == TRUE) {
+			ResetCity();
+			MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 255, 255), init.FontHandle);
+		}
+		break;
 	}
 }
 
 void SYSTEM::InvestBtnSys(int i) {
 
-	switch (BtnSwitch) {
-	case Sw_INVEST:
-		switch (i) {
-		case 63:
-			BtnSwitch = Sw_CITY;
-			ResetCity();
-			break;
-		case 0:
-			ResetCity();
-			BtnSwitch = Sw_INVEST2;
-			DrawWindow(520, 140, 5, 16);
-			InvestData(-1);
-			break;
-		case 1:
-			ResetCity();
-			BtnSwitch = Sw_INVEST3;
-			DrawWindow(520, 140, 5, 16);
-			InvestData(-1);
-			break;
-		case 2:
-			ResetCity();
-			BtnSwitch = Sw_INVEST4;
-			DrawWindow(520, 140, 5, 16);
-			InvestData(-1);
-			break;
-		}
+	switch (i) {
+	case 63:
+		BtnSwitch = Sw_CITY;
+		ResetCity();
 		break;
-	case Sw_INVEST2:
-		if (i == 63){
-			BtnSwitch = Sw_CITY;
-			ResetCity();
-			break;
-		}
-		else if (TransportTech) {
-			if (i < 8) {
-				BtnSwitch = Sw_INVESTBUY;
-				ResetCity();
-				InvestBuySys(i);
-			}
-			else if (i >= 8 && i < 16) {
-				BtnSwitch = Sw_INVESTSALE;
-				ResetCity();
-				InvestSaleSys(i - 8);
-			}
-		}
+	case 0:
+		ResetCity();
+		BtnSwitch = Sw_INVESTT;
+		DrawWindow(520, 140, 5, 16);
+		InvestData(-1);
 		break;
-	case Sw_INVEST3:
+	case 1:
+		ResetCity();
+		BtnSwitch = Sw_INVESTB;
+		DrawWindow(520, 140, 5, 16);
+		InvestData(-1);
 		break;
-	case Sw_INVEST4:
+	case 2:
+		ResetCity();
+		BtnSwitch = Sw_INVESTI;
+		DrawWindow(520, 140, 5, 16);
+		InvestData(-1);
 		break;
 	}
 }
 
 void SYSTEM::InvestData(int Btn) {
 
-	int x = 0;
-	int y = 0;
-	int i = 0;
-
 	switch (BtnSwitch) {
+
 	case Sw_INVEST:
 		for (int i = 0; i < 3; i++) {
 			BtnX[i] = 600;
@@ -701,83 +688,112 @@ void SYSTEM::InvestData(int Btn) {
 		if (Btn != 2)
 			DrawStringToHandle(BtnX[2], BtnY[2], TempChar[2], GetColor(0, 0, 0), init.FontHandle);
 		break;
-	case Sw_INVEST2:
-
-		TempChar[0] = "çwì¸";
-		TempChar[1] = "çwì¸";
-		TempChar[2] = "çwì¸";
-		TempChar[3] = "çwì¸";
-		TempChar[4] = "çwì¸";
-		TempChar[5] = "çwì¸";
-		TempChar[6] = "çwì¸";
-		TempChar[7] = "çwì¸";
-		TempChar[8] = "îÑãp";
-		TempChar[9] = "îÑãp";
-		TempChar[10] = "îÑãp";
-		TempChar[11] = "îÑãp";
-		TempChar[12] = "îÑãp";
-		TempChar[13] = "îÑãp";
-		TempChar[14] = "îÑãp";
-		TempChar[15] = "îÑãp";
-		TempChar[16] = "îné‘";
-		TempChar[17] = "îøëD";
-		TempChar[18] = "ëÂå^îné‘";
-		TempChar[19] = "ëÂå^îøëD";
-		TempChar[20] = "ÉgÉâÉbÉN";
-		TempChar[21] = "èˆãCëD";
-		TempChar[22] = "ëÂå^ÉgÉâÉbÉN";
-		TempChar[23] = "ëÂå^èˆãCëD";
-
-		//0îné‘0Å@1îøëD30Å@2ëÂå^îné‘30Å@3ëÂå^îøëD40Å@4ÉgÉâÉbÉN70Å@5èˆãCëD80Å@6ëÂå^ÉgÉâÉbÉN90Å@7ëÂå^èˆãCëD100
-		while (i < 24) {
-			BtnX[i] = 1000 + x * 200;
-			BtnY[i] = 180 + y * 50;
-			BtnW[i] = 180;
-			BtnH[i] = 42;
-			MultiResoBtn(i);
-			if (i < 16)
-				BtnOn[i] = TRUE;
-			if (Btn != i)
-				if (TransportTech)
-				DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
-			y++;
-			i++;
-			if (i == 8) {
-				x++;
-				y = 0;
-			}
-			if (i == 16) {
-				x = -2;
-				y = 0;
-			}
-		}
-
+	case Sw_INVESTT:
+		InvestDataT(-1);
 		break;
-	case Sw_INVEST3:
+	case Sw_INVESTB:
+		InvestDataB(-1);
 		break;
-	case Sw_INVEST4:
+	case Sw_INVESTI:
+		InvestDataI(-1);
 		break;
 	}
 }
 
-void SYSTEM::InvestBuySys(int ID) {
+void SYSTEM::InvestBtnSysT(int i) {
+
+	if (i == 63) {
+		BtnSwitch = Sw_INVEST;
+		ResetCity();
+	}
+	else if (TransportTech) {
+		if (i < 8) {
+			BtnSwitch = Sw_INVESTBUYT;
+			ResetCity();
+			InvestBuySysT(i);
+		}
+		else if (i >= 8 && i < 16) {
+			BtnSwitch = Sw_INVESTSALET;
+			ResetCity();
+			InvestSaleSysT(i - 8);
+		}
+	}
+}
+
+void SYSTEM::InvestDataT(int Btn) {
+
+	int x = 0;
+	int y = 0;
+	int i = 0;
+
+	TempChar[0] = "çwì¸";
+	TempChar[1] = "çwì¸";
+	TempChar[2] = "çwì¸";
+	TempChar[3] = "çwì¸";
+	TempChar[4] = "çwì¸";
+	TempChar[5] = "çwì¸";
+	TempChar[6] = "çwì¸";
+	TempChar[7] = "çwì¸";
+	TempChar[8] = "îÑãp";
+	TempChar[9] = "îÑãp";
+	TempChar[10] = "îÑãp";
+	TempChar[11] = "îÑãp";
+	TempChar[12] = "îÑãp";
+	TempChar[13] = "îÑãp";
+	TempChar[14] = "îÑãp";
+	TempChar[15] = "îÑãp";
+	TempChar[16] = "îné‘";
+	TempChar[17] = "îøëD";
+	TempChar[18] = "ëÂå^îné‘";
+	TempChar[19] = "ëÂå^îøëD";
+	TempChar[20] = "ÉgÉâÉbÉN";
+	TempChar[21] = "èˆãCëD";
+	TempChar[22] = "ëÂå^ÉgÉâÉbÉN";
+	TempChar[23] = "ëÂå^èˆãCëD";
+
+	//0îné‘0Å@1îøëD30Å@2ëÂå^îné‘30Å@3ëÂå^îøëD40Å@4ÉgÉâÉbÉN70Å@5èˆãCëD80Å@6ëÂå^ÉgÉâÉbÉN90Å@7ëÂå^èˆãCëD100
+	while (i < 24) {
+		BtnX[i] = 1000 + x * 200;
+		BtnY[i] = 180 + y * 50;
+		BtnW[i] = 180;
+		BtnH[i] = 42;
+		MultiResoBtn(i);
+		if (i < 16)
+			BtnOn[i] = TRUE;
+		if (Btn != i)
+			if (TransportTech)
+				DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+		y++;
+		i++;
+		if (i == 8) {
+			x++;
+			y = 0;
+		}
+		if (i == 16) {
+			x = -2;
+			y = 0;
+		}
+	}
+}
+
+void SYSTEM::InvestBuySysT(int ID) {
 
 	MessageWindowMessage("Ç¢Ç≠Ç¬çwì¸ÇµÇ‹Ç∑Ç©ÅH");
 
 	TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
-	TempPrice = trans[ID].Price * TempNumber;
+	TempPrice = Trans[ID].Price * TempNumber;
 
 	if (TempPrice > her.Money) {
 		ResetCity();
 		MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
 		WaitClick();
 	}
-	else if (trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
+	else if (Trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
 		ResetCity();
 		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
 		WaitClick();
 	}
-	else if (trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999 ) {
+	else if (Trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999 ) {
 		ResetCity();
 		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
 		WaitClick();
@@ -790,7 +806,7 @@ void SYSTEM::InvestBuySys(int ID) {
 		MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
 		WaitClick();
 	}
-	BtnSwitch = Sw_INVEST;
+	BtnSwitch = Sw_INVESTT;
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
 	InvestData(-1);
@@ -798,7 +814,7 @@ void SYSTEM::InvestBuySys(int ID) {
 	printfDx("%d\n", her.Transport[0]);
 }
 
-void SYSTEM::InvestSaleSys(int ID) {
+void SYSTEM::InvestSaleSysT(int ID) {
 
 	TCHAR Temp[32];
 	if (her.Transport[ID] == 0) {
@@ -812,7 +828,7 @@ void SYSTEM::InvestSaleSys(int ID) {
 		DrawStringToHandle(MultiResoIntX(MWX + 64 + 32 + 256), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
 
 		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
-		TempPrice = (int)(trans[ID].Price * TempNumber * 0.8);
+		TempPrice = (int)(Trans[ID].Price * TempNumber * 0.8);
 
 
 		if (her.Transport[ID] < TempNumber) {
@@ -829,11 +845,301 @@ void SYSTEM::InvestSaleSys(int ID) {
 			WaitClick();
 		}
 	}
-	BtnSwitch = Sw_INVEST;
+	BtnSwitch = Sw_INVESTT;
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
 	InvestData(-1);
 	OveredBtn = -1;
+}
+
+void SYSTEM::InvestBtnSysB(int i) {
+
+	switch (BtnSwitch) {
+	case Sw_INVESTB:
+		if (i == 63) {
+			BtnSwitch = Sw_INVEST;
+			ResetCity();
+		}
+		else {
+			if (3 <= i && i <= 5) {
+				BtnSwitch = Sw_INVESTRENTB;
+				ResetCity();
+				InvestRentSysB(i - 3);
+			}
+			else if (6 <= i && i <= 8) {
+				BtnSwitch = Sw_INVESTENDB;
+				ResetCity();
+				InvestEndSysB(i - 6);
+			}
+			else if (9 <= i && i <= 11) {
+				BtnSwitch = Sw_INVESTBUYB;
+				ResetCity();
+				InvestBuySysB(i - 9);
+			}
+			else if (12 <= i && i <= 14) {
+				BtnSwitch = Sw_INVESTSALEB;
+				ResetCity();
+				InvestSaleSysB(i - 12);
+			}
+		}
+		break;
+	case Sw_INVESTBUYB:
+		if (i == 63) {
+			BtnSwitch = Sw_INVESTB;
+			ResetCity();
+		}
+		else if (i == 62) {
+			BuyFlag = TRUE;
+			InvestBuySysB(0);
+		}
+		break;
+	}
+}
+
+void SYSTEM::InvestDataB(int Btn) {
+
+	int x = 0;
+	int y = 0;
+	char* Temp;
+
+	TempChar[0] = "éÿêî";
+	TempChar[1] = "èäóLêî";
+	TempChar[2] = "í¿óø";
+	TempChar[3] = "îÑâø";
+
+	for (int i = 0; i < 16; i++) {
+		if (i <= 9) {
+			TempValueX[i] = 650 + x * 50;
+			TempValueY[i] = 180 + y * 70;
+			MultiResoValue(i);
+		}
+		else {
+			TempValueX[i] = 660 + x * 50;
+			TempValueY[i] = 180 + y * 70;
+			MultiResoValue(i);
+		}
+
+		if (i <= 3) {
+			DrawStringToHandle(TempValueX[i], TempValueY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+			x += 2;
+		}
+		if (i == 3) {
+			x = 0;
+			y = 1;
+		}
+		if (i >= 4) {
+			if (i >= 4 && i <= 6)
+				sprintf_s(TempT, 32, "%d", Building[her.On][i - 4].RentNumber);
+			if (i >= 7 && i <= 9)
+				sprintf_s(TempT, 32, "%d", Building[her.On][i - 7].Number);
+			if (i >= 10 && i <= 12) {
+				Temp = AddCommaN(Building[her.On][i - 10].Rent);
+				sprintf_s(TempT, 32, "%s", Temp);
+			}
+			if (i >= 13 && i <= 15){
+				Temp = AddCommaN(Building[her.On][i - 13].Price);
+				sprintf_s(TempT, 32, "%s", Temp);
+			}
+			DrawStringToHandle(TempValueX[i], TempValueY[i], TempT, GetColor(0, 0, 0), init.FontHandle);
+
+			y++;
+
+			if (i == 6 || i == 12) {
+				x += 2;
+				y = 1;
+			}
+			if (i == 9) {
+				x++;
+				y = 1;
+			}
+		}
+	}
+
+	x = 0;
+	y = 0;
+
+	TempChar[0] = "éññ±èä";
+	TempChar[1] = "ëqå…";
+	TempChar[2] = "çHèÍ";
+	TempChar[3] = "í¿éÿ";
+	TempChar[4] = "í¿éÿ";
+	TempChar[5] = "í¿éÿ";
+	TempChar[6] = "å_ñÒâèú";
+	TempChar[7] = "å_ñÒâèú";
+	TempChar[8] = "å_ñÒâèú";
+	TempChar[9] = "çwì¸";
+	TempChar[10] = "çwì¸";
+	TempChar[11] = "çwì¸";
+	TempChar[12] = "îÑãp";
+	TempChar[13] = "îÑãp";
+	TempChar[14] = "îÑãp";
+
+	for (int i = 0; i <= 2; i++) {
+	
+		BtnX[i] = 550 + x * 95;
+		BtnY[i] = 250 + y * 70;
+		BtnW[i] = 180;
+		BtnH[i] = 42;
+		MultiResoBtn(i);
+
+		y++;
+
+		if (Btn != i)
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+	}
+
+	y = 0;
+
+	for (int i = 3; i <= 14; i++) {
+
+		if (i == 6 || i == 9 || i == 12) {
+			x++;
+			y = 0;
+		}
+
+		BtnX[i] = 1030 + x * 100;
+		BtnY[i] = 250 + y * 70;
+		BtnW[i] = 90;
+		BtnH[i] = 42;
+		MultiResoBtn(i);
+
+		y++;
+
+		BtnOn[i] = TRUE;
+
+		if (Btn != i)
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+	}
+}
+
+void SYSTEM::InvestBuySysB(int ID) {
+	
+	if (ID == 0 && BuyFlag == FALSE) {
+		BtnSwitch = Sw_INVESTBUYB;
+		MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+		SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
+		return;
+	}
+	else if (ID == 0 && Building[her.On][ID].Number >= 1) {
+		ResetCity();
+		MessageWindowMessage("Ç‡Ç§éùÇ¡ÇƒÇ¢Ç‹Ç∑ÅB");
+		WaitClick();
+	}
+	else if (BuyFlag == TRUE) {
+		TempNumber = 1;
+		TempPrice = Building[her.On][ID].Price;
+
+		Building[her.On][ID].Number += TempNumber;
+		her.Money -= TempPrice;
+		ResetCity();
+		MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
+		BuyFlag = FALSE;
+		WaitClick();
+
+	}
+	else {
+		MessageWindowMessage("Ç¢Ç≠Ç¬çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+
+		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
+		TempPrice = Building[her.On][ID].Price * TempNumber;
+
+		if (TempPrice > her.Money) {
+			ResetCity();
+			MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
+			WaitClick();
+		}
+		else if (Building[her.On][ID].Number + TempNumber > 99) {
+			ResetCity();
+			MessageWindowMessage("ÇªÇÒÇ»Ç…îÉÇ¶Ç‹ÇπÇÒÅB");
+			WaitClick();
+		}
+		else if (TempNumber != 0)
+		{
+			Building[her.On][ID].Number += TempNumber;
+			her.Money -= TempPrice;
+			ResetCity();
+			MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
+			WaitClick();
+		}
+	}
+		BtnSwitch = Sw_INVESTB;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		InvestData(-1);
+		OveredBtn = -1;
+		printfDx("%d\n", Building[her.On][ID].Number);
+	
+}
+
+void SYSTEM::InvestSaleSysB(int i) {
+
+	printfDx("i = %d\n", i);
+}
+
+void SYSTEM::InvestRentSysB(int ID) {
+
+	MessageWindowMessage("Ç¢Ç≠Ç¬å_ñÒÇµÇ‹Ç∑Ç©ÅH");
+
+	TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
+	TempPrice = Building[her.On][ID].Price * TempNumber;
+
+	if (TempPrice > her.Money) {
+		ResetCity();
+		MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
+		WaitClick();
+	}
+	else if (Trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
+		ResetCity();
+		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
+		WaitClick();
+	}
+	else if (Trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999) {
+		ResetCity();
+		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
+		WaitClick();
+	}
+	else if (TempNumber != 0)
+	{
+		Building[her.On][ID].Number += TempNumber;
+		her.Money -= TempPrice;
+		ResetCity();
+		MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
+		WaitClick();
+	}
+	BtnSwitch = Sw_INVESTB;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	InvestData(-1);
+	OveredBtn = -1;
+	printfDx("%d\n", Building[her.On][ID].Number);
+}
+
+void SYSTEM::InvestEndSysB(int i) {
+
+	printfDx("i = %d\n", i);
+}
+
+void SYSTEM::InvestBtnSysI(int i) {
+
+	if (i == 63) {
+		BtnSwitch = Sw_CITY;
+		ResetCity();
+	}
+}
+
+void SYSTEM::InvestDataI(int i) {
+
+
+}
+
+void SYSTEM::InvestBuySysI(int i) {
+
+
+}
+
+void SYSTEM::InvestSaleSysI(int i) {
+
+
 }
 
 void SYSTEM::ManageBtnOver(int i) {
@@ -888,13 +1194,13 @@ void SYSTEM::TalkBtnOver(int i) {
 	switch (i) {
 	case 62:
 		ResetTalk();
-		SetTwoBtn();
-		DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 0, 0), init.FontHandle);
+
+		DrawStringToHandle(BtnX[62], BtnY[62], TempChar[62], GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 63:
 		ResetTalk();
-		SetTwoBtn();
-		DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 0, 0), init.FontHandle);
+
+		DrawStringToHandle(BtnX[63], BtnY[63], TempChar[63], GetColor(255, 0, 0), init.FontHandle);
 		break;
 	}
 }
@@ -904,13 +1210,13 @@ void SYSTEM::TalkBtnOut(int OveredBtn) {
 	switch (OveredBtn) {
 	case 62:
 		ResetTalk();
-		SetTwoBtn();
-		DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 255, 255), init.FontHandle);
+
+		DrawStringToHandle(BtnX[62], BtnY[62], TempChar[62], GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 63:
 		ResetTalk();
-		SetTwoBtn();
-		DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 255, 255), init.FontHandle);
+
+		DrawStringToHandle(BtnX[63], BtnY[63], TempChar[63], GetColor(255, 255, 255), init.FontHandle);
 		break;
 	}
 }

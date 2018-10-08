@@ -116,10 +116,7 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
-
-			DrawStringToHandle(BtnX[62], BtnY[62], "してほしい", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "結論だけで十分", GetColor(255, 255, 255), init.FontHandle);
+			SetTwoBtn("してほしい", "結論だけで十分");
 			if (Stopper == TRUE) {
 				WaitClick();
 				Stopper = FALSE;
@@ -184,11 +181,9 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
+			SetTwoBtn("設備投資するわ", "そのまま頑張って");
 
 			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), "じゃあ・・・", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[62], BtnY[62], "設備投資するわ", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "そのまま頑張って", GetColor(255, 255, 255), init.FontHandle);
 			if (Stopper == TRUE) {
 				WaitClick();
 				Stopper = FALSE;
@@ -234,10 +229,8 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
+			SetTwoBtn("買う", "買わない");
 
-			DrawStringToHandle(BtnX[62], BtnY[62], "買う", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "買わない", GetColor(255, 255, 255), init.FontHandle);
 			if (Stopper == TRUE) {
 				WaitClick();
 				Stopper = FALSE;
@@ -274,13 +267,9 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
+			SetTwoBtn("行ってみる", "興味無い");
 
 			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), "工場ね・・・", GetColor(255, 255, 255), init.FontHandle);
-			SelectString[0] = "行ってみる";
-			SelectString[1] = "興味無い";
-			DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 255, 255), init.FontHandle);
 
 			if (Stopper == TRUE) {
 				WaitClick();
@@ -306,13 +295,7 @@ void SYSTEM::Event(int Num) {
 		case 2:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
-
-			SelectString[0] = "契約する";
-			SelectString[1] = "契約しない";
-
-			DrawStringToHandle(BtnX[62], BtnY[62], SelectString[0], GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], SelectString[1], GetColor(255, 255, 255), init.FontHandle);
+			SetTwoBtn("契約する", "契約しない");
 
 			if (Stopper == TRUE) {
 				WaitClick();
@@ -359,10 +342,7 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
-
-			DrawStringToHandle(BtnX[62], BtnY[62], "これ試着できるかしら？", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "こっちの工場製の服を買うわ。", GetColor(255, 255, 255), init.FontHandle);
+			SetTwoBtn("これ試着できるかしら？", "こっちの工場製の服を買うわ。");
 
 			if (Stopper == TRUE) {
 				WaitClick();
@@ -439,11 +419,9 @@ void SYSTEM::Event(int Num) {
 		case 1:
 			BtnSwitch = Sw_TALK2;
 			ResetCity();
-			SetTwoBtn();
+			SetTwoBtn("買う", "買わない");
 
 			DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64) , "どうする？", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[62], BtnY[62], "買う", GetColor(255, 255, 255), init.FontHandle);
-			DrawStringToHandle(BtnX[63], BtnY[63], "買わない", GetColor(255, 255, 255), init.FontHandle);
 			if (Stopper == TRUE) {
 				WaitClick();
 				Stopper = FALSE;

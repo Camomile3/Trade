@@ -1,4 +1,5 @@
 #pragma once
+#include "DxLib.h"
 #include <string>
 
 class INIT {
@@ -15,9 +16,12 @@ public:
 	int GraCalender, GraGold, GraIdea, GraFactory;
 	int GraCarriage[12];
 	int GraShip[12];
+	int SHandle;
 	void SetFont();
 	void LoadGra();
+	void LoadSE();
 	void InitMarket();
+	void InitBuilding();
 	void Cargo();
 };
 
@@ -37,6 +41,7 @@ public:
 
 class SYSTEM {
 	int BtnX[64], BtnY[64], BtnW[64], BtnH[64], BtnCx[64], BtnCy[64];
+	int TempValueX[64], TempValueY[64];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
 	int OveredBtn = -1;
@@ -55,6 +60,8 @@ class SYSTEM {
 	int SlotNumber;
 	TCHAR CommedValue[64];
 	const char* SelectString[8];
+	double VolumeMulti;
+	double VolumeMultiSE;
 
 	typedef struct Quad {
 		int a, b, c, d;
@@ -65,6 +72,9 @@ class SYSTEM {
 	bool MOver = FALSE;
 	bool LEnd = FALSE;
 	bool Stopper = TRUE;
+	bool DragStopper = FALSE;
+
+	bool BuyFlag;
 	enum {
 		Sw_TITLE,
 		Sw_NEW,
@@ -86,11 +96,17 @@ class SYSTEM {
 		Sw_SALE,
 		Sw_SALE2,
 		Sw_INVEST,
-		Sw_INVEST2,
-		Sw_INVEST3,
-		Sw_INVEST4,
-		Sw_INVESTBUY,
-		Sw_INVESTSALE,
+		Sw_INVESTT,
+		Sw_INVESTB,
+		Sw_INVESTI,
+		Sw_INVESTBUYT,
+		Sw_INVESTSALET,
+		Sw_INVESTBUYB,
+		Sw_INVESTSALEB,
+		Sw_INVESTRENTB,
+		Sw_INVESTENDB,
+		Sw_INVESTBUYI,
+		Sw_INVESTSALEI,
 		Sw_MANAGE,
 		Sw_TALK,
 		Sw_TALK2,
@@ -99,7 +115,8 @@ class SYSTEM {
 	int BtnSwitch = Sw_TITLE;
 public:
 	//システムセーブデータ
-	int Volume;
+	int VolumeBGM;
+	int VolumeSE;
 
 
 	bool DebugMode = TRUE;
@@ -107,6 +124,7 @@ public:
 	int EventSwitch;
 	int EventNumber;
 	const char* TempChar[32];
+	TCHAR TempT[32];
 
 	//メインシステム
 	void ButtonOver();
@@ -121,14 +139,17 @@ public:
 	void ResetButton();
 	void ResetBtnOn();
 	char* AddComma(int);
+	char* AddCommaN(int);
 	void WaitClick();
 	void WaitYesNo();
 	void SearchEmpty(int);
-	void SetTwoBtn();
+	void SetTwoBtn(const char*, const char*);
 	void SetFullBtn();
 	void LoopMusic(const char*);
 	double GetVolumeMulti(const char*);
+	void SetSEVolume();
 	void MultiResoBtn(int);
+	void MultiResoValue(int);
 	int MultiResoIntX(int);
 	int MultiResoIntY(int);
 	QuadS MultiResoIntQuad(int, int, int, int);
@@ -147,43 +168,54 @@ public:
 	void InitMap();
 	void DrawValue();
 	void SetMapBtn();
+
 	void MapBtnOver(int);
 	void MapBtnOut(int);
 	void MapBtnSys(int);
+
 	void CargoBtnOver(int);
 	void CargoBtnOut(int);
 	void CargoBtnSys(int);
 	void CargoData();
+
 	void TransBtnOver(int);
 	void TransBtnOut(int);
 	void TransBtnSys(int);
 	void TransData();
+
 	void FinanBtnOver(int);
 	void FinanBtnOut(int);
 	void FinanBtnSys(int);
 	void FinanData();
+
 	void QuestBtnOver(int);
 	void QuestBtnOut(int);
 	void QuestBtnSys(int);
+
 	void QuestData();
 	void PricesBtnOver(int);
 	void PricesBtnOut(int);
 	void PricesBtnSys(int);
 	void PricesData();
 	void PricesData2(int, int);
+
 	void SaveBtnOver(int);
 	void SaveBtnOut(int);
 	void SaveBtnSys(int);
 	void SaveData();
+
 	void LoadBtnOver(int);
 	void LoadBtnOut(int);
 	void LoadBtnSys(int);
 	void LoadData();
+
 	void OptionBtnOver(int);
 	void OptionBtnOut(int);
 	void OptionBtnSys(int);
 	void OptionData();
+
 	void DrawOptionString();
+	void DrawOptionBtn();
 	void DebugBox();
 	void DebugMap();
 	void InitHer();
@@ -195,10 +227,12 @@ public:
 	void SetHerPrices(int);
 	void ResetCity();
 	void ResetTalk();
+
 	void CityBtnOver(int);
 	void CityBtnOut(int);
 	void CityBtnSys(int);
 	void CityData();
+
 	void BuyBtnOver(int);
 	void BuyBtnOut(int);
 	void BuyBtnSys(int);
@@ -206,31 +240,52 @@ public:
 	void BuyData();
 	void BuySys(int);
 	void BuySort(int);
+
 	void SaleBtnOver(int);
 	void SaleBtnOut(int);
 	void SaleBtnSys(int);
 	void SaleData();
 	void SaleSys(int);
 	void SaleSort(int);
+
 	void InvestBtnOver(int);
 	void InvestBtnOut(int);
 	void InvestBtnSys(int);
 	void InvestData(int);
-	void InvestBuySys(int);
-	void InvestSaleSys(int);
+
+	void InvestBtnSysT(int);	//輸送
+	void InvestDataT(int);
+	void InvestBuySysT(int);
+	void InvestSaleSysT(int);
+
+	void InvestBtnSysB(int);	//建物
+	void InvestDataB(int);
+	void InvestBuySysB(int);
+	void InvestSaleSysB(int);
+	void InvestRentSysB(int);
+	void InvestEndSysB(int);
+
+	void InvestBtnSysI(int);	//投資
+	void InvestDataI(int);
+	void InvestBuySysI(int);
+	void InvestSaleSysI(int);
+
 	void ManageBtnOver(int);
 	void ManageBtnOut(int);
 	void ManageBtnSys(int);
 	void ManageData(int);
+
 	void TalkBtnOver(int);
 	void TalkBtnOut(int);
 	void TalkBtnSys(int);
 	void TalkData();
+
 	void Event(int);
 	void EventFunc(const char*, const char*);
 	void EventFunc2(const char*, const char*, const char*);
 	void EventMessage(const char*);
 	void EventEnd(int);
+
 	void ExitBtnOver(int);
 	void ExitBtnOut(int);
 	void ExitBtnSys(int);
@@ -321,4 +376,15 @@ public:
 
 	void SetTrans(int, const char*, int, int, bool);
 	void InitTrans();
+};
+
+class BUILDING {
+public:
+	int Number;
+	int RentNumber;
+	int Price;
+	int Maint;
+	int Rent;
+
+	void SetBuilding(int, int, int);
 };
