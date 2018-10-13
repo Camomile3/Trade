@@ -7,7 +7,8 @@ CITY City[16];
 MARKET Market[16][32];
 MARKET HerMarket[16][32];
 TRANSPORT Trans[8];
-BUILDING Building[16][3];
+BUILDING CityBuilding[16][3];
+BUILDING HerBuilding[16][3][99];
 extern HEROINE her;
 extern SYSTEM sys;
 extern INIT init;
@@ -28,21 +29,8 @@ void SYSTEM::DrawMessageWindow() {
 	sys.MOver = FALSE;
 	switch (BtnSwitch) {
 	case Sw_QUIT:
-		BtnX[62] = MWX + 280;
-		BtnY[62] = MWY + 140;
-		BtnW[62] = 90;
-		BtnH[62] = 42;
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(62);
-		MultiResoBtn(63);
-
 		MessageWindowMessage("終了しますか？");
-		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
+		SetTwoBtn("はい", "いいえ");
 		break;
 	case Sw_CARGO:
 
@@ -50,94 +38,37 @@ void SYSTEM::DrawMessageWindow() {
 
 		break;
 	case Sw_TRANS:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("輸送手段の説明文を表示する予定です");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_FINAN:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("財務状況の解説をさせる予定です");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_QUEST:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("メインクエストとかサブとか");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_PRICES:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("相場を見る街を選んでね");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_PRICES2:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		sprintf_s(Temp, 64, "%sの相場です", City[ClickedBtn].Name);
 		MessageWindowMessage(Temp);
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_SAVE:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("セーブするスロットを選んでね");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_LOAD:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("ロードするスロットを選んでね");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_OPTION:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("オプション項目の説明をさせる予定です");
-		DrawStringToHandle(BtnX[63], BtnY[63], "閉じる", GetColor(255, 255, 255), init.FontHandle);
-		printfDx("Sw_Option");
+		SetSingleBtn("閉じる");
 		break;
 	case Sw_CITY:
 		switch (TalkNumber) {
@@ -165,134 +96,110 @@ void SYSTEM::DrawMessageWindow() {
 
 		break;
 	case Sw_SALE:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("売却する貿易品を選んでください");
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("戻る");
 		break;
 	case Sw_INVEST:
 	case Sw_INVESTT:
 	case Sw_INVESTB:
 	case Sw_INVESTI:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("投資画面です");
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("戻る");
 		break;
 	case Sw_MANAGE:
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(63);
-
 		MessageWindowMessage("経営画面です");
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		SetSingleBtn("戻る");
 		break;
 	case Sw_TALK2:
 
 		break;
 	case Sw_EXIT:
-		BtnX[62] = MWX + 280;
-		BtnY[62] = MWY + 140;
-		BtnW[62] = 90;
-		BtnH[62] = 42;
-		BtnX[63] = MWX + 640;
-		BtnY[63] = MWY + 140;
-		BtnW[63] = 90;
-		BtnH[63] = 42;
-
-		MultiResoBtn(62);
-		MultiResoBtn(63);
-
 		MessageWindowMessage("街を出ますか？");
-		DrawStringToHandle(BtnX[62], BtnY[62], "はい", GetColor(255, 255, 255), init.FontHandle);
-		DrawStringToHandle(BtnX[63], BtnY[63], "いいえ", GetColor(255, 255, 255), init.FontHandle);
+		SetTwoBtn("はい", "いいえ");
 		break;
 	}
 
 }
 
-//ID　名前　基本値　係数　工業影響度　技術影響度　生産基本値　生産係数　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
-void GOODS::SetGoods(int i, char* n, int b, double ind, double tech, int bp, double ipi, double tpi, double isi, double tsi) {
+//ID　名前　基本値　係数　工業影響度　技術影響度　生産基本値　生産係数　工業生産影響度　技術生産影響度
+void GOODS::SetGoods(int i, char* n, int b, double ind, double tech, int bp, double ipi, double tpi, int bs) {
 	ID = i;
 	Name = n;
 	BasePrice = b;
-	IndImpact = ind;
-	TechImpact = tech;
+	IndIDemandmpact = ind;
+	TechDemandImpact = tech;
 	BaseProd = bp;
-	IndProdImpact = ipi;
-	TechProdImpact = tpi;
-	IndSizeImpact = isi;
-	TechSizeImpact = tsi;
+	IndSupplyImpact = ipi;
+	TechSupplyImpact = tpi;
+	BaseSize = bs;
 }
 
 //ID　名前　基本値　工業影響度　技術影響度　生産基本値　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
 void GOODS::InitGoods() {
-	Goods[0].SetGoods(0, (char*)"食料", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[1].SetGoods(1, (char*)"石炭", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[2].SetGoods(2, (char*)"鉱石", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[3].SetGoods(3, (char*)"レアメタル", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[4].SetGoods(4, (char*)"木材", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[5].SetGoods(5, (char*)"金属", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[6].SetGoods(6, (char*)"缶詰", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[7].SetGoods(7, (char*)"銃火器", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[8].SetGoods(8, (char*)"紙", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[9].SetGoods(9, (char*)"書籍", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[10].SetGoods(10, (char*)"東洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[11].SetGoods(11, (char*)"西洋贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[12].SetGoods(12, (char*)"農業贅沢品", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[13].SetGoods(13, (char*)"綿花", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[14].SetGoods(14, (char*)"生糸", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[15].SetGoods(15, (char*)"綿織物", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[16].SetGoods(16, (char*)"絹織物", 100, 1, 1, 100, 1, 1, 1, 1);
-	Goods[17].SetGoods(17, (char*)"石油", 100, 1, 1, 100, 1, 1, 1, 1);
+	Goods[0].SetGoods(0, (char*)"食料", 100, 1, 1, 100, 1, 1, 100);
+	Goods[1].SetGoods(1, (char*)"石炭", 100, 1, 1, 100, 1, 1, 100);
+	Goods[2].SetGoods(2, (char*)"鉱石", 100, 1, 1, 100, 1, 1, 100);
+	Goods[3].SetGoods(3, (char*)"レアメタル", 100, 1, 1, 100, 1, 1, 100);
+	Goods[4].SetGoods(4, (char*)"木材", 100, 1, 1, 100, 1, 1, 100);
+	Goods[5].SetGoods(5, (char*)"金属", 100, 1, 1, 100, 1, 1, 100);
+	Goods[6].SetGoods(6, (char*)"缶詰", 100, 1, 1, 100, 1, 1, 100);
+	Goods[7].SetGoods(7, (char*)"銃火器", 100, 1, 1, 100, 1, 1, 100);
+	Goods[8].SetGoods(8, (char*)"紙", 100, 1, 1, 100, 1, 1, 100);
+	Goods[9].SetGoods(9, (char*)"書籍", 100, 1, 1, 100, 1, 1, 100);
+	Goods[10].SetGoods(10, (char*)"東洋贅沢品", 100, 1, 1, 100, 1, 1, 100);
+	Goods[11].SetGoods(11, (char*)"西洋贅沢品", 100, 1, 1, 100, 1, 1, 100);
+	Goods[12].SetGoods(12, (char*)"農業贅沢品", 100, 1, 1, 100, 1, 1, 100);
+	Goods[13].SetGoods(13, (char*)"綿花", 100, 1, 1, 100, 1, 1, 100);
+	Goods[14].SetGoods(14, (char*)"生糸", 100, 1, 1, 100, 1, 1, 100);
+	Goods[15].SetGoods(15, (char*)"綿織物", 100, 1, 1, 100, 1, 1, 100);
+	Goods[16].SetGoods(16, (char*)"絹織物", 100, 1, 1, 100, 1, 1, 100);
+	Goods[17].SetGoods(17, (char*)"石油", 100, 1, 1, 100, 1, 1, 100);
 }
 
 
-//基本値　倍率　景気　需要　供給　工業　工業影響度　技術　技術影響度　開発度　インフラ
-int MARKET::CalcPrice(int b, double e, double d, double s, double i, double indimp, double t, double techimp, double dev, double inf) {
+//基本値　需要　供給　開発度　インフラ
+int MARKET::CalcPrice(int herOn, int ID) {
 
-	double CalclatedPrice = b * ((e + (d / s) * (d / s) + (i * indimp) + (t * techimp) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 6);
+	int b = Goods[ID].BasePrice;
+	double d = Market[herOn][ID].Demand;
+	double s = Market[herOn][ID].Supply;
+	double dev = City[herOn].Develop; 
+	double inf = City[herOn].Infra;
+
+	double CalclatedPrice = b * ((std::pow(d / s, 2) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 3);
+
+//	double CalclatedPrice = b * ((e + (d / s) * (d / s) + (i * indimp) + (t * techimp) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 6);
 
 //	double CalclatedPrice = b + p * e * d / s * (i * indimp) * (t * techimp) * (-0.05 * dev + 1) * (-0.1 * inf + 1);
 
 	return (int)CalclatedPrice;
 }
 
-int MARKET::SaleCalcPrice(int b, double e, double d, double s, double i, double indimp, double t,  double techimp, double dev, double inf) {
+int MARKET::SaleCalcPrice(int herOn, int ID) {
 
-	double CalclatedPrice = (b * ((e + (d / s) * (d / s) + (i * indimp) + (t * techimp) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 6)) * 0.8;
+	int b = Goods[ID].BasePrice;
+	double d = Market[herOn][ID].Demand;
+	double s = Market[herOn][ID].Supply;
+	double dev = City[herOn].Develop;
+	double inf = City[herOn].Infra;
+
+	double CalclatedPrice = (b * ((std::pow(d / s, 2) + (-0.05 * dev + 1) + (-0.1 * inf + 1)) / 3) ) * 0.8;
 
 	return (int)CalclatedPrice;
 }
 
-//品物基本値　人口　開発度　技術　技術生産影響度　インフラ　供給　需要　工業　工業生産影響度
-int MARKET::CalcProduction(int ID, int herOn) {
+//品物基本値　供給　人口　開発度　需要
+int MARKET::CalcProduction(int herOn, int ID) {
 
 	int bp = Goods[ID].BaseProd;
 	double p = City[herOn].Population;
 	double dev = City[herOn].Develop;
-	double tech = City[herOn].Technology;
-	double techimp = Goods[ID].TechProdImpact;
-	double inf = City[herOn].Infra;
 	double d = Market[herOn][ID].Demand;
 	double s = Market[herOn][ID].Supply;
-	double ind = City[herOn].Industry;
-	double indimp = Goods[ID].IndProdImpact;
 
-	double CalclatedProduction = bp * ((p / 10000000) + dev + tech * techimp + inf + std::pow(s, 4.0) + (0.1*d + 1) + (0.1*ind*indimp + 1) / 7);
+	double CalclatedProduction = bp * (( std::pow(s, 2.0) + (p / 10000000) + dev + (0.1 * d + 1)) / 4);
+
+	//double CalclatedProduction = bp * ((p / 10000000) + dev + tech * techimp + inf + std::pow(s, 4.0) + (0.1*d + 1) + (0.1*ind*indimp + 1) / 7);
 
 	//double CalclatedProduction = bp + (((p / 10000000) + dev + tech * techimp + inf + s * 2 + (0.1*d+1) + (0.1*ind*indimp+1)) * pm) / 8;
 
@@ -304,24 +211,80 @@ int MARKET::CalcMarketSize(int ID, int herOn) {
 	int bp = Goods[ID].BaseProd;
 	double p = City[herOn].Population;
 	double dev = City[herOn].Develop;
-	double tech = City[herOn].Technology;
-	double techimp = Goods[ID].TechSizeImpact;
-	double inf = City[herOn].Infra;
 	double d = Market[herOn][ID].Demand;
 	double s = Market[herOn][ID].Supply;
-	double ind = City[herOn].Industry;
-	double indimp = Goods[ID].IndSizeImpact;
 
-	double CalclatedMarketSize = bp * ((p / 10000000) + dev + tech * techimp + inf + d * d + (0.1*s + 1) + (0.1*ind*indimp + 1) / 7);
+	double CalclatedMarketSize = bp * ((std::pow(d, 2.0) + (p / 10000000) + dev + (0.1 * s + 1)) / 4);
+
+	//double CalclatedMarketSize = bp * ((p / 10000000) + dev + tech * techimp + inf + d * d + (0.1*s + 1) + (0.1*ind*indimp + 1) / 7);
 
 	return (int)CalclatedMarketSize;
 }
 
+void SYSTEM::CalcDemand(int herOn) {
+
+	double bd;
+	double t = City[herOn].Technology;
+	double timp;
+	double ind = City[herOn].Industry;
+	double iimp;
+	double e = City[herOn].Economy;
+
+	for (int i = 0; i < 17; i++) {
+		bd = Market[herOn][i].BaseDemand;
+		timp = Goods[i].TechDemandImpact;
+		iimp = Goods[i].IndIDemandmpact;
+
+		Market[herOn][i].Demand = bd + (((t * timp) + (ind * iimp) + e) / 3);
+	}
+
+}
+
+void SYSTEM::CalcSupply(int herOn) {
+
+	double bs;
+	double t = City[herOn].Technology;
+	double timp;
+	double ind = City[herOn].Industry;
+	double iimp;
+	double inf = City[herOn].Infra;
+
+	for (int i = 0; i < 17; i++) {
+		bs = Market[herOn][i].BaseSupply;
+		timp = Goods[i].TechSupplyImpact;
+		iimp = Goods[i].IndSupplyImpact;
+
+		Market[herOn][i].Supply = bs + (((t * timp) + (ind * iimp) + inf) / 3);
+	}
+
+}
+
 void MARKET::SetMarket(double D, double S) {
 
-	Demand = D;
-	Supply = S;
+	BaseDemand = D;
+	BaseSupply = S;
 }
+
+/*
+	Goods[0].SetGoods(0, (char*)"食料", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[1].SetGoods(1, (char*)"石炭", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[2].SetGoods(2, (char*)"鉱石", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[3].SetGoods(3, (char*)"レアメタル", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[4].SetGoods(4, (char*)"木材", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[5].SetGoods(5, (char*)"金属", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[6].SetGoods(6, (char*)"缶詰", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[7].SetGoods(7, (char*)"銃火器", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[8].SetGoods(8, (char*)"紙", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[9].SetGoods(9, (char*)"書籍", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[10].SetGoods(10, (char*)"東洋贅沢品", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[11].SetGoods(11, (char*)"西洋贅沢品", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[12].SetGoods(12, (char*)"農業贅沢品", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[13].SetGoods(13, (char*)"綿花", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[14].SetGoods(14, (char*)"生糸", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[15].SetGoods(15, (char*)"綿織物", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[16].SetGoods(16, (char*)"絹織物", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+	Goods[17].SetGoods(17, (char*)"石油", 100, 1, 1, 100, 1, 1, 100, 1, 1);
+*/
 
 void INIT::InitMarket() {
 
@@ -330,7 +293,7 @@ void INIT::InitMarket() {
 	Market[0][2].SetMarket(0.5, 0.1);
 	Market[0][3].SetMarket(1.3, 1.0);
 	Market[0][4].SetMarket(1.3, 0.95);
-	Market[0][5].SetMarket(0.01, 0.01);
+	Market[0][5].SetMarket(1.8, 1.4);
 	Market[0][6].SetMarket(1.3, 1.0);
 	Market[0][7].SetMarket(1.3, 0.8);
 	Market[0][8].SetMarket(1.3, 0.5);
@@ -339,6 +302,10 @@ void INIT::InitMarket() {
 	Market[0][11].SetMarket(1.0, 1.7);
 	Market[0][12].SetMarket(0.8, 1.2);
 	Market[0][13].SetMarket(1.3, 0.5);
+	Market[0][14].SetMarket(1.3, 0.5);
+	Market[0][15].SetMarket(1.3, 0.5);
+	Market[0][16].SetMarket(1.0, 1.7);
+	Market[0][17].SetMarket(0.8, 1.2);
 
 	Market[1][0].SetMarket(1.3, 0.5);
 	Market[1][1].SetMarket(1.4, 0.4);
@@ -354,6 +321,10 @@ void INIT::InitMarket() {
 	Market[1][11].SetMarket(1.3, 0.5);
 	Market[1][12].SetMarket(1.5, 0.3);
 	Market[1][13].SetMarket(1.3, 0.5);
+	Market[1][14].SetMarket(1.3, 0.5);
+	Market[1][15].SetMarket(1.3, 0.5);
+	Market[1][16].SetMarket(1.0, 1.7);
+	Market[1][17].SetMarket(0.8, 1.2);
 }
 
 void CITY::SetCity(int I, const char* T, const char* N, double P, double D, double E, double Tech, double Ind, double Inf) {
@@ -373,7 +344,7 @@ void CITY::InitCity() {
 
 	//ID タイプ 名前　人口　開発度　景気　技術　工業　インフラ
 	City[0].SetCity(0, "帝都", "ロイア", 8000000, 0.7, 1.3, 1.0, 0.2, 0.2);
-	City[1].SetCity(0, "貴族の町", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
+	City[1].SetCity(0, "貴族の町", "セカンド", 8000000, 0.5, 1.0, 0.2, 0.2, 0.2);
 	City[2].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
 	City[3].SetCity(0, "", "セカンド", 8000000, 0.7, 1.0, 0.2, 0.2, 0.2);
 	City[4].SetCity(0, "", "ロイア", 8000000, 0.7, 1.3, 0.2, 0.2, 0.2);
@@ -463,37 +434,38 @@ void BUILDING::SetBuilding(int p, int m , int r) {
 }
 
 //[街番号][0事務所 1倉庫 2工場]
+//値段, 維持費, 家賃
 
 void INIT::InitBuilding() {
 
-	Building[0][0].SetBuilding(20000, 200, 1000);
-	Building[0][1].SetBuilding(30000, 400, 1500);
-	Building[0][2].SetBuilding(100000, 2000, 5000);
-	Building[1][0].SetBuilding(20000, 200, 1000);
-	Building[1][1].SetBuilding(20000, 200, 1000);
-	Building[1][2].SetBuilding(20000, 200, 1000);
-	Building[2][0].SetBuilding(20000, 200, 1000);
-	Building[2][1].SetBuilding(20000, 200, 1000);
-	Building[2][2].SetBuilding(20000, 200, 1000);
-	Building[3][0].SetBuilding(20000, 200, 1000);
-	Building[3][1].SetBuilding(20000, 200, 1000);
-	Building[3][2].SetBuilding(20000, 200, 1000);
-	Building[4][0].SetBuilding(20000, 200, 1000);
-	Building[4][1].SetBuilding(20000, 200, 1000);
-	Building[4][2].SetBuilding(20000, 200, 1000);
-	Building[5][0].SetBuilding(20000, 200, 1000);
-	Building[5][1].SetBuilding(20000, 200, 1000);
-	Building[5][2].SetBuilding(20000, 200, 1000);
-	Building[6][0].SetBuilding(20000, 200, 1000);
-	Building[6][1].SetBuilding(20000, 200, 1000);
-	Building[6][2].SetBuilding(20000, 200, 1000);
-	Building[7][0].SetBuilding(20000, 200, 1000);
-	Building[7][1].SetBuilding(20000, 200, 1000);
-	Building[7][2].SetBuilding(20000, 200, 1000);
-	Building[8][0].SetBuilding(20000, 200, 1000);
-	Building[8][1].SetBuilding(20000, 200, 1000);
-	Building[8][2].SetBuilding(20000, 200, 1000);
-	Building[9][0].SetBuilding(20000, 200, 1000);
-	Building[9][1].SetBuilding(20000, 200, 1000);
-	Building[9][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[0][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[0][1].SetBuilding(30000, 400, 1500);
+	CityBuilding[0][2].SetBuilding(100000, 2000, 5000);
+	CityBuilding[1][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[1][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[1][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[2][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[2][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[2][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[3][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[3][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[3][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[4][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[4][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[4][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[5][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[5][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[5][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[6][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[6][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[6][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[7][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[7][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[7][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[8][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[8][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[8][2].SetBuilding(20000, 200, 1000);
+	CityBuilding[9][0].SetBuilding(20000, 200, 1000);
+	CityBuilding[9][1].SetBuilding(20000, 200, 1000);
+	CityBuilding[9][2].SetBuilding(20000, 200, 1000);
 }

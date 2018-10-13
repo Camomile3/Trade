@@ -143,6 +143,21 @@ void SYSTEM::ResetBtnOn() {
 	}
 }
 
+void SYSTEM::SetSingleBtn(const char* a) {
+
+	BtnX[63] = MWX + 640;
+	BtnY[63] = MWY + 140;
+	BtnW[63] = 90;
+	BtnH[63] = 42;
+
+	MultiResoBtn(63);
+
+	if (OveredBtn != 63)
+		DrawStringToHandle(BtnX[63], BtnY[63], a, GetColor(255, 255, 255), init.FontHandle);
+
+	BtnOn[63] = TRUE;
+}
+
 void SYSTEM::SetTwoBtn(const char* a, const char* b) {
 
 	BtnX[62] = MWX + 280;
@@ -191,8 +206,6 @@ void SYSTEM::LoopMusic(const char* string) {
 }
 
 double SYSTEM::GetVolumeMulti(const char* string) {
-
-	printfDx("%s\n", string);
 
 	if (!strcmp(string, "Title"))
 		return 1;
@@ -406,6 +419,7 @@ void SYSTEM::ButtonOver() {
 				case Sw_INVESTB:
 				case Sw_INVESTI:
 				case Sw_INVESTBUYB:
+				case Sw_INVESTRENTB:
 					InvestBtnOver(i);
 					break;
 				case Sw_MANAGE:
@@ -480,6 +494,7 @@ void SYSTEM::ButtonOver() {
 			case Sw_INVESTB:
 			case Sw_INVESTI:
 			case Sw_INVESTBUYB:
+			case Sw_INVESTRENTB:
 				InvestBtnOut(OveredBtn);
 				break;
 			case Sw_MANAGE:
@@ -565,13 +580,12 @@ void SYSTEM::ButtonSys() {
 			InvestBtnSysT(OveredBtn);
 			break;
 		case Sw_INVESTB:
+		case Sw_INVESTBUYB:
+		case Sw_INVESTRENTB:
 			InvestBtnSysB(OveredBtn);
 			break;
 		case Sw_INVESTI:
 			InvestBtnSysI(OveredBtn);
-			break;
-		case Sw_INVESTBUYB:
-			InvestBtnSysB(OveredBtn);
 			break;
 		case Sw_MANAGE:
 			ManageBtnSys(OveredBtn);
@@ -877,5 +891,74 @@ void SYSTEM::Fade(int before, int after, const char* Music) {
 		}
 	}
 	SetDrawScreen(DX_SCREEN_FRONT);
+}
 
+void SYSTEM::SearchEmpty(int ID) {
+
+	for (int i = 0; i < 64; i++) {
+		if (her.HiddenID[i] == ID) {
+			SlotNumber = i;
+			break;
+		}
+		else if (her.Cargo[i] == 0) {
+			SlotNumber = i;
+			break;
+		}
+	}
+}
+
+void SYSTEM::SearchBuildingEmpty(int ID) {
+
+	for (int i = 0; i < 99; i++) {
+		if (HerBuilding[her.On][ID][i].Number == 0) {
+			BuildingSlot = i;
+			break;
+		}
+	}
+}
+
+void SYSTEM::SearchCheapestBuilding(int ID) {
+
+	for (int i = 0; i < 99; i++) {
+		if (HerBuilding[her.On][ID][i].Number != 0 && ( (HerBuilding[her.On][ID][CheapestBuildingID].Price <= HerBuilding[her.On][ID][i].Price || i == 0) ) ) {
+
+			CheapestBuildingID = i;
+		}
+	}
+}
+
+int SYSTEM::GetCheapest() {
+
+	return CheapestBuildingID;
+}
+
+int SYSTEM::CalcSellBuilding(int ID) {
+
+	for (int i = 0; i < 99; i++) {
+		SearchCheapestBuilding(ID);
+		TempPrice += HerBuilding[her.On][ID][CheapestBuildingID].Price;
+
+	}
+	return (int)TempPrice;
+}
+
+int SYSTEM::CountBuilding(int ID) {
+
+	for (int i = 0; i < 99; i++) {
+		if (HerBuilding[her.On][ID][i].Number != 0) {
+			BuildingCount++;
+		}
+	}
+	return BuildingCount;
+}
+
+
+
+void BUILDING::Reset(int ID) {
+
+	HerBuilding[her.On][ID][sys.GetCheapest()].Price = 0;
+	HerBuilding[her.On][ID][sys.GetCheapest()].Maint = 0;
+	HerBuilding[her.On][ID][sys.GetCheapest()].Number = 0;
+	HerBuilding[her.On][ID][sys.GetCheapest()].Rent = 0;
+	HerBuilding[her.On][ID][sys.GetCheapest()].RentNumber = 0;
 }

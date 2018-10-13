@@ -53,11 +53,17 @@ class SYSTEM {
 	bool BtnOn[64];
 	int CargoNumber;
 	int MWX,MWY;
+
 	long long TempPrice;
 	int TempNumber;
 	int TalkNumber = 0;
 	int ETalkCount = 0;
+
 	int SlotNumber;
+	int BuildingSlot;
+	int CheapestBuildingID;
+	int BuildingCount;
+
 	TCHAR CommedValue[64];
 	const char* SelectString[8];
 	double VolumeMulti;
@@ -131,28 +137,43 @@ public:
 	void ButtonSys();
 	void DragSys();
 	void DaySys();
+
 	void DrawMessageWindow();
 	void MessageWindowMessage(const char*);
 	void DrawWindow(int, int, int, int);
 	void Fade(int, int, const char*);
+
 	void InitSys();
 	void ResetButton();
 	void ResetBtnOn();
+
 	char* AddComma(int);
 	char* AddCommaN(int);
+
 	void WaitClick();
 	void WaitYesNo();
+
 	void SearchEmpty(int);
+	void SearchBuildingEmpty(int);
+	void SearchCheapestBuilding(int);
+	int CalcSellBuilding(int);
+	int CountBuilding(int);
+
+	void SetSingleBtn(const char*);
 	void SetTwoBtn(const char*, const char*);
 	void SetFullBtn();
+
 	void LoopMusic(const char*);
 	double GetVolumeMulti(const char*);
 	void SetSEVolume();
+
 	void MultiResoBtn(int);
 	void MultiResoValue(int);
 	int MultiResoIntX(int);
 	int MultiResoIntY(int);
 	QuadS MultiResoIntQuad(int, int, int, int);
+
+	int GetCheapest();
 	//タイトル
 	void ResetTitle();
 	void DrawButton(int);
@@ -224,6 +245,9 @@ public:
 	void MoveRoute();
 	void WarpHer(int);
 	//街
+	void CalcSupply(int);
+	void CalcDemand(int);
+	void CalcMarket();
 	void SetHerPrices(int);
 	void ResetCity();
 	void ResetTalk();
@@ -318,31 +342,32 @@ public:
 	int ID;
 	const char* Name;
 	int BasePrice;
-	double IndImpact;
-	double TechImpact;
+	double IndIDemandmpact;
+	double TechDemandImpact;
 	int BaseProd;
-	double IndProdImpact;
-	double TechProdImpact;
-	double IndSizeImpact;
-	double TechSizeImpact;
+	double IndSupplyImpact;
+	double TechSupplyImpact;
+	int BaseSize;
 
 	int CalcedPrice;
 	int CalcedProd;
 	int CalcedSize;
 
 	void InitGoods();
-	//ID　名前　基本値　工業影響度　技術影響度　生産基本値　工業生産影響度　技術生産影響度　工業市場規模影響度　技術市場規模影響度
-	void SetGoods(int, char*, int, double, double, int, double, double, double, double);
+	//ID　名前　基本値　工業影響度　技術影響度　生産基本値　工業生産影響度　技術生産影響度
+	void SetGoods(int, char*, int, double, double, int, double, double, int);
 };
 
 class MARKET {
 public:
-	double Supply;
 	double Demand;
+	double Supply;
+	double BaseDemand;
+	double BaseSupply;
 
-	//基本値　倍率　景気　需要　供給　工業　工業影響度　技術　技術影響度　開発度　インフラ
-	int CalcPrice(int, double, double, double, double, double, double, double, double, double);
-	int SaleCalcPrice(int, double, double, double, double, double, double, double, double, double);
+	//基本値　需要　供給　開発度　インフラ
+	int CalcPrice(int, int);
+	int SaleCalcPrice(int, int);
 
 	//品物基本値　品物係数　人口　開発度　技術　技術生産影響度　インフラ　供給　需要　工業　工業生産影響度
 	int CalcProduction(int, int);
@@ -387,4 +412,5 @@ public:
 	int Rent;
 
 	void SetBuilding(int, int, int);
+	void Reset(int);
 };

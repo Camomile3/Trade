@@ -11,7 +11,8 @@ extern CITY City[16];
 extern MARKET Market[16][32];
 extern MARKET HerMarket[16][32];
 extern TRANSPORT Trans[8];
-extern BUILDING Building[16][3];
+extern BUILDING CityBuilding[16][3];
+extern BUILDING HerBuilding[16][3][99];
 
 void SYSTEM::ResetCity() {
 
@@ -30,6 +31,12 @@ void SYSTEM::ResetCity() {
 	if (DebugMode == TRUE) {
 		DebugBox();
 	}
+}
+
+void SYSTEM::CalcMarket() {
+
+	CalcDemand(her.On);
+	CalcSupply(her.On);
 }
 
 void SYSTEM::CityBtnOver(int i) {
@@ -222,8 +229,8 @@ void SYSTEM::BuySort(int ID) {
 			break;
 		}
 	}
-	Goods[ID].CalcedPrice = Market[her.On][ID].CalcPrice(Goods[ID].BasePrice, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, City[her.On].Industry, Goods[ID].IndImpact, City[her.On].Technology, Goods[ID].TechImpact, City[her.On].Develop, City[her.On].Infra);
-	Goods[ID].CalcedProd = Market[her.On][ID].CalcProduction(ID, her.On);
+	Goods[ID].CalcedPrice = Market[her.On][ID].CalcPrice(her.On, ID);
+	Goods[ID].CalcedProd = Market[her.On][ID].CalcProduction(her.On, ID);
 
 	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedPrice);
@@ -312,20 +319,6 @@ void SYSTEM::DrawBuyString() {
 
 //BuyDataÇÕdatas.hÇ÷à⁄ìÆ
 
-void SYSTEM::SearchEmpty(int ID) {
-
-	for (int i = 0; i < 64; i++) {
-		if (her.HiddenID[i] == ID) {
-			SlotNumber = i;
-			break;
-		}
-		else if (her.Cargo[i] == 0) {
-			SlotNumber = i;
-			break;
-		}
-	}
-}
-
 void SYSTEM::BuySys(int ID) {
 
 	if (ID < 0 || OveredBtn == 63 || OveredBtn == 62) {
@@ -412,7 +405,7 @@ void SYSTEM::SaleSort(int ID) {
 		}
 	}
 
-	Goods[ID].CalcedPrice = Market[her.On][ID].SaleCalcPrice(Goods[ID].BasePrice, City[her.On].Economy, Market[her.On][ID].Demand, Market[her.On][ID].Supply, City[her.On].Industry, Goods[ID].IndImpact, City[her.On].Technology, Goods[ID].TechImpact, City[her.On].Develop, City[her.On].Infra);
+	Goods[ID].CalcedPrice = Market[her.On][ID].SaleCalcPrice(her.On, ID);
 
 	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 
@@ -595,9 +588,13 @@ void SYSTEM::InvestBtnOver(int i) {
 		}
 		break;
 	case Sw_INVESTBUYB:
+	case Sw_INVESTRENTB:
 		if (BtnOn[i] == TRUE) {
 			ResetCity();
-			MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			if (BtnSwitch == Sw_INVESTBUYB)
+				MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			else
+				MessageWindowMessage("å_ñÒÇµÇ‹Ç∑Ç©ÅH");
 			SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
 			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 0, 0), init.FontHandle);
 		}
@@ -628,9 +625,13 @@ void SYSTEM::InvestBtnOut(int i) {
 		}
 		break;
 	case Sw_INVESTBUYB:
+	case Sw_INVESTRENTB:
 		if (BtnOn[i] == TRUE) {
 			ResetCity();
-			MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			if (BtnSwitch == Sw_INVESTBUYB)
+				MessageWindowMessage("çwì¸ÇµÇ‹Ç∑Ç©ÅH");
+			else
+				MessageWindowMessage("å_ñÒÇµÇ‹Ç∑Ç©ÅH");
 			SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
 			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 255, 255), init.FontHandle);
 		}
@@ -893,6 +894,16 @@ void SYSTEM::InvestBtnSysB(int i) {
 			InvestBuySysB(0);
 		}
 		break;
+	case Sw_INVESTRENTB:
+		if (i == 63) {
+			BtnSwitch = Sw_INVESTB;
+			ResetCity();
+		}
+		else if (i == 62) {
+			BuyFlag = TRUE;
+			InvestRentSysB(0);
+		}
+		break;
 	}
 }
 
@@ -929,15 +940,18 @@ void SYSTEM::InvestDataB(int Btn) {
 		}
 		if (i >= 4) {
 			if (i >= 4 && i <= 6)
-				sprintf_s(TempT, 32, "%d", Building[her.On][i - 4].RentNumber);
-			if (i >= 7 && i <= 9)
-				sprintf_s(TempT, 32, "%d", Building[her.On][i - 7].Number);
+				sprintf_s(TempT, 32, "%d", CityBuilding[her.On][i - 4].RentNumber);
+			if (i >= 7 && i <= 9) {
+				CountBuilding(i - 7);
+				sprintf_s(TempT, 32, "%d", BuildingCount);
+				BuildingCount = 0;
+			}
 			if (i >= 10 && i <= 12) {
-				Temp = AddCommaN(Building[her.On][i - 10].Rent);
+				Temp = AddCommaN(CityBuilding[her.On][i - 10].Rent);
 				sprintf_s(TempT, 32, "%s", Temp);
 			}
 			if (i >= 13 && i <= 15){
-				Temp = AddCommaN(Building[her.On][i - 13].Price);
+				Temp = AddCommaN(CityBuilding[her.On][i - 13].Price);
 				sprintf_s(TempT, 32, "%s", Temp);
 			}
 			DrawStringToHandle(TempValueX[i], TempValueY[i], TempT, GetColor(0, 0, 0), init.FontHandle);
@@ -964,9 +978,9 @@ void SYSTEM::InvestDataB(int Btn) {
 	TempChar[3] = "í¿éÿ";
 	TempChar[4] = "í¿éÿ";
 	TempChar[5] = "í¿éÿ";
-	TempChar[6] = "å_ñÒâèú";
-	TempChar[7] = "å_ñÒâèú";
-	TempChar[8] = "å_ñÒâèú";
+	TempChar[6] = "âñÒ";
+	TempChar[7] = "âñÒ";
+	TempChar[8] = "âñÒ";
 	TempChar[9] = "çwì¸";
 	TempChar[10] = "çwì¸";
 	TempChar[11] = "çwì¸";
@@ -1020,42 +1034,48 @@ void SYSTEM::InvestBuySysB(int ID) {
 		SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
 		return;
 	}
-	else if (ID == 0 && Building[her.On][ID].Number >= 1) {
+	else if (ID == 0 && (CountBuilding(ID) >= 1 || CityBuilding[her.On][ID].RentNumber >= 1)) {
 		ResetCity();
 		MessageWindowMessage("Ç‡Ç§éùÇ¡ÇƒÇ¢Ç‹Ç∑ÅB");
+		BuyFlag = FALSE;
 		WaitClick();
 	}
 	else if (BuyFlag == TRUE) {
 		TempNumber = 1;
-		TempPrice = Building[her.On][ID].Price;
+		TempPrice = CityBuilding[her.On][ID].Price;
 
-		Building[her.On][ID].Number += TempNumber;
+		for (int i = 0; i < TempNumber; i++) {
+			SearchBuildingEmpty(ID);
+			HerBuilding[her.On][ID][BuildingSlot].Number++;
+		}
 		her.Money -= TempPrice;
 		ResetCity();
 		MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
 		BuyFlag = FALSE;
 		WaitClick();
-
 	}
 	else {
 		MessageWindowMessage("Ç¢Ç≠Ç¬çwì¸ÇµÇ‹Ç∑Ç©ÅH");
 
 		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
-		TempPrice = Building[her.On][ID].Price * TempNumber;
+		TempPrice = CityBuilding[her.On][ID].Price * TempNumber;
 
 		if (TempPrice > her.Money) {
 			ResetCity();
 			MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
 			WaitClick();
 		}
-		else if (Building[her.On][ID].Number + TempNumber > 99) {
+		else if (CountBuilding(ID) + CityBuilding[her.On][ID].RentNumber + TempNumber > 99) {
 			ResetCity();
 			MessageWindowMessage("ÇªÇÒÇ»Ç…îÉÇ¶Ç‹ÇπÇÒÅB");
 			WaitClick();
 		}
 		else if (TempNumber != 0)
 		{
-			Building[her.On][ID].Number += TempNumber;
+			for (int i = 0; i < TempNumber; i++) {
+				SearchBuildingEmpty(ID);
+				HerBuilding[her.On][ID][BuildingSlot].Number++;
+			}
 			her.Money -= TempPrice;
 			ResetCity();
 			MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
@@ -1067,56 +1087,144 @@ void SYSTEM::InvestBuySysB(int ID) {
 		DrawWindow(520, 140, 5, 16);
 		InvestData(-1);
 		OveredBtn = -1;
-		printfDx("%d\n", Building[her.On][ID].Number);
+		printfDx("%d\n", CityBuilding[her.On][ID].Number);
 	
 }
 
-void SYSTEM::InvestSaleSysB(int i) {
+void SYSTEM::InvestSaleSysB(int ID) {
 
-	printfDx("i = %d\n", i);
-}
-
-void SYSTEM::InvestRentSysB(int ID) {
-
-	MessageWindowMessage("Ç¢Ç≠Ç¬å_ñÒÇµÇ‹Ç∑Ç©ÅH");
-
-	TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 1000000, 0, FALSE);
-	TempPrice = Building[her.On][ID].Price * TempNumber;
-
-	if (TempPrice > her.Money) {
+	TCHAR Temp[32];
+	if (CountBuilding(ID) == 0) {
 		ResetCity();
-		MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
+		MessageWindowMessage("èäéùÇµÇƒÇ¢Ç‹ÇπÇÒÅB");
 		WaitClick();
 	}
-	else if (Trans[ID].Sea == FALSE && TempNumber + her.MaxWeight > 999999999) {
-		ResetCity();
-		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
-		WaitClick();
-	}
-	else if (Trans[ID].Sea == TRUE && TempNumber + her.ShipMaxWeight > 999999999) {
-		ResetCity();
-		MessageWindowMessage("Ç±ÇÍà»è„îÉÇ¶Ç‹ÇπÇÒÅB");
-		WaitClick();
-	}
-	else if (TempNumber != 0)
-	{
-		Building[her.On][ID].Number += TempNumber;
-		her.Money -= TempPrice;
-		ResetCity();
-		MessageWindowMessage("çwì¸ÇµÇ‹ÇµÇΩÅB");
-		WaitClick();
+	else {
+		MessageWindowMessage("Ç¢Ç≠Ç¬îÑãpÇµÇ‹Ç∑Ç©ÅH");
+		sprintf_s(Temp, 32, "0Å`%d", CountBuilding(ID));
+		DrawStringToHandle(MultiResoIntX(MWX + 64 + 32 + 256), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
+
+		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), CountBuilding(ID), 0, FALSE);
+		TempPrice = (int)CalcSellBuilding(ID);
+
+
+		if (CountBuilding(ID) < TempNumber) {
+			ResetCity();
+			MessageWindowMessage("èäéùêîÇí¥Ç¶ÇƒÇ¢Ç‹Ç∑ÅB");
+			WaitClick();
+		}
+		else if (TempNumber != 0)
+		{
+			for (int i = 0; i < TempNumber; i++) {
+				SearchCheapestBuilding(ID);
+				HerBuilding[her.On][ID][CheapestBuildingID].Reset(ID);
+			}
+			her.Money += TempPrice;
+			ResetCity();
+			MessageWindowMessage("îÑãpÇµÇ‹ÇµÇΩÅB");
+			WaitClick();
+		}
 	}
 	BtnSwitch = Sw_INVESTB;
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
 	InvestData(-1);
 	OveredBtn = -1;
-	printfDx("%d\n", Building[her.On][ID].Number);
 }
 
-void SYSTEM::InvestEndSysB(int i) {
+void SYSTEM::InvestRentSysB(int ID) {
 
-	printfDx("i = %d\n", i);
+	TCHAR Temp[64];
+
+	if (ID == 0 && BuyFlag == FALSE) {
+		BtnSwitch = Sw_INVESTRENTB;
+		MessageWindowMessage("å_ñÒÇµÇ‹Ç∑Ç©ÅH");
+		SetTwoBtn("ÇÕÇ¢", "Ç¢Ç¢Ç¶");
+		return;
+	}
+	else if (ID == 0 && (CountBuilding(ID) >= 1 || CityBuilding[her.On][ID].RentNumber >= 1)) {
+		ResetCity();
+		MessageWindowMessage("Ç‡Ç§éùÇ¡ÇƒÇ¢Ç‹Ç∑ÅB");
+		BuyFlag = FALSE;
+		WaitClick();
+	}
+	else if (BuyFlag == TRUE) {
+
+		CityBuilding[her.On][ID].RentNumber++;
+		her.Money -= CityBuilding[her.On][ID].Rent * 2;
+		ResetCity();
+		MessageWindowMessage("å_ñÒÇµÇ‹ÇµÇΩÅB");
+		BuyFlag = FALSE;
+		WaitClick();
+	}
+	else {
+
+		sprintf_s(Temp, 64, "Ç¢Ç≠Ç¬å_ñÒÇµÇ‹Ç∑Ç©ÅH(ì™ã‡ÇÕí¿óøÇÃìÒî{Ç≈Ç∑ÅB) 0Å`%d", 99 - CityBuilding[her.On][ID].RentNumber);
+		DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
+
+		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 99 - CityBuilding[her.On][ID].RentNumber, 0, FALSE);
+		TempPrice = CityBuilding[her.On][ID].Rent * TempNumber * 2;
+
+		if (TempPrice > her.Money) {
+			ResetCity();
+			MessageWindowMessage("èäéùã‡Ç™ë´ÇËÇ‹ÇπÇÒÅB");
+			WaitClick();
+		}
+		else if (CityBuilding[her.On][ID].RentNumber + CountBuilding(ID) + TempNumber > 99) {
+			ResetCity();
+			MessageWindowMessage("ÇªÇÒÇ»Ç…éÿÇËÇÍÇ‹ÇπÇÒÅB");
+			WaitClick();
+		}
+		else if (TempNumber != 0)
+		{
+			CityBuilding[her.On][ID].RentNumber += TempNumber;
+			her.Money -= TempPrice;
+			ResetCity();
+			MessageWindowMessage("å_ñÒÇµÇ‹ÇµÇΩÅB");
+			WaitClick();
+		}
+	}
+	BtnSwitch = Sw_INVESTB;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	InvestData(-1);
+	OveredBtn = -1;
+	printfDx("%d\n", CityBuilding[her.On][ID].Number);
+}
+
+void SYSTEM::InvestEndSysB(int ID) {
+
+	TCHAR Temp[32];
+	if (CityBuilding[her.On][ID].RentNumber == 0) {
+		ResetCity();
+		MessageWindowMessage("éÿÇËÇƒÇ¢Ç‹ÇπÇÒÅB");
+		WaitClick();
+	}
+	else {
+		MessageWindowMessage("Ç¢Ç≠Ç¬âñÒÇµÇ‹Ç∑Ç©ÅH");
+		sprintf_s(Temp, 32, "0Å`%d", CityBuilding[her.On][ID].RentNumber);
+		DrawStringToHandle(MultiResoIntX(MWX + 64 + 32 + 256), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
+
+		TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), CityBuilding[her.On][ID].RentNumber, 0, FALSE);
+
+		if (CityBuilding[her.On][ID].RentNumber < TempNumber) {
+			ResetCity();
+			MessageWindowMessage("å_ñÒêîÇí¥Ç¶ÇƒÇ¢Ç‹Ç∑ÅB");
+			WaitClick();
+		}
+		else if (TempNumber != 0)
+		{
+			CityBuilding[her.On][ID].RentNumber -= TempNumber;
+			ResetCity();
+			MessageWindowMessage("âñÒÇµÇ‹ÇµÇΩÅB");
+			WaitClick();
+		}
+	}
+	BtnSwitch = Sw_INVESTB;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	InvestData(-1);
+	OveredBtn = -1;
 }
 
 void SYSTEM::InvestBtnSysI(int i) {
