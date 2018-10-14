@@ -9,6 +9,7 @@ MARKET HerMarket[16][32];
 TRANSPORT Trans[8];
 BUILDING CityBuilding[16][3];
 BUILDING HerBuilding[16][3][99];
+COMPANY Comp[16];
 extern HEROINE her;
 extern SYSTEM sys;
 extern INIT init;
@@ -102,8 +103,11 @@ void SYSTEM::DrawMessageWindow() {
 	case Sw_INVEST:
 	case Sw_INVESTT:
 	case Sw_INVESTB:
-	case Sw_INVESTI:
 		MessageWindowMessage("“ŠŽ‘‰æ–Ê‚Å‚·");
+		SetSingleBtn("–ß‚é");
+		break;
+	case Sw_INVESTI:
+		MessageWindowMessage("–¢ŽÀ‘•‚æ");
 		SetSingleBtn("–ß‚é");
 		break;
 	case Sw_MANAGE:

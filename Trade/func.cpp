@@ -423,6 +423,11 @@ void SYSTEM::ButtonOver() {
 					InvestBtnOver(i);
 					break;
 				case Sw_MANAGE:
+				case Sw_MANAGEO:
+				case Sw_MANAGEW:
+				case Sw_MANAGEWIN:
+				case Sw_MANAGEWOUT:
+				case Sw_MANAGEF:
 					ManageBtnOver(i);
 					break;
 				case Sw_TALK2:
@@ -498,6 +503,11 @@ void SYSTEM::ButtonOver() {
 				InvestBtnOut(OveredBtn);
 				break;
 			case Sw_MANAGE:
+			case Sw_MANAGEO:
+			case Sw_MANAGEW:
+			case Sw_MANAGEWIN:
+			case Sw_MANAGEWOUT:
+			case Sw_MANAGEF:
 				ManageBtnOut(OveredBtn);
 				break;
 			case Sw_TALK2:
@@ -507,10 +517,12 @@ void SYSTEM::ButtonOver() {
 				ExitBtnOut(OveredBtn);
 				break;	
 			}
+			if (DebugMode == TRUE) {
+				printfDx("OutTrue & %d \n", OveredBtn);
+				printfDx("PressedBtn=%d\n", PressedBtn);
+			}
 			OveredBtn = -1;
 			MOver = FALSE;
-			if (DebugMode == TRUE)
-				printfDx("OutTrue & %d \n", OveredBtn);
 			return;
 		}
 	}
@@ -520,91 +532,109 @@ void SYSTEM::ButtonSys() {
 
 	MInput1F = MInput;
 	MInput = GetMouseInput();
+	KeyInput1F = KeyInput;
+	KeyInput = CheckHitKeyAll();
+
 	if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1 || CheckHitKey(KEY_INPUT_ESCAPE) == 1 || CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1) {
-		if (OveredBtn == -1)
+		if ( (KeyInput == 1 && KeyInput1F == 0) || !(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1) {
+			if (CheckHitKey(KEY_INPUT_ESCAPE) == 1) {
+				OveredBtn = 63;
+			}
+			else if (CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
+				OveredBtn = 62;
+			else if (OveredBtn == -1)
+				return;
+			switch (BtnSwitch) {
+			case Sw_TITLE:
+				TitleBtnSys(OveredBtn);
+				break;
+			case Sw_QUIT:
+				QuitBtnSys(OveredBtn);
+				break;
+			case Sw_MMAP:
+				MapBtnSys(OveredBtn);
+				break;
+			case Sw_CARGO:
+				CargoBtnSys(OveredBtn);
+				break;
+			case Sw_TRANS:
+				TransBtnSys(OveredBtn);
+				break;
+			case Sw_FINAN:
+				FinanBtnSys(OveredBtn);
+				break;
+			case Sw_QUEST:
+				QuestBtnSys(OveredBtn);
+				break;
+			case Sw_PRICES:
+				PricesBtnSys(OveredBtn);
+				break;
+			case Sw_PRICES2:
+				PricesBtnSys(OveredBtn);
+				break;
+			case Sw_SAVE:
+				SaveBtnSys(OveredBtn);
+				break;
+			case Sw_LOAD:
+				LoadBtnSys(OveredBtn);
+				break;
+			case Sw_OPTION:
+				OptionBtnSys(OveredBtn);
+				break;
+			case Sw_CITY:
+				CityBtnSys(OveredBtn);
+				break;
+			case Sw_BUY:
+				BuyBtnSys(OveredBtn);
+				break;
+			case Sw_SALE:
+				SaleBtnSys(OveredBtn);
+				break;
+			case Sw_INVEST:
+				InvestBtnSys(OveredBtn);
+				break;
+			case Sw_INVESTT:
+				InvestBtnSysT(OveredBtn);
+				break;
+			case Sw_INVESTB:
+			case Sw_INVESTBUYB:
+			case Sw_INVESTRENTB:
+				InvestBtnSysB(OveredBtn);
+				break;
+			case Sw_INVESTI:
+				InvestBtnSysI(OveredBtn);
+				break;
+			case Sw_MANAGE:
+				ManageBtnSys(OveredBtn);
+				break;
+			case Sw_MANAGEO:
+				ManageBtnSysO(OveredBtn);
+				break;
+			case Sw_MANAGEW:
+				ManageBtnSysW(OveredBtn);
+				break;
+			case Sw_MANAGEWIN:
+				ManageWareInSys(OveredBtn);
+				break;
+			case Sw_MANAGEWOUT:
+				break;
+			case Sw_MANAGEF:
+				break;
+			case Sw_TALK:
+				TalkBtnSys(OveredBtn);
+				break;
+			case Sw_TALK2:
+				TalkBtnSys(OveredBtn);
+				break;
+			case Sw_EXIT:
+				ExitBtnSys(OveredBtn);
+				break;
+			}
+			if (DebugMode == TRUE) {
+				printfDx("MOUSE LEFT ON %d \n", OveredBtn);
+			}
 			return;
-		else if (CheckHitKey(KEY_INPUT_ESCAPE) == 1)
-			OveredBtn = 63;
-		else if (CheckHitKey(KEY_INPUT_RETURN) == 1 || CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-			OveredBtn = 62;
-		switch (BtnSwitch) {
-		case Sw_TITLE:
-			TitleBtnSys(OveredBtn);
-			break;
-		case Sw_QUIT:
-			QuitBtnSys(OveredBtn);
-			break;
-		case Sw_MMAP:
-			MapBtnSys(OveredBtn);
-			break;
-		case Sw_CARGO:
-			CargoBtnSys(OveredBtn);
-			break;
-		case Sw_TRANS:
-			TransBtnSys(OveredBtn);
-			break;
-		case Sw_FINAN:
-			FinanBtnSys(OveredBtn);
-			break;
-		case Sw_QUEST:
-			QuestBtnSys(OveredBtn);
-			break;
-		case Sw_PRICES:
-			PricesBtnSys(OveredBtn);
-			break;
-		case Sw_PRICES2:
-			PricesBtnSys(OveredBtn);
-			break;
-		case Sw_SAVE:
-			SaveBtnSys(OveredBtn);
-			break;
-		case Sw_LOAD:
-			LoadBtnSys(OveredBtn);
-			break;
-		case Sw_OPTION:
-			OptionBtnSys(OveredBtn);
-			break;
-		case Sw_CITY:
-			CityBtnSys(OveredBtn);
-			break;
-		case Sw_BUY:
-			BuyBtnSys(OveredBtn);
-			break;
-		case Sw_SALE:
-			SaleBtnSys(OveredBtn);
-			break;
-		case Sw_INVEST:
-			InvestBtnSys(OveredBtn);
-			break;
-		case Sw_INVESTT:
-			InvestBtnSysT(OveredBtn);
-			break;
-		case Sw_INVESTB:
-		case Sw_INVESTBUYB:
-		case Sw_INVESTRENTB:
-			InvestBtnSysB(OveredBtn);
-			break;
-		case Sw_INVESTI:
-			InvestBtnSysI(OveredBtn);
-			break;
-		case Sw_MANAGE:
-			ManageBtnSys(OveredBtn);
-			break;
-		case Sw_TALK:
-			TalkBtnSys(OveredBtn);
-			break;
-		case Sw_TALK2:
-			TalkBtnSys(OveredBtn);
-			break;
-		case Sw_EXIT:
-			ExitBtnSys(OveredBtn);
-			break;
 		}
-		if (DebugMode == TRUE) {
-			printfDx("MOUSE LEFT ON %d \n", OveredBtn);
-			printfDx("Volume = %d\n", VolumeBGM);
-		}
-		return;
 	}
 }
 
@@ -807,6 +837,7 @@ void SYSTEM::WaitClick() {
 			}
 		}
 		WaitTimer(16);
+		if (ProcessMessage() == -1) break;
 		if (LEnd) {
 			LEnd = FALSE;
 			break;

@@ -167,7 +167,7 @@ void SYSTEM::MapBtnSys(int OveredBtn) {
 		DrawWindow(60, 140, 5, 16);
 		DrawWindow(980, 140, 5, 16);
 		DrawMessageWindow();
-		FinanData();
+		FinanDrawString();
 		break;
 	case 51:
 		BtnSwitch = Sw_QUEST;
@@ -386,7 +386,7 @@ void SYSTEM::FinanBtnOver(int i) {
 		DrawWindow(60, 140, 5, 16);
 		DrawWindow(980, 140, 5, 16);
 		DrawMessageWindow();
-		FinanData();
+		FinanDrawString();
 		DrawStringToHandle(BtnX[63], BtnY[63], "•Â‚¶‚é", GetColor(255, 0, 0), init.FontHandle);
 		break;
 	case 1:
@@ -404,7 +404,7 @@ void SYSTEM::FinanBtnOut(int OveredBtn) {
 		DrawWindow(60, 140, 5, 16);
 		DrawWindow(980, 140, 5, 16);
 		DrawMessageWindow();
-		FinanData();
+		FinanDrawString();
 		DrawStringToHandle(BtnX[63], BtnY[63], "•Â‚¶‚é", GetColor(255, 255, 255), init.FontHandle);
 		break;
 	case 1:
@@ -425,7 +425,7 @@ void SYSTEM::FinanBtnSys(int OveredBtn) {
 	}
 }
 
-void SYSTEM::FinanData() {
+void SYSTEM::FinanDrawString() {
 
 	int x = 0;
 	int y = 0;
@@ -441,32 +441,34 @@ void SYSTEM::FinanData() {
 	Temp[4] = "";
 	Temp[5] = "Œš•¨";
 	Temp[6] = "“y’n";
-	Temp[7] = "”õ•i";
+	Temp[7] = "‹@ŠB‘•’u";
 	Temp[8] = "Ô—¼‰^”À‹ï";
-	Temp[9] = "";
-	Temp[10] = "ŒÅ’è‘Y‡Œv";
-	Temp[11] = "‘Y‡Œv";
+	Temp[9] = "‘D”•";
+	Temp[10] = "";
+	Temp[11] = "ŒÅ’è‘Y‡Œv";
+	Temp[12] = "‘Y‡Œv";
 
-	Temp[12] = "Ø“ü‹à";
-	Temp[13] = "–¢•¥‹à";
-	Temp[14] = "";
-	Temp[15] = "•‰Â‡Œv";
-	Temp[16] = "";
-	Temp[17] = "‘–{‹à";
-	Temp[18] = "";
+	Temp[13] = "Ø“ü‹à";
+	Temp[14] = "–¢•¥‹à";
+	Temp[15] = "";
+	Temp[16] = "•‰Â‡Œv";
+	Temp[17] = "";
+	Temp[18] = "‘–{‹à";
 	Temp[19] = "";
-	Temp[20] = "“–Šúƒ—˜‰v";
+	Temp[20] = "";
 	Temp[21] = "";
-	Temp[22] = "ƒ‘Y‡Œv";
-	Temp[23] = "•‰Âƒ‘Y‡Œv";
-	while (i <= 23) {
+	Temp[22] = "“–Šúƒ—˜‰v";
+	Temp[23] = "";
+	Temp[24] = "ƒ‘Y‡Œv";
+	Temp[25] = "•‰Âƒ‘Y‡Œv";
+	while (i <= 25) {
 
 		DrawStringToHandle(MultiResoIntX(x * 416 + 100), MultiResoIntY(y * 32 + 240), Temp[i], GetColor(0, 0, 0), init.FontHandle); y++;
-		if (i == 11) {
+		if (i == 12) {
 			x++;
 			y = 0;
 		}
-		else if (i == 23) {
+		else if (i == 25) {
 			x = 0;
 			y = 0;
 		}
@@ -475,40 +477,40 @@ void SYSTEM::FinanData() {
 
 	DrawStringToHandle(MultiResoIntX(1350), MultiResoIntY(160), "‘¹‰vŒvZ‘", GetColor(0, 0, 0), init.FontHandle);
 
-	Temp[24] = "”„ã‚";
-	Temp[25] = "”„ãŒ´‰¿";
-	Temp[26] = "";
-	Temp[27] = "”Ì”„”ï‹y‚Ñˆê”ÊŠÇ—”ï";
+	Temp[26] = "”„ã‚";
+	Temp[27] = "”„ãŒ´‰¿";
 	Temp[28] = "";
-	Temp[29] = "";
+	Temp[29] = "”Ì”„”ï‹y‚Ñˆê”ÊŠÇ—”ï";
 	Temp[30] = "";
 	Temp[31] = "";
-	Temp[32] = "‰c‹ÆŠO‘¹‰v";
+	Temp[32] = "";
 	Temp[33] = "";
-	Temp[34] = "";
-	Temp[35] = "“Á•Ê‘¹‰v";
+	Temp[34] = "‰c‹ÆŠO‘¹‰v";
+	Temp[35] = "";
 	Temp[36] = "";
-
-	Temp[37] = "";
+	Temp[37] = "“Á•Ê‘¹‰v";
 	Temp[38] = "";
-	Temp[39] = "”„ã‘—˜‰v";
-	Temp[40] = "";
-	Temp[41] = "‹‹—¿";
-	Temp[42] = "x•¥‰Æ’À";
-	Temp[43] = "Œ¸‰¿‹p”ï";
-	Temp[44] = "‰c‹Æ—˜‰v";
-	Temp[45] = "";
-	Temp[46] = "x•¥—˜‘§";
-	Temp[47] = "Œoí—˜‰v";
-	Temp[48] = "";
-	Temp[49] = "Åˆø‘O“–Šúƒ—˜‰v";
-	Temp[50] = "–@lÅ“™";
-	Temp[51] = "“–Šúƒ—˜‰v";
 
-	while (i <= 51) {
+	Temp[39] = "";
+	Temp[40] = "";
+	Temp[41] = "”„ã‘—˜‰v";
+	Temp[42] = "";
+	Temp[43] = "‹‹—¿";
+	Temp[44] = "x•¥‰Æ’À";
+	Temp[45] = "Œ¸‰¿‹p”ï";
+	Temp[46] = "‰c‹Æ—˜‰v";
+	Temp[47] = "";
+	Temp[48] = "x•¥—˜‘§";
+	Temp[49] = "Œoí—˜‰v";
+	Temp[50] = "";
+	Temp[51] = "Åˆø‘O“–Šúƒ—˜‰v";
+	Temp[52] = "–@lÅ“™";
+	Temp[53] = "“–Šúƒ—˜‰v";
+
+	while (i <= 53) {
 
 		DrawStringToHandle(MultiResoIntX(x * 128 + 1024 + 64), MultiResoIntY(y * 30 + 240), Temp[i], GetColor(0, 0, 0), init.FontHandle); y++;
-		if (i == 36) {
+		if (i == 38) {
 			x++;
 			y = 0;
 		}

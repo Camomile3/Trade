@@ -44,6 +44,7 @@ class SYSTEM {
 	int TempValueX[64], TempValueY[64];
 	int MouseX, MouseY;
 	int MInput,MInput1F;
+	bool KeyInput, KeyInput1F;
 	int OveredBtn = -1;
 	int ClickedBtn = -1;
 	int ButtonNumber = 64;
@@ -79,6 +80,7 @@ class SYSTEM {
 	bool LEnd = FALSE;
 	bool Stopper = TRUE;
 	bool DragStopper = FALSE;
+	bool PressedBtn = FALSE;
 
 	bool BuyFlag;
 	enum {
@@ -114,6 +116,13 @@ class SYSTEM {
 		Sw_INVESTBUYI,
 		Sw_INVESTSALEI,
 		Sw_MANAGE,
+		Sw_MANAGEO,
+		Sw_MANAGEEMPO,
+		Sw_MANAGEENDO,
+		Sw_MANAGEW,
+		Sw_MANAGEWIN,
+		Sw_MANAGEWOUT,
+		Sw_MANAGEF,
 		Sw_TALK,
 		Sw_TALK2,
 		Sw_EXIT,
@@ -207,7 +216,7 @@ public:
 	void FinanBtnOver(int);
 	void FinanBtnOut(int);
 	void FinanBtnSys(int);
-	void FinanData();
+	void FinanDrawString();
 
 	void QuestBtnOver(int);
 	void QuestBtnOut(int);
@@ -298,6 +307,23 @@ public:
 	void ManageBtnOut(int);
 	void ManageBtnSys(int);
 	void ManageData(int);
+
+	void ManageBtnSysO(int);
+	void ManageDataO(int);
+	void ManageEmpSysO();
+	void ManageEmpEndSysO();
+
+	void ManageBtnSysW(int);
+	void ManageDataW(int);
+
+	void ManageDataWINSort(int);
+	void ManageDataWIN();
+	void ManageWareInSys(int);
+
+	void ManageWareOutSys();
+
+	void ManageBtnSysF(int);
+	void ManageDataF(int);
 
 	void TalkBtnOver(int);
 	void TalkBtnOut(int);
@@ -413,4 +439,32 @@ public:
 
 	void SetBuilding(int, int, int);
 	void Reset(int);
+};
+
+class COMPANY {
+public:
+	int OEmployee;
+	int OEmpSet;
+	int OSalary;
+	int FEmployee;
+	int FProductID;
+	int FRoute;
+	int FEquip;
+	int WID;
+	int WNumber;
+};
+
+class TRADEROUTE {
+public:
+	int Route;
+	bool BuySale;
+	int GoodsID;
+	int BuySaleNumber;
+};
+
+class WAREHOUSE {
+public:
+	int ID;
+	int InNumber;
+
 };

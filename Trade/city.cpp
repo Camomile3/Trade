@@ -13,6 +13,7 @@ extern MARKET HerMarket[16][32];
 extern TRANSPORT Trans[8];
 extern BUILDING CityBuilding[16][3];
 extern BUILDING HerBuilding[16][3][99];
+extern COMPANY Comp[16];
 
 void SYSTEM::ResetCity() {
 
@@ -232,7 +233,8 @@ void SYSTEM::BuySort(int ID) {
 	Goods[ID].CalcedPrice = Market[her.On][ID].CalcPrice(her.On, ID);
 	Goods[ID].CalcedProd = Market[her.On][ID].CalcProduction(her.On, ID);
 
-	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
+	if (OveredBtn != ID)
+		DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedPrice);
 	DrawStringToHandle(BtnX[ID] + MultiResoIntX(200), BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
 	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedProd);
@@ -370,14 +372,11 @@ void SYSTEM::BuySys(int ID) {
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
 	DrawBuyString();
-	BuyData();
 	OveredBtn = -1;
+	BuyData();
 }
 
 void SYSTEM::SaleSort(int ID) {
-
-	//BtnX[1] = 560;
-	//BtnY[1] = 180;
 
 	TCHAR Temp[32];
 
@@ -407,7 +406,8 @@ void SYSTEM::SaleSort(int ID) {
 
 	Goods[ID].CalcedPrice = Market[her.On][ID].SaleCalcPrice(her.On, ID);
 
-	DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
+	if (OveredBtn != ID)
+		DrawStringToHandle(BtnX[ID], BtnY[ID], Goods[ID].Name, GetColor(0, 0, 0), init.FontHandle);
 
 	sprintf_s(Temp, 32, "%d", Goods[ID].CalcedPrice); //売値
 	DrawStringToHandle(BtnX[ID] + MultiResoIntX(210 + 110), BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
@@ -453,6 +453,9 @@ void SYSTEM::SaleBtnSys(int OveredBtn) {
 		BtnSwitch = Sw_CITY;
 		ResetCity();
 	}
+	else if (OveredBtn == 62) {
+
+	}
 	else if (OveredBtn != -1) {
 		BtnSwitch = Sw_SALE2;
 		ResetCity();
@@ -481,7 +484,6 @@ void SYSTEM::SaleData() {
 
 void SYSTEM::SaleSys(int ID) {
 
-	int SlotNumber;
 	bool LEnd = FALSE;
 
 	for (int i = 0; i < 64; i++) {
@@ -504,26 +506,7 @@ void SYSTEM::SaleSys(int ID) {
 	if (TempNumber > her.Cargo[SlotNumber]) {
 		ResetCity();
 		MessageWindowMessage("所有量を超えています");
-		while (1) {
-			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
-				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
-					while (1) {
-						MInput1F = MInput;
-						MInput = GetMouseInput();
-						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-							LEnd = TRUE;
-						WaitTimer(16);
-						if (LEnd) { break; }
-					}
-				}
-			}
-			WaitTimer(16);
-			if (LEnd) { break; }
-		}
+		WaitClick();
 	}
 	else if (TempNumber != 0)
 	{
@@ -536,33 +519,14 @@ void SYSTEM::SaleSys(int ID) {
 
 		ResetCity();
 		MessageWindowMessage("売却しました");
-		while (1) {
-			if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 0) {
-				if (CheckHitKey(KEY_INPUT_RETURN) == 0) {
-					while (1) {
-						MInput1F = MInput;
-						MInput = GetMouseInput();
-						if (!(MInput & MOUSE_INPUT_LEFT) && (MInput1F & MOUSE_INPUT_LEFT) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-							LEnd = TRUE;
-						if (CheckHitKey(KEY_INPUT_NUMPADENTER) == 1)
-							LEnd = TRUE;
-						WaitTimer(16);
-						if (LEnd) { break; }
-					}
-				}
-			}
-			WaitTimer(16);
-			if (LEnd) { break; }
-		}
+		WaitClick();
 
 	}
 	BtnSwitch = Sw_SALE;
 	ResetCity();
 	DrawWindow(520, 140, 5, 16);
-	SaleData();
 	OveredBtn = -1;
+	SaleData();
 }
 
 void SYSTEM::InvestBtnOver(int i) {
@@ -647,20 +611,20 @@ void SYSTEM::InvestBtnSys(int i) {
 		ResetCity();
 		break;
 	case 0:
-		ResetCity();
 		BtnSwitch = Sw_INVESTT;
+		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		InvestData(-1);
 		break;
 	case 1:
-		ResetCity();
 		BtnSwitch = Sw_INVESTB;
+		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		InvestData(-1);
 		break;
 	case 2:
-		ResetCity();
 		BtnSwitch = Sw_INVESTI;
+		ResetCity();
 		DrawWindow(520, 140, 5, 16);
 		InvestData(-1);
 		break;
@@ -1252,30 +1216,50 @@ void SYSTEM::InvestSaleSysI(int i) {
 
 void SYSTEM::ManageBtnOver(int i) {
 
-	switch (i) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_MANAGE;
-		DrawWindow(520, 140, 5, 16);
-		ManageData(i);
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 0, 0), init.FontHandle);
-		break;
-	case 1:
+	switch (BtnSwitch) {
+	case Sw_MANAGE:
+	case Sw_MANAGEO:
+	case Sw_MANAGEW:
+	case Sw_MANAGEWIN:
+	case Sw_MANAGEWOUT:
+	case Sw_MANAGEF:
+		if (i == 63) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			ManageData(i);
+			DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 0, 0), init.FontHandle);
+		}
+		else if (BtnOn[i] == TRUE) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			ManageData(i);
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(255, 0, 0), init.FontHandle);
+		}
 		break;
 	}
 }
 
-void SYSTEM::ManageBtnOut(int OveredBtn) {
+void SYSTEM::ManageBtnOut(int i) {
 
-	switch (OveredBtn) {
-	case 63:
-		ResetCity();
-		BtnSwitch = Sw_MANAGE;
-		DrawWindow(520, 140, 5, 16);
-		ManageData(OveredBtn);
-		DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
-		break;
-	case 1:
+	switch (BtnSwitch) {
+	case Sw_MANAGE:
+	case Sw_MANAGEO:
+	case Sw_MANAGEW:
+	case Sw_MANAGEWIN:
+	case Sw_MANAGEWOUT:
+	case Sw_MANAGEF:
+		if (i == 63) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			ManageData(i);
+			DrawStringToHandle(BtnX[63], BtnY[63], "戻る", GetColor(255, 255, 255), init.FontHandle);
+		}
+		else if (BtnOn[i] == TRUE) {
+			ResetCity();
+			DrawWindow(520, 140, 5, 16);
+			ManageData(i);
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+		}
 		break;
 	}
 }
@@ -1287,15 +1271,307 @@ void SYSTEM::ManageBtnSys(int OveredBtn) {
 		BtnSwitch = Sw_CITY;
 		ResetCity();
 		break;
+	case 0:
+		BtnSwitch = Sw_MANAGEO;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		ManageDataO(-1);
+		break;
 	case 1:
+		BtnSwitch = Sw_MANAGEW;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		ManageDataW(-1);
+		break;
+	case 2:
+		BtnSwitch = Sw_MANAGEF;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		ManageDataF(-1);
 		break;
 	}
 }
 
-void SYSTEM::ManageData(int i) {
+void SYSTEM::ManageData(int Btn) {
+
+	switch (BtnSwitch) {
+
+	case Sw_MANAGE:
+		for (int i = 0; i < 3; i++) {
+			BtnX[i] = 600;
+			BtnY[i] = 200 + i * 70;
+			BtnOn[i] = TRUE;
+			MultiResoBtn(i);
+		}
+		TempChar[0] = "事務所";
+		TempChar[1] = "倉庫";
+		TempChar[2] = "工場";
+
+		if (Btn != 0)
+			DrawStringToHandle(BtnX[0], BtnY[0], TempChar[0], GetColor(0, 0, 0), init.FontHandle);
+		if (Btn != 1)
+			DrawStringToHandle(BtnX[1], BtnY[1], TempChar[1], GetColor(0, 0, 0), init.FontHandle);
+		if (Btn != 2)
+			DrawStringToHandle(BtnX[2], BtnY[2], TempChar[2], GetColor(0, 0, 0), init.FontHandle);
+		break;
+	case Sw_MANAGEO:
+		ManageDataO(Btn);
+		break;
+	case Sw_MANAGEW:
+		ManageDataW(Btn);
+		break;
+	case Sw_MANAGEWIN:
+		ManageDataWIN();
+		break;
+	case Sw_MANAGEF:
+		ManageDataF(Btn);
+		break;
+	}
+}
+
+void SYSTEM::ManageBtnSysO(int i) {
+
+	if (i == 63) {
+		BtnSwitch = Sw_MANAGE;
+		ResetCity();
+	}
+	else if (i == 0) {
+		BtnSwitch = Sw_MANAGEEMPO;
+		ResetCity();
+		ManageEmpSysO();
+	}
+	else if (i == 1) {
+		BtnSwitch = Sw_MANAGEENDO;
+		ResetCity();
+		ManageEmpEndSysO();
+	}
+}
+
+void SYSTEM::ManageDataO(int Btn) {
+
+	TCHAR Temp[32];
+	int x = 0;
+	int y = 0;
+
+	SetSingleBtn("戻る");
+
+	TempChar[0] = "従業員数";
+	TempChar[1] = "貿易路一覧";
+
+	for (int i = 0; i < 2; i++) {
+		TempValueX[i] = 600;
+		TempValueY[i] = 200 + i * 84;
+		MultiResoValue(i);
+		DrawStringToHandle(TempValueX[i], TempValueY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+		y++;
+	}
+	for (int i = 0; i < 1; i++) {
+		TempValueX[i] = 800;
+		TempValueY[i] = 200 + i * 42;
+		MultiResoValue(i);
+		sprintf_s(Temp, 32, "%d", Comp[her.On].OEmployee);
+		DrawStringToHandle(TempValueX[i], TempValueY[i], Temp, GetColor(0, 0, 0), init.FontHandle);
+		y++;
+	}
+
+	y = 0;
+	TempChar[0] = "従業員雇用";
+	TempChar[1] = "従業員解雇";
+	TempChar[2] = "貿易路設定";
+
+	for (int i = 0; i <= 2; i++) {
+
+		BtnX[i] = 1000;
+		BtnY[i] = 200 + y * 42;
+		BtnW[i] = 180;
+		BtnH[i] = 42;
+		MultiResoBtn(i);
+
+		y++;
+
+		if (Btn != i)
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+
+		BtnOn[i] = TRUE;
+	}
+}
+
+void SYSTEM::ManageEmpSysO() {
+
+	TCHAR Temp[64];
+
+	sprintf_s(Temp, 64, "何セット雇用しますか？(1セット5人 0～%d", 10 - Comp[her.On].OEmpSet);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
+
+	TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 96), 10 - Comp[her.On].OEmpSet, 0, FALSE);
+
+	if (Comp[her.On].OEmpSet + TempNumber > 10) {
+		ResetCity();
+		MessageWindowMessage("そんなに雇えません。");
+		WaitClick();
+	}
+	else if (TempNumber != 0)
+	{
+		Comp[her.On].OEmployee += TempNumber * 5;
+		Comp[her.On].OEmpSet += TempNumber;
+		ResetCity();
+		MessageWindowMessage("雇用しました。");
+		WaitClick();
+	}
+	BtnSwitch = Sw_MANAGEO;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	ManageData(-1);
+	OveredBtn = -1;
+}
+
+void SYSTEM::ManageEmpEndSysO() {
+
+	TCHAR Temp[64];
+
+	sprintf_s(Temp, 64, "何セット解雇しますか？ 0～%d", Comp[her.On].OEmpSet);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64), Temp, GetColor(255, 255, 255), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 + 32), "退職金として給料6か月分を支払う義務があります。", GetColor(255, 255, 255), init.FontHandle);
+
+	TempNumber = KeyInputNumber(MultiResoIntX(MWX + 64 + 32), MultiResoIntY(MWY + 64 + 64), Comp[her.On].OEmpSet, 0, FALSE);
+
+	if (TempNumber > Comp[her.On].OEmpSet) {
+		ResetCity();
+		MessageWindowMessage("そんなに雇ってません。");
+		WaitClick();
+	}
+	else if (TempNumber != 0)
+	{
+		Comp[her.On].OEmployee -= TempNumber * 5;
+		Comp[her.On].OEmpSet -= TempNumber;
+		her.Money -= Comp[her.On].OSalary * 6;
+		ResetCity();
+		MessageWindowMessage("解雇しました。");
+		WaitClick();
+	}
+	BtnSwitch = Sw_MANAGEO;
+	ResetCity();
+	DrawWindow(520, 140, 5, 16);
+	ManageData(-1);
+	OveredBtn = -1;
+}
+
+void SYSTEM::ManageBtnSysW(int i) {
+
+	if (i == 63) {
+		BtnSwitch = Sw_MANAGE;
+		OveredBtn = -1;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		ManageData(-1);
+	}
+	else if (i == 0) {
+		BtnSwitch = Sw_MANAGEWIN;
+		ResetCity();
+		ManageDataWIN();
+	}
+	else if (i == 1) {
+		BtnSwitch = Sw_MANAGEWOUT;
+		ResetCity();
+		ManageWareOutSys();
+	}
+}
+
+void SYSTEM::ManageDataW(int Btn) {
+
+	TCHAR Temp[32];
+	int x = 0;
+	int y = 0;
+
+	SetSingleBtn("戻る");
+
+	TempChar[0] = "入庫";
+	TempChar[1] = "出庫";
+
+	for (int i = 0; i < 2; i++) {
+		BtnX[i] = 600;
+		BtnY[i] = 200 + i * 84;
+		MultiResoBtn(i);
+		if (Btn != i)
+			DrawStringToHandle(BtnX[i], BtnY[i], TempChar[i], GetColor(0, 0, 0), init.FontHandle);
+		y++;
+
+		BtnOn[i] = TRUE;
+	}
+}
+
+void SYSTEM::ManageDataWINSort(int ID) {
+
+	TCHAR Temp[32];
+
+	for (int i = 0; i < 16; i++) {
+		SortX[i] = 560;
+		SortY[i] = 240 + i * 42;
+	}
+
+	for (int i = 0; i < 63; i++) {
+		if (GoodsOn[i] == FALSE) {
+			BtnX[ID] = SortX[i];
+			BtnY[ID] = SortY[i];
+			BtnW[ID] = 150;
+			BtnH[ID] = 42;
+			BtnOn[ID] = TRUE;
+			GoodsOn[i] = TRUE;
+
+			MultiResoBtn(ID);
+
+			sprintf_s(Temp, 32, "%d", her.CargoPrice[i] / her.Cargo[i]);	//一個当買値
+			DrawStringToHandle(BtnX[ID] + MultiResoIntX(190), BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+			sprintf_s(Temp, 32, "%d", her.Cargo[i]);	//積荷数量
+			DrawStringToHandle(BtnX[ID] + MultiResoIntX(210 + 110 * 2), BtnY[ID], Temp, GetColor(0, 0, 0), init.FontHandle);
+			break;
+		}
+	}
+	TempChar[ID] = Goods[ID].Name;
+
+	DrawStringToHandle(BtnX[ID], BtnY[ID], TempChar[ID], GetColor(0, 0, 0), init.FontHandle);
+}
+
+void SYSTEM::ManageDataWIN() {
+
+	DrawWindow(520, 140, 5, 16);
+
+	int X = 560;
+	int Y = MultiResoIntY(160);
+
+	DrawStringToHandle(MultiResoIntX(X), Y, "名前", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(X + 190), Y, "一個当買値", GetColor(0, 0, 0), init.FontHandle);
+	DrawStringToHandle(MultiResoIntX(X + 210 + 110), Y, "数量", GetColor(0, 0, 0), init.FontHandle);
+
+	MessageWindowMessage("どれを入庫しますか？");
+	SetSingleBtn("戻る");
+
+	for (int i = 0; i < 8; i++) {
+		if (her.HiddenID[i] != -1)
+			ManageDataWINSort(her.HiddenID[i]);
+	}
+}
+
+void SYSTEM::ManageWareInSys(int i) {
+
+	if (i == 63) {
+		BtnSwitch = Sw_MANAGEW;
+		ResetCity();
+		DrawWindow(520, 140, 5, 16);
+		OveredBtn = -1;
+		ManageDataW(-1);
+	}
+}
+
+void SYSTEM::ManageWareOutSys() {
+
 
 }
 
+void SYSTEM::ManageDataF(int Btn) {
+
+
+}
 
 void SYSTEM::TalkBtnOver(int i) {
 
